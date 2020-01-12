@@ -1,56 +1,64 @@
 <template>
     <b-container fluid id="body">
-        <div class="tag-chooser">
-            <p class="d-inline">Deck:</p>
-            <b-button  class="tag-style-button green-btn d-inline"  v-for="deck in includedDecks" :key="deck.edited" > 
+        <b-container class="card">
+            <b-row  class="card-row">
+                <b-col v-if="card.front_image">
+                    <b-img-lazy class="img" v-if="card.front_image" :src="card.front_image"></b-img-lazy>
+                </b-col>
+                <b-col >
+                    <b-form-textarea class="card-text-input" id="front-text-input" v-model="card.front_text"></b-form-textarea>
+                </b-col>
+            </b-row>
+        </b-container>
+        <br>
+        <b-container class="card">
+            <b-form-textarea class="card-text-input" id="back-text-input" v-model="card.back_text"></b-form-textarea>
+            <b-img-lazy v-if="card.back_image" class="img" :src="card.back_image"></b-img-lazy>
+        </b-container>
+        <br>
+        <b-container class="tag-chooser">
+            <p class="d-inline-block tags-label">Deck:</p>
+            <b-button  class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.edited" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
-            <b-button  class="tag-style-button white-btn d-inline"  v-for="deck in unincludedDecks" :key="deck.edited" > 
+            <br>
+            <b-button  class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.edited" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
-        </div>
-      <b-container class="card">
-        <b-row  class="card-row">
-            <b-col v-if="card.front_image">
-                <b-img-lazy class="img" v-if="card.front_image" :src="card.front_image"></b-img-lazy>
-            </b-col>
-            <b-col >
-                <b-card-text class="font-weight-bold">{{ card.front_text }}</b-card-text>
-            </b-col>
-        </b-row>
-      </b-container>
-      <b-container class="card">
-        <b-row class="card-row">
-          <b-col v-if="card.back_image">
-              <b-img-lazy class="img" :src="card.back_image"></b-img-lazy>
-          </b-col>
-          <b-col>
-              <b-card-text> {{ card.back_text }} </b-card-text>
-          </b-col>
-        </b-row>
-      </b-container>
-        <div class="tag-chooser" id="tags-bottom">
-            <p class="d-inline">Tags:</p>
+        </b-container>
+        <b-container  class="tag-chooser" id="tags-bottom">
+            <p class="d-inline tags-label">Tags:</p>
             <b-button  class="tag-style-button green-btn d-inline"  v-for="deck in includedDecks" :key="deck.edited" > 
                 {{ deck.title.slice(0, 24) }}
             </b-button>
+            <br>
             <b-button  class="tag-style-button white-btn d-inline"  v-for="deck in unincludedDecks" :key="deck.edited" > 
                 {{ deck.title.slice(0, 24) }}
             </b-button>
-        </div>
+        </b-container >
         <b-row id="buttons-row" >
             <b-col>
-                <b-button class="btn-circle btn-xl" @click="incorrect()">
+                <b-button class="btn-circle btn-md" @click="deleteCard()">
                     <font-awesome-icon size="2x" icon="trash-alt"/>
                 </b-button>
             </b-col>
-            <b-col>    
-                <b-button class="btn-circle btn-xl" @click="flipCard()">
-                    <font-awesome-icon size="2x" icon="undo"/>
+            <b-col>
+                <b-button class="btn-circle btn-md" @click="previousCard()">
+                    <font-awesome-icon size="2x" icon="step-backward"/>
                 </b-button>
             </b-col>
             <b-col>    
-                <b-button class="btn-circle btn-xl" @click="correct()">
+                <b-button class="btn-circle btn-md" @click="undo()">
+                    <font-awesome-icon size="2x" icon="undo"/>
+                </b-button>
+            </b-col>
+            <b-col>
+                <b-button class="btn-circle btn-md" @click="nextCard()">
+                    <font-awesome-icon size="2x" icon="step-forward"/>
+                </b-button>
+            </b-col>
+            <b-col>    
+                <b-button class="btn-circle btn-md" @click="doneCheck()">
                     <font-awesome-icon size="2x" icon="check"/>
                 </b-button>
             </b-col>
@@ -69,23 +77,76 @@ export default {
     },
     computed: {
         ...mapState({
-            card: 'cardToEdit',
-            cardToEditsDeck: 'cardToEditsDeck',
+            cardToEditIndex: 'cardToEditIndex',
             decksMeta: 'decksMeta',
-            decks: 'decks'
+            decks: 'decks',
+            currentDeck: 'currentDeck'
         }),
+        card (){
+            return this.currentDeck[this.cardToEditIndex]
+        },
         includedDecks () {
-
-         var card = this.card
-         return this.decks.filter(function (deck) {
+            var card = this.card
+            return this.decks.filter(function (deck) {
                 return deck.cards.indexOf(card)>-1
             })
         },
         unincludedDecks () {
-         var card = this.card
-             return this.decks.filter(function(deck) {
-                return !deck.cards.indexOf(card)>-1
-            })
+            var card = this.card
+            return this.decks.filter(function (deck) {
+                return !deck.cards.includes(card)
+            }) 
+        }
+    },
+    methods: {
+        deleteCard () {
+            // for each of the included decks, filter out the current card from its .cards
+            let changedDecks = this.unincludedDecks
+            for (let deck of this.includedDecks) {
+                let card = this.card
+                let updatedDeckCards = deck.cards.filter(function (x) {
+                    return x.card_id != card.card_id
+                    }) 
+                deck.cards = updatedDeckCards
+                changedDecks.push(deck)
+                deck.edited = Math.round(new Date().getTime() / 1000);
+            }
+            this.$store.commit('updateDecks', changedDecks)
+            this.$store.dispatch('refreshDecksMeta')
+            this.$router.go(-1)
+        },
+        previousCard() {
+            this.submit()
+            this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
+        },
+        undo () {
+            return null
+        },
+        nextCard() {
+            this.submit()
+            this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
+        },
+        doneCheck () {
+            this.submit()
+            this.$router.go(-1)
+        },
+        submit () {
+            // for each of the included decks, 
+            let changedDecks = this.unincludedDecks.slice(0)
+            for (let deck of this.includedDecks) {
+                let card = this.card
+                // filter out the old version card from .cards
+                let updatedDeckCards = deck.cards.filter(function (x) {
+                    return x.card_id != card.card_id
+                    })
+                // then add new one back
+                updatedDeckCards.push(card)
+                deck.cards = updatedDeckCards
+                deck.edited = Math.round(new Date().getTime() / 1000);
+                changedDecks.push(deck)
+            }
+            this.$store.commit('updateDecks', changedDecks)
+            this.$store.dispatch('refreshDecksMeta')
         }
     }  
 }
@@ -94,58 +155,56 @@ export default {
 <style scoped>
 #body{
     background-color: C7C7C7;
+  
+    overflow-y: auto;
+
 }
+
 .card {
     margin: auto;
-    margin-bottom: 30px;
-    top: 35px;
+    top: 30px;
     border-radius: 10px;
     cursor: pointer;
     font-size: 1.5em;
-    padding: 25px;
+    padding: 15px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.51);
     text-align: left;
     overflow-y: auto;
     width: 90vw;
    
 }
-.card-row {
-    max-height: 5em;
+.card::-webkit-scrollbar {
+    width: .5em;
 }
-
-.btn-circle.btn-xl { 
-    width: 60px; 
-    height: 60px; 
-    padding: 10px 16px; 
-    margin: 10px auto;
-    border-radius: 30px; 
-    font-size: 12px; 
-    text-align: center; 
-    color:grey;
-    background-color: white;
-    border: none;
-    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.5);
-    max-height: 25vh;
-    } 
-.btn-circle.btn-xl:hover {
-    box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
+.card::-webkit-scrollbar-thumb {
+    background-color: lightgrey;
+    border-radius: 5px;
 }
-
-#buttons-row {
+.card-text-input {
+    border: hidden;
+    word-wrap: normal;
     margin: auto;
-    text-align: center;
-   
-    left: 0;
-    bottom: 0;
-    width: 100%;
+    margin-top: 0px;
+    font-size: 1em;
+    padding-top: 0px;
+    min-height: 4.8em;
 }
-p {
-    margin-left: 10px;
+.card-text-input::-webkit-scrollbar {
+    width: .5em;
 }
-.img {
-    object-fit: fill;
+.card-text-input::-webkit-scrollbar-thumb {
+    background-color: lightgrey;
+    border-radius: 5px;
 }
 
+
+.img {
+    margin: auto;
+    margin-top: .5em;
+    object-fit: fill;
+    width: 68vw;
+    max-height: 50vh;
+}
 
 .flashcard:hover {
     box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
@@ -153,24 +212,69 @@ p {
 
 
 .tag-chooser {
-    margin-top: 5px;
-    margin-left: 0px;
-    max-height: 6.5em;
-    overflow-y: auto;
+    margin: 1em auto;
+    margin-right: 0px;
+    height: 7.5em;
+    overflow-x: auto;
+    white-space: nowrap;
+    position: initial;
+    padding: 0px;
 }
-#tags-bottom {
-    margin: 50px 0px;
+
+.tag-chooser::-webkit-scrollbar {
+    height: .5em;
+} 
+.tag-chooser::-webkit-scrollbar-thumb {
+    background-color: lightgrey;
+    border-radius: 5px;
+}
+.tags-label {
+    margin-left: 10px;
 }
 
 .tag-style-button {
     border-radius: 10px;
     margin: 5px 10px;
     border-width: 0px;
-    color: black;
+    color: grey;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.51);
 
 }
 .green-btn {  background-color: rgba(185, 255, 184, 1)}
 .white-btn {  background-color: white;}
+
+#tags-bottom {
+    margin-bottom: 80px;
+}
+
+
+.btn-circle.btn-md { 
+    width: 50px; 
+    height: 50px; 
+    padding: 10px 16px; 
+    margin: 5px auto;
+    border-radius: 25px; 
+    font-size: 10px; 
+    text-align: center; 
+    color:grey;
+    background-color: white;
+    border: none;
+    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.5);
+    max-height: 25vh;
+    } 
+.btn-circle.btn-md:hover {
+    box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
+}
+
+#buttons-row {
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    z-index: 1000;
+    background-color: rgba(63, 47, 47, 0.3)
+}
+
+
 
 </style>

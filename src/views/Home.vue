@@ -104,9 +104,9 @@ export default {
         NavbarProgess() {
             this.$store.dispatch('navProgress', this.cardsCompleted)
         },
-        editCard(card, deck) {
-            this.$store.commit('updateCardToEdit', card)
-            this.$store.commit('updateCardToEditsDeck', deck)
+        editCard(card, reviewDeck) {
+            this.$store.commit('updateCardToEditIndex', reviewDeck.indexOf(card))
+            this.$store.commit('updateCurrentDeck', reviewDeck)
             this.$router.push('/card-editor')
         }
     },
@@ -179,5 +179,7 @@ export default {
     left: 0;
     bottom: 0;
     width: 100%;
+    background-color: rgba(0, 0, 0, 0.3)
+
 }
 </style>
