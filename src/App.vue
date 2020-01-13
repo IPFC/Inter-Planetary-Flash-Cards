@@ -7,6 +7,8 @@
 
 <script>
 import Navbar from './components/Navbar'
+import { mapState } from 'vuex'
+
     export default {
         name: 'App',
         data() {
@@ -15,6 +17,16 @@ import Navbar from './components/Navbar'
         },
         mounted() {
            this.redirectIfAuth()
+        },
+        computed: {
+            ...mapState({
+                decks: 'decks'
+            }),
+        },
+        watch: {
+            decks: function() {
+                this.$store.dispatch('sync')
+            }
         },
         methods: {
             async redirectIfAuth () {

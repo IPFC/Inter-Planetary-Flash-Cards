@@ -22,7 +22,7 @@
         <b-form-invalid-feedback v-if="input.password" :state="passwordValidation">{{ passwordValidationErrorMsg }}</b-form-invalid-feedback>
         <!-- <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback> -->
         
-        <b-button v-if="signingUp" id="button-get-pinata" type="submit" @click="OpenPinata()" variant="warning">Get Pinata</b-button>
+        <b-button v-if="signingUp" id="button-get-pinata" type="submit" @click="OpenPinata()" variant="primary">Get Pinata</b-button>
         <br>
         
         <label v-if="signingUp" for="feedback-pinata-api">Pinata API key</label>
@@ -35,19 +35,23 @@
         <b-form-invalid-feedback v-if="signingUp" :state="pinataSecretValidation">{{ pinataSecretValidationErrorMsg }}</b-form-invalid-feedback>
         <!-- <b-form-valid-feedback v-if="signingUp" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
         
-        <div id="login-signup-buttons">
-        <span>
-            <b-button v-if="signingUp" :disabled="invalidSignUp" type="submit" @click="SignUp()" variant="primary">Sign up</b-button>
-            <b-button v-else :disabled="invalidLogin" type="submit" @click="login()" variant="primary">Log in</b-button>
+        <span id="login-signup-buttons">
+            <b-button v-if="signingUp" :disabled="loginButtonDisable" type="submit" @click="SignUp()" variant="primary">
+                <font-awesome-icon v-show="loggingIn" icon="spinner" spin />
+                Sign up</b-button>
+            <b-button v-else :disabled="loginButtonDisable" type="submit" @click="login()" variant="primary">
+                <font-awesome-icon v-show="loggingIn" icon="spinner" spin />
+                Log in</b-button>
             
-            <a v-if="signingUp" type="submit" id="sign-up-a" @click="toggleSigningUp()" variant="primary">Returning user? Log in now!</a>
-            <a v-else type="submit" id="sign-up-a" @click="toggleSigningUp()" variant="primary">New account? Sign up now!</a>
+            <b-button v-if="signingUp" :disabled="loginButtonDisable" type="submit" id="sign-up-a" @click="toggleSigningUp()" variant="secondary">Log in</b-button>
+            <b-button v-else :disabled="loginButtonDisable" type="submit" id="sign-up-a" @click="toggleSigningUp()" variant="secondary">Sign up</b-button>
         </span>
-        </div>
     </b-form>
 </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
     name: 'Login',
     data() {
@@ -56,19 +60,20 @@ export default {
                 email: '',
                 password: '',
                 pinataApi: '',
-                pinataSecret: '',
-                signingUp: false
+                pinataSecret: ''
             },
             apiErrorMsg: '',
             failedLogin: false,
             dismissSecs: 5,
             dismissCountDown: 0,
+            loggingIn: false,
+            signingUp: false
         }
     },
     computed: {
-        signingUp () {
-            return this.input.signingUp
-        },
+        ...mapState({
+           serverURL: 'serverURL'
+        }),
         emailValidation () {
             let email = this.input.email
             if (email.length < 4 || email.length > 25) {
@@ -160,7 +165,15 @@ export default {
            }else {
                return false
            }
+        },
+        loginButtonDisable () {
+            if (!this.emailValidation || !this.passwordValidation || this.loggingIn) {
+               return true
+           }else {
+               return false
+           }
         }
+
     },
     watch: {
         failedLogin: function () {
@@ -171,8 +184,9 @@ export default {
     },
     methods: {
         login () {
+            this.loggingIn = true
             this.failedLogin = false
-            let loginURL = "https://ipfc-midware.herokuapp.com/login";
+            let loginURL = this.serverURL + "/login";
             let headers = new Headers();
             let username = this.input.email;
             let password = this.input.password;
@@ -192,8 +206,10 @@ export default {
                         this.$store.commit('updateUserCollection', data['user_collection'])
                         this.$store.commit('updateDecksMeta', data['decks_meta'])
                         this.$store.commit('updateDecks', data['decks'])
+                        this.$store.dispatch('refreshLastSyncsData')
                         this.$router.push('home');
                     }
+                    this.loggingIn = false
                     })
                     .catch(function() {
                         //console.log(error);
@@ -204,8 +220,9 @@ export default {
                     
         },
         SignUp () {
+            this.loggingIn = true
             this.failedLogin = false
-            let signupURL = "https://ipfc-midware.herokuapp.com/sign_up";
+            let signupURL = this.serverURL + "/sign_up";
             let data = {
                 'email': this.input.email,
                 'password': this.input.password,
@@ -220,21 +237,23 @@ export default {
                 .then(response => response.json())
                 .then((data) => {
                     // console.log(data);
-                    if (!data['message  ']) {
+                    if (!data['message']) {
                         this.failedLogin = true
                         this.apiErrorMsg = data['error']
                     }
                     else {
                         this.login ();
                     }
+                    this.loggingIn = false
                     }).catch(function() {
                         this.failedLogin = true
                         this.apiErrorMsg = 'Server error'
                         //console.log(error);
                     });
+            
         },
         toggleSigningUp () {
-            this.input.signingUp = !this.input.signingUp
+            this.signingUp = !this.signingUp
         },
         changeErrorMsg (msg) {
             this.emailValidationErrorMsg = msg
