@@ -26,7 +26,7 @@ const vuexLocal = new VuexPersistence({
     decks: state.decks,
     currentDeck: state.deck,
     reviewDeck: state.reviewDeck,
-
+    lastSyncsData: state.lastSyncsData
   })
   // Function that passes a mutation and lets you decide if it should update the state in localStorage.
   // filter: mutation => (true)
@@ -42,8 +42,10 @@ const store = new Vuex.Store({
     currentDeck: null,
     reviewDeck: null,
     cardToEditIndex: null,
-    navProgressCounter: ""
-
+    navProgressCounter: '',
+    lastSyncsData: null,
+    syncing: false,
+    serverURL: 'https://ipfc-midware.herokuapp.com'
   },
   mutations: {
     updateJwt(state, newJwt) {
@@ -54,6 +56,9 @@ const store = new Vuex.Store({
     },
     toggleJwtValid(state, bool) {
       state.jwtValid = bool
+    },
+    toggleSyncing(state, bool) {
+      state.syncing = bool
     },
     updateUserCollection(state, data) {
       state.userCollection = data
@@ -75,6 +80,9 @@ const store = new Vuex.Store({
     },
     updateCardToEditIndex (state, index) {
       state.cardToEditIndex = index
+    },
+    updateLastSyncsData (state, data) {
+      state.lastSyncsData = data
     }
   },
   actions: {
@@ -129,6 +137,78 @@ const store = new Vuex.Store({
         newDecksMeta.push(deckMeta)
       }
       context.commit('updateDecksMeta', newDecksMeta)
+    },
+    refreshLastSyncsData(context) {
+      let lastDecks = context.state.decks
+      let lastUserCollection = context.state.userCollection
+      let lastSyncsData = {
+          decks: lastDecks,
+          userCollection: lastUserCollection
+      }
+      context.commit('updateLastSyncsData', lastSyncsData)
+    },
+    async sync(context) {
+      console.log('sync called')
+      console.log('syncing status')
+      console.log(context.state.syncing)
+      if (context.state.syncing == true) {
+        console.log('syncing blocked')
+        return null
+      }
+      else{
+        context.commit('toggleSyncing', true)
+        console.log('syncing status')
+        console.log(context.state.syncing)
+        let decks = context.state.decks
+        let lastSyncDecks = context.state.lastSyncsData.decks
+        // let thisSyncsDecks = []
+        // let userCollection = context.state.userCollection
+        if (decks != lastSyncDecks) {
+          console.log("decks changed")
+          for (let deck of decks) {
+            for (let lastSyncDeck of lastSyncDecks) {
+              if (deck.deck_id === lastSyncDeck.deck_id && deck.edited > lastSyncDeck.edited) {
+                console.log("this deck changed" + deck.deck_id )
+                let putDeckURL = context.state.serverURL + '/put_deck';
+                let data = {
+                  'deck_id': deck.deck_id,
+                  'deck': deck,
+                  'title': deck.title,
+                  'edited': deck.edited
+                  // 'deck_cid': deck.deck_cid
+              }
+              console.log("starting api call");
+              await fetch(putDeckURL, { 
+                  headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+                  body: JSON.stringify(data),
+                  method: 'PUT',
+                  })
+                  .then(response => response.json())
+                  .then((responseData) => {
+                      console.log(responseData);
+                      if (!responseData['deck']) {
+                        console.log(responseData)
+                      }
+                      // else if () {
+                      //     this.login ();
+                      // }
+                      }).catch(function() {
+                          context.state.failedSync = true
+                          this.apiErrorMsg = 'Server error'
+                          //console.log(error);
+                      });
+              }
+            }
+          }
+          
+        }
+        // context.commit('updateUserCollection', null)
+        // context.commit('updateDecks', null)
+        context.dispatch('refreshLastSyncsData')
+        context.dispatch('refreshDecksMeta')
+        context.commit('toggleSyncing', false)
+      }
+      
     }
   },
   getters: {

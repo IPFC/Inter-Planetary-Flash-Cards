@@ -62,6 +62,7 @@
                     <font-awesome-icon size="2x" icon="check"/>
                 </b-button>
             </b-col>
+            <b-button @click="pinataTest()">Sync Test</b-button>
         </b-row>  
     </b-container>
 </template>
@@ -80,7 +81,8 @@ export default {
             cardToEditIndex: 'cardToEditIndex',
             decksMeta: 'decksMeta',
             decks: 'decks',
-            currentDeck: 'currentDeck'
+            currentDeck: 'currentDeck',
+            jwt: 'jwt'
         }),
         card (){
             return this.currentDeck[this.cardToEditIndex]
@@ -147,6 +149,9 @@ export default {
             }
             this.$store.commit('updateDecks', changedDecks)
             this.$store.dispatch('refreshDecksMeta')
+        },
+        pinataTest() {
+            this.$store.dispatch('sync')
         }
     }  
 }
