@@ -106,13 +106,14 @@ export default {
         },
         editCard(card, reviewDeck) {
             this.$store.commit('updateCardToEditIndex', reviewDeck.indexOf(card))
-            this.$store.commit('updateCurrentDeck', reviewDeck)
             this.$router.push('/card-editor')
         }
     },
     created () {
         this.$store.dispatch('updateReviewDeck')
         this.$store.dispatch('navProgress', 0)
+        this.$store.dispatch('refreshLastSyncsData')
+        this.$store.commit('updateCurrentDeck', this.reviewDeck)
         this.currentCardIndex = 0
     },
     components: { vueFlashcard }

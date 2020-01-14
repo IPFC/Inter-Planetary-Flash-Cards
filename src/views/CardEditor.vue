@@ -62,18 +62,20 @@
                     <font-awesome-icon size="2x" icon="check"/>
                 </b-button>
             </b-col>
-            <b-button @click="pinataTest()">Sync Test</b-button>
         </b-row>  
     </b-container>
 </template>
 
 <script>
+import _ from 'lodash';   
+const uuidv4 = require('uuid/v4');
+
 import { mapState } from 'vuex'
 export default {
     name: 'card-editor',
     data() {
         return {
-            
+            initialDeckState : null
         };
     },
     computed: {
@@ -84,8 +86,25 @@ export default {
             currentDeck: 'currentDeck',
             jwt: 'jwt'
         }),
-        card (){
-            return this.currentDeck[this.cardToEditIndex]
+        card() {
+            if (this.currentDeck == null){
+                return {}
+            }
+            else {
+                return this.currentDeck[this.cardIndex]
+            }
+        },
+        cardIndex () {
+             if (this.cardToEditIndex < 0){ 
+                return 0
+            } if (this.cardToEditIndex === this.currentDeck.length){
+                return this.cardToEditIndex 
+            } if ( this.cardToEditIndex > this.currentDeck.length){
+                return this.currentDeck.length
+            }
+            else {
+                return this.cardToEditIndex
+            }
         },
         includedDecks () {
             var card = this.card
@@ -101,6 +120,15 @@ export default {
         }
     },
     methods: {
+        createCard () {
+            let newCard = {
+                back_text:"",
+                card_id: uuidv4(),
+                card_tags: [],
+                front_text: ""
+            }
+            this.currentDeck.push(newCard)
+        },
         deleteCard () {
             // for each of the included decks, filter out the current card from its .cards
             let changedDecks = this.unincludedDecks
@@ -118,14 +146,28 @@ export default {
             this.$router.go(-1)
         },
         previousCard() {
-            this.submit()
+            let card = this.card
+            for (let initialDeckCard of this.initialDeckState) {
+                if (card.card_id === initialDeckCard.card_id) {
+                    if ( !_.isEqual(initialDeckCard, card)) {
+                            this.submit()
+                    }
+                }
+            }
             this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
         },
         undo () {
             return null
         },
         nextCard() {
-            this.submit()
+            let card = this.card
+            for (let initialDeckCard of this.initialDeckState) {
+                if (card.card_id === initialDeckCard.card_id) {
+                    if ( !_.isEqual(initialDeckCard, card)) {
+                            this.submit()
+                    }
+                }
+            }
             this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
         },
         doneCheck () {
@@ -133,6 +175,8 @@ export default {
             this.$router.go(-1)
         },
         submit () {
+            // check to make sure card isnt blank, maybe disable all the buttons
+
             // for each of the included decks, 
             let changedDecks = this.unincludedDecks.slice(0)
             for (let deck of this.includedDecks) {
@@ -149,11 +193,23 @@ export default {
             }
             this.$store.commit('updateDecks', changedDecks)
             this.$store.dispatch('refreshDecksMeta')
-        },
-        pinataTest() {
-            this.$store.dispatch('sync')
         }
-    }  
+    },
+    created () {
+        // deep copy so it doesnt change
+        this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck))
+    },
+     watch: {
+            cardToEditIndex: function() {
+                if (this.cardToEditIndex < 0){ 
+                    this.$store.commit('updateCardToEditIndex', 0)
+                } if (this.cardToEditIndex === this.currentDeck.length){
+                    this.createCard()
+                } if (this.cardToEditIndex > this.currentDeck.length){
+                    this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length)
+                }
+            }
+        },  
 }
 </script>
 

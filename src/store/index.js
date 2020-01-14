@@ -83,6 +83,9 @@ const store = new Vuex.Store({
     },
     updateLastSyncsData (state, data) {
       state.lastSyncsData = data
+    },
+    toggleFailedSync (state, bool) {
+      state.failedSync = bool
     }
   },
   actions: {
@@ -148,36 +151,43 @@ const store = new Vuex.Store({
       context.commit('updateLastSyncsData', lastSyncsData)
     },
     async sync(context) {
-      console.log('sync called')
-      console.log('syncing status')
-      console.log(context.state.syncing)
-      if (context.state.syncing == true) {
+      // console.log('sync called')
+      // console.log('syncing status ',context.state.syncing)
+      if (context.state.syncing === true) {
         console.log('syncing blocked')
         return null
       }
       else{
         context.commit('toggleSyncing', true)
-        console.log('syncing status')
-        console.log(context.state.syncing)
-        let decks = context.state.decks
-        let lastSyncDecks = context.state.lastSyncsData.decks
-        // let thisSyncsDecks = []
-        // let userCollection = context.state.userCollection
+        context.commit('toggleFailedSync', false)
+        // these need to be deep copies, so they don't change in the middle of the sync
+        let userCollection = JSON.parse(JSON.stringify(context.state.userCollection))
+        let lastUserCollection = JSON.parse(JSON.stringify(context.state.lastSyncsData.userCollection))
+        let decks = JSON.parse(JSON.stringify(context.state.decks))
+        let lastSyncDecks = JSON.parse(JSON.stringify(context.state.lastSyncsData.decks))
+        let thisSyncsData = {
+          decks: decks,
+          userCollection: userCollection }
+        if (userCollection != lastUserCollection) {
+          console.log('user collection changed')
+        }
+
         if (decks != lastSyncDecks) {
-          console.log("decks changed")
+        console.log("decks changed (but maybe just order, not content)")
           for (let deck of decks) {
             for (let lastSyncDeck of lastSyncDecks) {
               if (deck.deck_id === lastSyncDeck.deck_id && deck.edited > lastSyncDeck.edited) {
-                console.log("this deck changed" + deck.deck_id )
+                console.log("this deck changed" + deck.deck_id + ' edited ' + deck.edited)
+                console.log('changed with this deck'+ lastSyncDeck.deck_id + ' edited ' + lastSyncDeck.edited)
                 let putDeckURL = context.state.serverURL + '/put_deck';
                 let data = {
                   'deck_id': deck.deck_id,
                   'deck': deck,
                   'title': deck.title,
-                  'edited': deck.edited
-                  // 'deck_cid': deck.deck_cid
+                  'edited': deck.edited 
               }
               console.log("starting api call");
+              context.commit('updateLastSyncsData', thisSyncsData)
               await fetch(putDeckURL, { 
                   headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
                   body: JSON.stringify(data),
@@ -186,29 +196,29 @@ const store = new Vuex.Store({
                   .then(response => response.json())
                   .then((responseData) => {
                       console.log(responseData);
-                      if (!responseData['deck']) {
-                        console.log(responseData)
-                      }
-                      // else if () {
-                      //     this.login ();
+                      // console.log('finished syncing')   
+                      // if (response data.. says that the server had a newer version) {
+                      // prompt user if they want to accept changes from the database. changes made locally during the sync will be discarded
+                      // click to show a list of changes 
                       // }
-                      }).catch(function() {
-                          context.state.failedSync = true
-                          this.apiErrorMsg = 'Server error'
-                          //console.log(error);
+                      // context.commit('updateUserCollection', data)
+                      // context.commit('updateDecks', data)
+                      // context.dispatch('refreshDecksMeta')
+                      // context.dispatch('refreshLastSyncsData')
+                      // actually, this step should just be logged here, but dealt with after all the decks have synced
+                      }).catch(function(err) {
+                          context.commit('toggleFailedSync', true)
+                          console.log(err);
                       });
+              }
+              else{
+                // console.log("this deck unchanged" + deck.deck_id )
               }
             }
           }
-          
         }
-        // context.commit('updateUserCollection', null)
-        // context.commit('updateDecks', null)
-        context.dispatch('refreshLastSyncsData')
-        context.dispatch('refreshDecksMeta')
-        context.commit('toggleSyncing', false)
       }
-      
+      context.commit('toggleSyncing', false)
     }
   },
   getters: {
