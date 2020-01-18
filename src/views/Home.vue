@@ -7,7 +7,6 @@
             <b-col class="card-col">
                <vue-flashcard 
                 id="main-card"
-                class ="card"
                 :isToggle= "cardFlipToggle"
                 :front="currentCard.front_text" 
                 :back="currentCard.back_text"
@@ -18,7 +17,6 @@
             </vue-flashcard>
             <vue-flashcard 
                 id="next-card"
-                class ="card"
                 :front="nextCard.front_text" 
                 :back="nextCard.back_text"
                 :imgFront="nextCard.front_image"
@@ -79,10 +77,10 @@ export default {
             reviewDeck: 'reviewDeck'
         }),
         currentCard () {
-            return this.reviewDeck[this.currentCardIndex]
+            return this.reviewDeck.cards[this.currentCardIndex]
         },
         nextCard () {
-            return this.reviewDeck[this.currentCardIndex + 1]
+            return this.reviewDeck.cards[this.currentCardIndex + 1]
         }
     },
     methods: {
@@ -105,7 +103,7 @@ export default {
             this.$store.dispatch('navProgress', this.cardsCompleted)
         },
         editCard(card, reviewDeck) {
-            this.$store.commit('updateCardToEditIndex', reviewDeck.indexOf(card))
+            this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card))
             this.$router.push('/card-editor')
         }
     },

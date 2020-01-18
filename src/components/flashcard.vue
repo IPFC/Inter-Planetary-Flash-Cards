@@ -137,7 +137,7 @@ export default {
 }
 
 .animated {
-    animation-duration:0.8s;
+    animation-duration:.65s;
     animation-fill-mode: both;
 }
 
@@ -151,18 +151,18 @@ export default {
     from {
         transform: perspective(300px) rotate3d(0, 1, 0, 90deg);
         animation-timing-function: ease-in;
-        opacity: 0;
+        opacity: .97;   
     }
     40% {
-        transform: perspective(300px) rotate3d(0, 1, 0, -20deg);
+        transform: perspective(300px) rotate3d(0, 1, 0, -10deg);
         animation-timing-function: ease-in;
     }
     60% {
-        transform: perspective(300px) rotate3d(0, 1, 0, 10deg);
+        transform: perspective(300px) rotate3d(0, 1, 0, 5deg);
         opacity: 1;
     }
     80% {
-        transform: perspective(300px) rotate3d(0, 1, 0, -5deg);
+        transform: perspective(300px) rotate3d(0, 1, 0, -2deg);
     }
     to {
         transform: perspective(300px);

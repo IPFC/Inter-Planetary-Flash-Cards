@@ -24,6 +24,8 @@
 </template>
 
 <script>
+const uuidv4 = require('uuid/v4');
+
 import { mapState } from 'vuex'
 export default {
   name: 'navbar',
@@ -41,8 +43,16 @@ export default {
   },
   methods: {
     newCard() {
+      let newCard = {
+          back_text:"",
+          card_id: uuidv4(),
+          card_tags: [],
+          front_text: ""
+      }
+            //.cards
+      this.currentDeck.cards.push(newCard)
       // if coming from the home screen, it won't have a current deck. we want to make a new card, but not assigned to any deck yet
-      this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length)
+      this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1)
       this.$router.push('/card-editor')
     }
   }  

@@ -66,6 +66,14 @@ const store = new Vuex.Store({
     updateDecksMeta(state, data) {
       state.decksMeta = data
     },
+    updateDeck(state, data) {
+      for (let deck of state.decks) {
+        if (deck.deck_id === data.deck_id) {
+          deck = data
+          }
+      }
+
+    },
     updateDecks(state, data) {
       state.decks = data
     },
@@ -89,8 +97,8 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    navProgress (context, completedCards) {
-        let outputString = completedCards + " / "  + context.state.reviewDeck.length
+    navProgress (context, completedCards) {                 //.cards
+        let outputString = completedCards + " / "  + context.state.reviewDeck.cards.length
         context.commit('updateProgressCounter', outputString)
     },
     logout(context) {
@@ -115,13 +123,13 @@ const store = new Vuex.Store({
     },
     updateReviewDeck(context) {
       let decks = context.state.decks
-      let reviewDeck = []
+      let reviewDeck = {cards: [] } 
       let deck
       for (deck of decks) {
         let card
         for (card of deck.cards) {
           if (card.card_tags.includes('Daily Review')){
-            reviewDeck.push(card)
+            reviewDeck.cards.push(card)
           }
         }
       }

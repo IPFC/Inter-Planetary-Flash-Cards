@@ -18,11 +18,11 @@
         <br>
         <b-container class="tag-chooser">
             <p class="d-inline-block tags-label">Deck:</p>
-            <b-button  class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.edited" > 
+            <b-button  @click="removeCardFromDeck(deck.title)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.edited" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
             <br>
-            <b-button  class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.edited" > 
+            <b-button  @click="addCardToDeck" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.edited" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
         </b-container>
@@ -43,7 +43,7 @@
                 </b-button>
             </b-col>
             <b-col>
-                <b-button class="btn-circle btn-md" @click="previousCard()">
+                <b-button :disabled="leftNavDisabled" class="btn-circle btn-md" @click="previousCard()">
                     <font-awesome-icon size="2x" icon="step-backward"/>
                 </b-button>
             </b-col>
@@ -53,7 +53,7 @@
                 </b-button>
             </b-col>
             <b-col>
-                <b-button class="btn-circle btn-md" @click="nextCard()">
+                <b-button :disabled="rightNavDisabled" class="btn-circle btn-md" @click="nextCard()">
                     <font-awesome-icon size="2x" icon="step-forward"/>
                 </b-button>
             </b-col>
@@ -68,7 +68,6 @@
 
 <script>
 import _ from 'lodash';   
-const uuidv4 = require('uuid/v4');
 
 import { mapState } from 'vuex'
 export default {
@@ -87,29 +86,19 @@ export default {
             jwt: 'jwt'
         }),
         card() {
-            if (this.currentDeck == null){
-                return {}
-            }
-            else {
-                return this.currentDeck[this.cardIndex]
-            }
+            return this.currentDeck.cards[this.cardIndex]
+
         },
         cardIndex () {
-             if (this.cardToEditIndex < 0){ 
-                return 0
-            } if (this.cardToEditIndex === this.currentDeck.length){
-                return this.cardToEditIndex 
-            } if ( this.cardToEditIndex > this.currentDeck.length){
-                return this.currentDeck.length
-            }
-            else {
-                return this.cardToEditIndex
-            }
+            return this.cardToEditIndex
+
         },
         includedDecks () {
             var card = this.card
             return this.decks.filter(function (deck) {
-                return deck.cards.indexOf(card)>-1
+                if (deck != undefined){ 
+                   return deck.cards.indexOf(card)>-1
+                }
             })
         },
         unincludedDecks () {
@@ -117,29 +106,36 @@ export default {
             return this.decks.filter(function (deck) {
                 return !deck.cards.includes(card)
             }) 
+        },
+        leftNavDisabled () {
+            if (this.cardToEditIndex === 0){ 
+            return true                        
+            }
+            else {
+                return false
+            }
+        },
+        rightNavDisabled () {
+            if (this.cardToEditIndex === this.currentDeck.cards.length -1){
+            return true } 
+            else {
+                return false
+            }
         }
+
     },
     methods: {
-        createCard () {
-            let newCard = {
-                back_text:"",
-                card_id: uuidv4(),
-                card_tags: [],
-                front_text: ""
-            }
-            this.currentDeck.push(newCard)
-        },
         deleteCard () {
             // for each of the included decks, filter out the current card from its .cards
             let changedDecks = this.unincludedDecks
             for (let deck of this.includedDecks) {
                 let card = this.card
-                let updatedDeckCards = deck.cards.filter(function (x) {
-                    return x.card_id != card.card_id
+                let updatedDeckCards = deck.cards.filter(function (cards) {
+                    return cards.card_id != card.card_id
                     }) 
                 deck.cards = updatedDeckCards
-                changedDecks.push(deck)
                 deck.edited = Math.round(new Date().getTime() / 1000);
+                changedDecks.push(deck)
             }
             this.$store.commit('updateDecks', changedDecks)
             this.$store.dispatch('refreshDecksMeta')
@@ -147,7 +143,7 @@ export default {
         },
         previousCard() {
             let card = this.card
-            for (let initialDeckCard of this.initialDeckState) {
+            for (let initialDeckCard of this.initialDeckState.cards) {
                 if (card.card_id === initialDeckCard.card_id) {
                     if ( !_.isEqual(initialDeckCard, card)) {
                             this.submit()
@@ -161,7 +157,7 @@ export default {
         },
         nextCard() {
             let card = this.card
-            for (let initialDeckCard of this.initialDeckState) {
+            for (let initialDeckCard of this.initialDeckState.cards) {
                 if (card.card_id === initialDeckCard.card_id) {
                     if ( !_.isEqual(initialDeckCard, card)) {
                             this.submit()
@@ -193,23 +189,43 @@ export default {
             }
             this.$store.commit('updateDecks', changedDecks)
             this.$store.dispatch('refreshDecksMeta')
+        },
+        removeCardFromDeck (title) {
+            console.log('removing from deck ' + title)
+            for (let deck of this.decks) {
+                let card = this.card
+                if (deck.title === title){
+                let updatedDeckCards = deck.cards.filter(function (cards) {
+                    return cards.card_id != card.card_id
+                    }) 
+                deck.cards = updatedDeckCards
+                deck.edited = Math.round(new Date().getTime() / 1000);
+                this.$store.commit('updateDeck', deck)
+                this.$store.dispatch('refreshDecksMeta')
+
+                }
+            }
+        },
+        addCardToDeck (title) {
+            console.log('adding to deck ' + title)
+            for (let deck of this.decks) {
+                let card = this.card
+                if (deck.title == title){
+                    deck.cards.push(card)
+                }
+            deck.edited = Math.round(new Date().getTime() / 1000);
+            this.$store.commit('updateDeck', deck)
+            this.$store.dispatch('refreshDecksMeta')
+
+            }
         }
+        
     },
     created () {
         // deep copy so it doesnt change
         this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck))
-    },
-     watch: {
-            cardToEditIndex: function() {
-                if (this.cardToEditIndex < 0){ 
-                    this.$store.commit('updateCardToEditIndex', 0)
-                } if (this.cardToEditIndex === this.currentDeck.length){
-                    this.createCard()
-                } if (this.cardToEditIndex > this.currentDeck.length){
-                    this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length)
-                }
-            }
-        },  
+    }
+
 }
 </script>
 
