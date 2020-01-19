@@ -46,7 +46,7 @@ export default {
       let newCard = {
           back_text:"",
           card_id: uuidv4(),
-          card_tags: [],
+          card_tags: ["Daily Review"],
           front_text: ""
       }
             //.cards

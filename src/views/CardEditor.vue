@@ -22,16 +22,16 @@
             <p class="d-inline-block tags-label">Deck:
                 <b-button class="add-btn" >
                     <font-awesome-icon v-if="!addingDeck" class="d-inline add-icon" @click="toggleAddingDeck()" color="white" size="1x" icon="plus-circle"/>
-                    <font-awesome-icon v-if="addingDeck" class="d-inline add-icon" @click="addDeck()" color="white" size="1x" icon="plus-circle"/>
-                    <b-form-input class="d-inline tag-input" v-if="addingDeck" >
+                    <font-awesome-icon v-if="addingDeck" class="d-inline add-icon" @click="addNewDeck()" color="white" size="1x" icon="plus-circle"/>
+                    <b-form-input class="d-inline tag-input" v-if="addingDeck" v-model="newDeckTitle" >
                     </b-form-input>
                 </b-button>
             </p>
-            <b-button  @click="removeCardFromDeck(deck.title)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.edited" > 
+            <b-button  @click="removeCardFromDeck(deck.title)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.deck_id" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
             <br>
-            <b-button  @click="addCardToDeck(deck.title)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.edited" > 
+            <b-button  @click="addCardToDeck(deck.title)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.deck_id" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
         </b-container>
@@ -39,17 +39,17 @@
             <p class="d-inline tags-label">Tags:
                 <b-button class="add-btn" >
                     <font-awesome-icon v-if="!addingTag" class="d-inline add-icon" @click="toggleAddingTag()" color="white" size="1x" icon="plus-circle"/>
-                    <font-awesome-icon v-if="addingTag" class="d-inline add-icon" @click="addTag()" color="white" size="1x" icon="plus-circle"/>
-                    <b-form-input class="d-inline tag-input" v-if="addingTag" >
+                    <font-awesome-icon v-if="addingTag" class="d-inline add-icon" @click="addNewTag()" color="white" size="1x" icon="plus-circle"/>
+                    <b-form-input class="d-inline tag-input" v-if="addingTag" v-model="newTagTitle" >
                     </b-form-input>
                 </b-button>
             </p>
-            <b-button  class="tag-style-button green-btn d-inline"  v-for="tag in card.card_tags" :key="tag" > 
-                {{ tag.slice(0, 24)  }}
+            <b-button  @click="removeTagFromCard(tag)" class="tag-style-button green-btn d-inline"  v-for="tag in card.card_tags" :key="tag" > 
+                {{ tag }}
             </b-button>
             <br>
-            <b-button  class="tag-style-button white-btn d-inline"  v-for="tag in unincludedTags" :key="tag" > 
-                {{ tag.slice(0, 24) }}
+            <b-button  @click="addTagToCard(tag)" class="tag-style-button white-btn d-inline"  v-for="tag in unincludedTags" :key="tag" > 
+                {{ tag }}
             </b-button>
         </b-container >
         </b-col>
@@ -98,6 +98,7 @@
 
 <script>
 import _ from 'lodash';   
+const uuidv4 = require('uuid/v4');
 
 import { mapState } from 'vuex'
 export default {
@@ -106,11 +107,14 @@ export default {
         return {
             initialDeckState : null,
             addingDeck: false,
-            addingTag: false
+            addingTag: false,
+            newDeckTitle: "",
+            newTagTitle: "",
         };
     },
     computed: {
         ...mapState({
+            userCollection: 'userCollection',
             cardToEditIndex: 'cardToEditIndex',
             decksMeta: 'decksMeta',
             decks: 'decks',
@@ -229,18 +233,20 @@ export default {
             this.$router.go(-1)
         },
         submit () {
-            // check to make sure card isnt blank, maybe disable all the buttons
-
-            // for each of the included decks, 
             let changedDecks = this.unincludedDecks.slice(0)
             for (let deck of this.includedDecks) {
                 let card = this.card
+                let cardInCurrentDeck = deck.cards.filter(function (cardToCheck){
+                    return cardToCheck.card_id === card.card_id
+                })
+                let indexOfCard = deck.cards.indexOf(cardInCurrentDeck)
                 // filter out the old version card from .cards
-                let updatedDeckCards = deck.cards.filter(function (x) {
-                    return x.card_id != card.card_id
+                let updatedDeckCards = deck.cards.filter(function (cardToCheck) {
+                    return cardToCheck.card_id != card.card_id
                     })
                 // then add new one back
                 updatedDeckCards.push(card)
+                updatedDeckCards.splice(indexOfCard, 0, card)
                 deck.cards = updatedDeckCards
                 deck.edited = Math.round(new Date().getTime() / 1000);
                 changedDecks.push(deck)
@@ -249,7 +255,7 @@ export default {
             this.$store.dispatch('refreshDecksMeta')
         },
         removeCardFromDeck (title) {
-            console.log('removing from deck ' + title)
+            // console.log('removing from deck ' + title)
             for (let deck of this.decks) {
                 let card = this.card
                 if (deck.title === title){
@@ -265,7 +271,7 @@ export default {
             }
         },
         addCardToDeck (title) {
-            console.log('adding to deck ' + title)
+            // console.log('adding to deck ' + title)
             for (let deck of this.decks) {
                 let card = this.card
                 if (deck.title == title){
@@ -277,19 +283,55 @@ export default {
 
             }
         },
+        removeTagFromCard(tag){
+            this.card.card_tags.splice(this.card.card_tags.indexOf(tag),1)
+            this.submit()
+        },
+        addTagToCard(tag){
+            this.card.card_tags.unshift(tag)
+            this.submit()
+        },
         toggleAddingDeck () {
             this.addingDeck = !this.addingDeck
         },
         toggleAddingTag () {
             this.addingTag = !this.addingTag
         },
-        addDeck () {
-            //add new deck
-            this.toggleAddingDeck()
+        addNewDeck () {
+            if (this.newDeckTitle === "" || this.newDeckTitle === " ") {
+                this.toggleAddingDeck()
+            } else{
+                let decks = this.decks
+                let emptyDeck = {
+                    cards: [this.card],
+                    created_by: this.userCollection.user_id,
+                    deck_id: uuidv4(),
+                    deck_tags: [],
+                    description: null,
+                    editable_by: "only_me",
+                    edited: Math.round(new Date().getTime() / 1000),
+                    has_html:false,
+                    has_media: false,
+                    lang_back:"en",
+                    lang_front:"en",
+                    term_count: 1,
+                    title: this.newDeckTitle,
+                    visibility:"public",
+                    }
+                decks.unshift(emptyDeck)
+                this.$store.commit('updateDecks', decks)
+                this.toggleAddingDeck()
+            }
         },
-        addTag () {
-            //add new tag
-            this.toggleAddingTag()
+        addNewTag () {
+            let allTags = this.unincludedTags.concat(this.card.card_tags)
+            if (allTags.includes(this.newTagTitle) || this.newTagTitle === "" || this.newTagTitle === " ") {
+                this.toggleAddingTag()
+            }else {
+                this.card.card_tags.unshift(this.newTagTitle)
+                this.submit()
+                this.toggleAddingTag()
+            }
         }
         
     },

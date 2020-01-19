@@ -15,7 +15,7 @@
                     <b-card-text class="font-weight-bold">{{ card.front_text }}</b-card-text>
                 </b-col>
                 <b-col cols="1">
-                    <font-awesome-icon icon="edit" />
+                    <font-awesome-icon icon="edit" class="edit" @click="editCard(card)"/>
                 </b-col>
             </b-row>
 
@@ -49,7 +49,13 @@ export default {
         ...mapState({
             deck: 'currentDeck'
         })
-    }  
+    },
+    methods: {
+        editCard(card) {
+            this.$store.commit('updateCardToEditIndex', this.deck.cards.indexOf(card))
+            this.$router.push('/card-editor')
+        }
+    }
 }
 </script>
 
@@ -59,5 +65,11 @@ export default {
     margin: 10px;
     box-shadow: 0px 0px 15px 5px
     rgba(0, 0, 0, 0.1);
+}
+.edit {
+    color: gray;
+}
+.edit:hover{
+    cursor: pointer;
 }
 </style>
