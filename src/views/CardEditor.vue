@@ -1,5 +1,7 @@
 <template>
     <b-container fluid id="body">
+        <b-row id="main-row">
+        <b-col id="main-col">
         <b-container class="card">
             <b-row  class="card-row">
                 <b-col v-if="card.front_image">
@@ -17,51 +19,79 @@
         </b-container>
         <br>
         <b-container class="tag-chooser">
-            <p class="d-inline-block tags-label">Deck:</p>
+            <p class="d-inline-block tags-label">Deck:
+                <b-button class="add-btn" >
+                    <font-awesome-icon v-if="!addingDeck" class="d-inline add-icon" @click="toggleAddingDeck()" color="white" size="1x" icon="plus-circle"/>
+                    <font-awesome-icon v-if="addingDeck" class="d-inline add-icon" @click="addDeck()" color="white" size="1x" icon="plus-circle"/>
+                    <b-form-input class="d-inline tag-input" v-if="addingDeck" >
+                    </b-form-input>
+                </b-button>
+            </p>
             <b-button  @click="removeCardFromDeck(deck.title)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.edited" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
             <br>
-            <b-button  @click="addCardToDeck" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.edited" > 
+            <b-button  @click="addCardToDeck(deck.title)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.edited" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
         </b-container>
         <b-container  class="tag-chooser" id="tags-bottom">
-            <p class="d-inline tags-label">Tags:</p>
-            <b-button  class="tag-style-button green-btn d-inline"  v-for="deck in includedDecks" :key="deck.edited" > 
-                {{ deck.title.slice(0, 24) }}
+            <p class="d-inline tags-label">Tags:
+                <b-button class="add-btn" >
+                    <font-awesome-icon v-if="!addingTag" class="d-inline add-icon" @click="toggleAddingTag()" color="white" size="1x" icon="plus-circle"/>
+                    <font-awesome-icon v-if="addingTag" class="d-inline add-icon" @click="addTag()" color="white" size="1x" icon="plus-circle"/>
+                    <b-form-input class="d-inline tag-input" v-if="addingTag" >
+                    </b-form-input>
+                </b-button>
+            </p>
+            <b-button  class="tag-style-button green-btn d-inline"  v-for="tag in card.card_tags" :key="tag" > 
+                {{ tag.slice(0, 24)  }}
             </b-button>
             <br>
-            <b-button  class="tag-style-button white-btn d-inline"  v-for="deck in unincludedDecks" :key="deck.edited" > 
-                {{ deck.title.slice(0, 24) }}
+            <b-button  class="tag-style-button white-btn d-inline"  v-for="tag in unincludedTags" :key="tag" > 
+                {{ tag.slice(0, 24) }}
             </b-button>
         </b-container >
-        <b-row id="buttons-row" >
-            <b-col>
-                <b-button class="btn-circle btn-md" @click="deleteCard()">
-                    <font-awesome-icon size="2x" icon="trash-alt"/>
-                </b-button>
+        </b-col>
+        </b-row>
+        <b-row id="buttons-row">
+            <b-col id="buttons-col">
+                <b-container id="buttons-inner">
+                    <b-row>
+                    <b-col >
+                        <b-button :disabled="noDeckSelected" class="btn-circle btn-md" 
+                            @click="deleteCard()">
+                            <font-awesome-icon size="2x" icon="trash-alt"/>
+                        </b-button>
+                    </b-col>
+                    <b-col>
+                        <b-button :disabled="leftNavDisabled" class="btn-circle btn-md" 
+                            @click="previousCard()">
+                            <font-awesome-icon size="2x" icon="step-backward"/>
+                        </b-button>
+                    </b-col>
+                    <b-col>    
+                        <b-button :disabled="noDeckSelected" class="btn-circle btn-md" 
+                            @click="undo()">
+                            <font-awesome-icon size="2x" icon="undo"/>
+                        </b-button>
+                    </b-col>
+                    <b-col>
+                        <b-button :disabled="rightNavDisabled" class="btn-circle btn-md" 
+                            @click="nextCard()">
+                            <font-awesome-icon size="2x" icon="step-forward"/>
+                        </b-button>
+                    </b-col>
+                    <b-col>    
+                        <b-button :disabled="noDeckSelected" class="btn-circle btn-md" 
+                            @click="doneCheck()">
+                            <font-awesome-icon size="2x" icon="check"/>
+                        </b-button>
+                    </b-col>
+                    </b-row>
+                </b-container>
             </b-col>
-            <b-col>
-                <b-button :disabled="leftNavDisabled" class="btn-circle btn-md" @click="previousCard()">
-                    <font-awesome-icon size="2x" icon="step-backward"/>
-                </b-button>
-            </b-col>
-            <b-col>    
-                <b-button class="btn-circle btn-md" @click="undo()">
-                    <font-awesome-icon size="2x" icon="undo"/>
-                </b-button>
-            </b-col>
-            <b-col>
-                <b-button :disabled="rightNavDisabled" class="btn-circle btn-md" @click="nextCard()">
-                    <font-awesome-icon size="2x" icon="step-forward"/>
-                </b-button>
-            </b-col>
-            <b-col>    
-                <b-button class="btn-circle btn-md" @click="doneCheck()">
-                    <font-awesome-icon size="2x" icon="check"/>
-                </b-button>
-            </b-col>
+           
         </b-row>  
     </b-container>
 </template>
@@ -74,7 +104,9 @@ export default {
     name: 'card-editor',
     data() {
         return {
-            initialDeckState : null
+            initialDeckState : null,
+            addingDeck: false,
+            addingTag: false
         };
     },
     computed: {
@@ -107,8 +139,27 @@ export default {
                 return !deck.cards.includes(card)
             }) 
         },
+        unincludedTags () {
+            let allTagsList = []
+            for (let deck of this.decks) {
+                for (let card of deck.cards) {
+                   for (let tag of card.card_tags) {
+                        if (!allTagsList.includes(tag)){
+                            allTagsList.push(tag)
+                        }
+                   }
+                }
+            }
+            let unincludedTagsList = []
+            for (let tag of allTagsList) {
+                if (!this.card.card_tags.includes(tag)) {
+                    unincludedTagsList.push(tag)
+                }
+            }
+            return unincludedTagsList
+        },
         leftNavDisabled () {
-            if (this.cardToEditIndex === 0){ 
+            if (this.cardToEditIndex === 0 || this.noDeckSelected === true){ 
             return true                        
             }
             else {
@@ -116,9 +167,16 @@ export default {
             }
         },
         rightNavDisabled () {
-            if (this.cardToEditIndex === this.currentDeck.cards.length -1){
+            if (this.cardToEditIndex === this.currentDeck.cards.length -1 || this.noDeckSelected === true) {
             return true } 
             else {
+                return false
+            }
+        },
+        noDeckSelected () {
+            if (this.includedDecks.length < 1) {
+                return true
+            } else {
                 return false
             }
         }
@@ -218,6 +276,20 @@ export default {
             this.$store.dispatch('refreshDecksMeta')
 
             }
+        },
+        toggleAddingDeck () {
+            this.addingDeck = !this.addingDeck
+        },
+        toggleAddingTag () {
+            this.addingTag = !this.addingTag
+        },
+        addDeck () {
+            //add new deck
+            this.toggleAddingDeck()
+        },
+        addTag () {
+            //add new tag
+            this.toggleAddingTag()
         }
         
     },
@@ -232,29 +304,30 @@ export default {
 <style scoped>
 #body{
     background-color: C7C7C7;
-  
-    overflow-y: auto;
-
+    overflow-y: auto;   
 }
-
+#main-col {
+    max-width: 600px;
+    margin: auto;
+}
 .card {
     margin: auto;
     top: 30px;
     border-radius: 10px;
     cursor: pointer;
     font-size: 1.5em;
-    padding: 15px;
+    padding: 0px 20px 0px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.51);
     text-align: left;
     overflow-y: auto;
-    width: 90vw;
+    width: 100%;
    
 }
 .card::-webkit-scrollbar {
     width: .5em;
 }
 .card::-webkit-scrollbar-thumb {
-    background-color: lightgrey;
+    background-color: grey;
     border-radius: 5px;
 }
 .card-text-input {
@@ -263,7 +336,7 @@ export default {
     margin: auto;
     margin-top: 0px;
     font-size: 1em;
-    padding-top: 0px;
+    padding: 0.3em 0px 0px;
     min-height: 4.8em;
 }
 .card-text-input::-webkit-scrollbar {
@@ -273,13 +346,11 @@ export default {
     background-color: lightgrey;
     border-radius: 5px;
 }
-
-
 .img {
     margin: auto;
     margin-top: .5em;
     object-fit: fill;
-    width: 68vw;
+    width: 90%;
     max-height: 50vh;
 }
 
@@ -291,7 +362,7 @@ export default {
 .tag-chooser {
     margin: 1em auto;
     margin-right: 0px;
-    height: 7.5em;
+    height: 7em;
     overflow-x: auto;
     white-space: nowrap;
     position: initial;
@@ -306,7 +377,8 @@ export default {
     border-radius: 5px;
 }
 .tags-label {
-    margin-left: 10px;
+    margin: 0px 0px 5px 0px;
+    padding: 0px;
 }
 
 .tag-style-button {
@@ -314,6 +386,7 @@ export default {
     margin: 5px 10px;
     border-width: 0px;
     color: grey;
+    padding: 0.4em;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.51);
 
 }
@@ -323,14 +396,27 @@ export default {
 #tags-bottom {
     margin-bottom: 80px;
 }
-
+.add-btn {
+    border-radius: 10px;
+    background-color: grey;
+    padding: 0px 0px;
+    overflow-x: hidden;
+    display: inline-flex;
+}
+.add-icon{
+    margin: .58em;
+    height: 1em;
+}
+.tag-input{
+    height: 2em;
+}
 
 .btn-circle.btn-md { 
-    width: 50px; 
-    height: 50px; 
-    padding: 10px 16px; 
+    width: 40px; 
+    height: 40px; 
+    padding: 0px 11px; 
     margin: 5px auto;
-    border-radius: 25px; 
+    border-radius: 20px; 
     font-size: 10px; 
     text-align: center; 
     color:grey;
@@ -351,7 +437,10 @@ export default {
     z-index: 1000;
     background-color: rgba(63, 47, 47, 0.3)
 }
-
+#buttons-col {
+    max-width: 600px;
+    margin: auto;
+}
 
 
 </style>
