@@ -26,19 +26,25 @@ import _ from 'lodash';
             }),
         },
         watch: {
-            decks: function() {
-                this.debouncedSync = _.debounce(this.sync, 60000)
-            },
+            decks: {
+                handler: function() {
+                    console.log('watched decks for syncing')
+                    this.sync()
+                },
+                deep: true
+            }, 
             syncing: function() {
                 if (this.syncing === false) {
-                    this.debouncedSync = _.debounce(this.sync, 60000)
+                    console.log('watched syncing for syncing')
+                    this.sync()
                 }
             }
         },
         methods: {
-            sync: function () {
+            sync: _.debounce(function(){
+                 console.log('debounced sync')
                 this.$store.dispatch('sync')  
-            },
+            }, 10000),
             async redirectIfAuth () {
                 await this.$store.dispatch('checkJwt')
                 if (this.$store.getters.isAuthenticated) {
@@ -61,7 +67,7 @@ import _ from 'lodash';
   @import '~bootstrap-vue/dist/bootstrap-vue.css';
 
     body {
-        background-color: #F0F0F0;
+        background-color: #F6F6F6;
         margin: 0;
         margin-top: 55px;
     }

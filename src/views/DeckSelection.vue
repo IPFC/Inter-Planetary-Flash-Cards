@@ -2,12 +2,13 @@
   <div id="main">
       <!-- <h3>Decks</h3> -->
     <b-list-group >
-    <b-list-group-item id="list-group-item" v-for="deckMeta in decksMeta" :key="deckMeta.edited" > 
-      <b-container>
-        <b-row>
+    <b-list-group-item id="list-group-item" v-for="deckMeta in decksMeta" :key="deckMeta.deck_id" > 
+      <b-container id="list-group-item-container">
+        <b-row id="list-group-item-row">
          <b-col id="icon-col" cols="1" class="align-self-center">
-           <div id="icon" > <p id="deck-abrev"><strong>{{ getTitleAbrev(deckMeta.title)}}</strong>
-             </p></div>
+           <div id="icon" :style="{ backgroundColor: deckMeta.icon_color}" > 
+             <p id="deck-abrev"><strong>{{ getTitleAbrev(deckMeta.title)}}</strong></p>
+           </div>
          </b-col>
          <b-col id="text-and-edit-col" cols="11">
           <b-row>
@@ -18,19 +19,16 @@
               </p>     
             </b-col>
             <b-col id="edit-col" cols="1">
-               <b-dropdown class="deck-options" dropleft=“true” size="lg" left variant= "link" 
+               <b-dropdown class="deck-options" dropleft size="lg" left variant= "link" 
                 toggle-class="text-decoration-none" no-caret>
                 <template v-slot:button-content>
                   <font-awesome-icon class="deck-options" color="grey" 
                   size="1x" icon="ellipsis-h"/> 
                   <span class="sr-only">Search</span>
                 </template>
-                <b-dropdown-item-button href="#">Delete</b-dropdown-item-button>
-                <b-dropdown-item-button href="#">Edit icon</b-dropdown-item-button>
-                <b-dropdown-item href="#">Edit deck tags</b-dropdown-item>
-                <b-dropdown-item href="#">Export</b-dropdown-item>
+                <b-dropdown-item-button @click="deleteDeck(decksMeta.deck_id)">Delete</b-dropdown-item-button>
+                <b-dropdown-item-button disabled href="#">Export</b-dropdown-item-button>
               </b-dropdown>
-              
             </b-col>
           </b-row>
           <b-row>
@@ -71,25 +69,37 @@ export default {
     cardOrCards (deckLength) {
       if (deckLength === 1) {
         return ""
-      } else{
+      } else {
         return "s"
       }
     },
     getTitleAbrev(title) {
-      console.log(title.split(" "))
-      let split = title.split(" ")[0]
-      let abrev
-      if (split.length === 1) {
-        abrev=  split[0].charAt(0) + split[0].charAt(1)
+        // There shouldn't be any empty title decks, but we can leave this validation here just in case
+      if (title === "") {
+        return ""
       } else {
-        abrev =  split[0].charAt(0)  + split[1].charAt(0)
+        let split = title.split(" ")[0]
+        let abrev
+        if (split.length === 1) {
+          abrev = split[0].charAt(0) + split[0].charAt(1)
+        } else {
+          abrev = split[0].charAt(0) + split[1].charAt(0)
         }
-      return abrev
-
+        return abrev
+      }
+    },
+    deleteDeck(id) {
+      let decks = this.$store.state.decks
+      let updatedDecks = decks.filter(function (deckToCheck) {
+          return deckToCheck.deck_id !== id
+          }) 
+      this.$store.commit('updateDecks', updatedDecks)
+      this.$store.dispatch('refreshDecksMeta')
     }
   },
   created () {
     this.$store.dispatch('refreshDecksMeta')
+    this.$store.commit('toggleNavNewCardDisabled', false)
   }
 }
 </script>
@@ -97,14 +107,9 @@ export default {
 #main{
   padding: 15px 15px 0px 10px;
 }
-/* h3{
-  margin: auto;
-  text-align: center;
-} */
-
 
 #list-group-item{
-  margin:auto;
+  margin: auto;
   margin-bottom: 5px;
   padding: 0px;
   background-color: transparent;
@@ -113,7 +118,7 @@ export default {
   width: 100%;
 }
 #text-col{
-  padding-right: 0px;
+  padding: 0px 0px 10px 20px ;
 }
 #underline{
   position: absolute;
@@ -133,22 +138,27 @@ export default {
   padding: 0px; 
   height: 50px;
 }
+#icon:hover{
+  cursor: pointer;
+}
 #icon{
-  background-color: blue;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
+  width: 46px;
+  height: 46px;
+  border-radius: 23px;
   text-align: center;
   font-size: 28px;
   color: white;
-  margin: 5px 20px 0px 0px;
+  margin: auto;
 }
 #deck-abrev{
   margin: 0;
 }
 .text{
-  padding: 0px 0px .3em .5em;
+  padding: 0px 0px 0px 10px;
   margin: 0px
+}
+.text:hover{
+  cursor: pointer;
 }
 .card-count{
   font-size: .8em;
@@ -162,6 +172,6 @@ export default {
 }
 .deck-options:hover{
   color: black;
-   padding: 0;
+  padding: 0;
 }
 </style>

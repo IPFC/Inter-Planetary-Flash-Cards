@@ -134,11 +134,9 @@ const store = new Vuex.Store({
     updateReviewDeck(context) {
       let decks = context.state.decks
       let reviewDeck = {cards: [] } 
-      let deck
-      for (deck of decks) {
-        let card
-        for (card of deck.cards) {
-          if (card.card_tags.includes('Daily Review')){
+      for (let deck of decks) {
+        for (let card of deck.cards) {
+          if (card.card_tags.includes('Daily Review') && !reviewDeck.cards.includes(card)){
             reviewDeck.cards.push(card)
           }
         }
@@ -154,7 +152,8 @@ const store = new Vuex.Store({
           deck_id: deck.deck_id,
           edited: deck.edited,
           title: deck.title,
-          deck_length: deck.cards.length
+          deck_length: deck.cards.length,
+          icon_color: deck.icon_color
         }
         newDecksMeta.push(deckMeta)
       }
@@ -193,46 +192,77 @@ const store = new Vuex.Store({
 
         if (decks != lastSyncDecks) {
         console.log("decks changed (but maybe just order, not content)")
+          let lastSyncDecksDeckIds = []
+          for (let lastSyncDeck of lastSyncDecks) {
+            lastSyncDecksDeckIds.push(lastSyncDeck.deck_id)
+          }
           for (let deck of decks) {
-            for (let lastSyncDeck of lastSyncDecks) {
-              if (deck.deck_id === lastSyncDeck.deck_id && deck.edited > lastSyncDeck.edited) {
-                console.log("this deck changed" + deck.deck_id + ' edited ' + deck.edited)
-                console.log('changed with this deck'+ lastSyncDeck.deck_id + ' edited ' + lastSyncDeck.edited)
-                let putDeckURL = context.state.serverURL + '/put_deck';
-                let data = {
-                  'deck_id': deck.deck_id,
-                  'deck': deck,
-                  'title': deck.title,
-                  'edited': deck.edited 
+            if (lastSyncDecksDeckIds.includes(deck.deck_id)){
+              for (let lastSyncDeck of lastSyncDecks) {
+                if (deck.deck_id === lastSyncDeck.deck_id && deck.edited > lastSyncDeck.edited) {
+                  // console.log("this deck changed" + deck.title + " "  + deck.deck_id + ' edited: ' + deck.edited)
+                  // console.log('changed with this deck' + deck.title + " " + lastSyncDeck.deck_id + ' edited: ' + lastSyncDeck.edited)
+                  let putDeckURL = context.state.serverURL + '/put_deck';
+                  let data = {
+                    'deck_id': deck.deck_id,
+                    'deck': deck,
+                    'title': deck.title,
+                    'edited': deck.edited 
+                }
+                console.log("starting api call");
+                context.commit('updateLastSyncsData', thisSyncsData)
+                await fetch(putDeckURL, { 
+                    headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+                    body: JSON.stringify(data),
+                    method: 'PUT',
+                    })
+                    .then(response => response.json())
+                    .then((responseData) => {
+                        console.log(responseData);
+                        // console.log('finished syncing')   
+                        // if (response data.. says that the server had a newer version) {
+                        // prompt user if they want to accept changes from the database. changes made locally during the sync will be discarded
+                        // click to show a list of changes 
+                        // }
+                        // context.commit('updateUserCollection', data)
+                        // context.commit('updateDecks', data)
+                        // context.dispatch('refreshDecksMeta')
+                        // context.dispatch('refreshLastSyncsData')
+                        // actually, this step should just be logged here, but dealt with after all the decks have synced
+                        }).catch(function(err) {
+                            context.commit('toggleFailedSync', true)
+                            console.log(err);
+                        });
+                }
+                else if (deck.deck_id === lastSyncDeck.deck_id) {
+                  // console.log("this deck unchanged: " + deck.title + " " + deck.deck_id + ' edited: ' + deck.edited)
+                  // console.log('unchanged with this deck: ' + lastSyncDeck.title + " " + lastSyncDeck.deck_id + ' edited: ' + lastSyncDeck.edited)
+                }
+              }
+            } else {
+              // post not put
+              console.log("this is a new deck to upload " + deck.title + " " + deck.deck_id + ' edited: ' + deck.edited)
+              let putDeckURL = context.state.serverURL + '/post_deck';
+              let data = {
+                'deck_id': deck.deck_id,
+                'deck': deck,
+                'title': deck.title,
+                'edited': deck.edited 
               }
               console.log("starting api call");
               context.commit('updateLastSyncsData', thisSyncsData)
               await fetch(putDeckURL, { 
                   headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
                   body: JSON.stringify(data),
-                  method: 'PUT',
+                  method: 'POST',
                   })
                   .then(response => response.json())
                   .then((responseData) => {
                       console.log(responseData);
-                      // console.log('finished syncing')   
-                      // if (response data.. says that the server had a newer version) {
-                      // prompt user if they want to accept changes from the database. changes made locally during the sync will be discarded
-                      // click to show a list of changes 
-                      // }
-                      // context.commit('updateUserCollection', data)
-                      // context.commit('updateDecks', data)
-                      // context.dispatch('refreshDecksMeta')
-                      // context.dispatch('refreshLastSyncsData')
-                      // actually, this step should just be logged here, but dealt with after all the decks have synced
                       }).catch(function(err) {
-                          context.commit('toggleFailedSync', true)
-                          console.log(err);
+                        context.commit('toggleFailedSync', true)
+                        console.log(err);
                       });
-              }
-              else{
-                // console.log("this deck unchanged" + deck.deck_id )
-              }
             }
           }
         }

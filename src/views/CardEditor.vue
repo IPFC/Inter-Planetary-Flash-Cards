@@ -1,3 +1,5 @@
+//https://github.com/chrisvfritz/vue-enterprise-boilerplate
+//https://github.com/vuejs/awesome-vue#scaffold
 <template>
     <b-container fluid id="body">
         <b-row id="main-row">
@@ -321,11 +323,18 @@ export default {
                     term_count: 1,
                     title: this.newDeckTitle,
                     visibility:"public",
+                    icon_color: this.generateRandomHslaColor()
                     }
                 decks.unshift(emptyDeck)
                 this.$store.commit('updateDecks', decks)
                 this.toggleAddingDeck()
             }
+        },
+        generateRandomHslaColor (){
+            // round to an interval of 20, 0-360
+            let hue = Math.round(Math.random() * 360 / 20) * 20
+            let color = `hsla(${hue}, 100%, 50%, 1)`
+            return color
         },
         addNewTag () {
             let allTags = this.unincludedTags.concat(this.card.card_tags)
