@@ -8,6 +8,7 @@
 <script>
 import Navbar from './components/Navbar'
 import { mapState } from 'vuex'
+import _ from 'lodash';   
 
     export default {
         name: 'App',
@@ -26,15 +27,18 @@ import { mapState } from 'vuex'
         },
         watch: {
             decks: function() {
-                this.$store.dispatch('sync')
+                this.debouncedSync = _.debounce(this.sync, 60000)
             },
             syncing: function() {
                 if (this.syncing === false) {
-                    this.$store.dispatch('sync')        
+                    this.debouncedSync = _.debounce(this.sync, 60000)
                 }
             }
         },
         methods: {
+            sync: function () {
+                this.$store.dispatch('sync')  
+            },
             async redirectIfAuth () {
                 await this.$store.dispatch('checkJwt')
                 if (this.$store.getters.isAuthenticated) {

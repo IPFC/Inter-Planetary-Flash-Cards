@@ -45,7 +45,9 @@ const store = new Vuex.Store({
     navProgressCounter: '',
     lastSyncsData: null,
     syncing: false,
-    serverURL: 'https://ipfc-midware.herokuapp.com'
+    serverURL: 'https://ipfc-midware.herokuapp.com',
+    navNewCardDisabled: false,
+    navNewCardClicked: false
   },
   mutations: {
     updateJwt(state, newJwt) {
@@ -72,7 +74,6 @@ const store = new Vuex.Store({
           deck = data
           }
       }
-
     },
     updateDecks(state, data) {
       state.decks = data
@@ -94,12 +95,21 @@ const store = new Vuex.Store({
     },
     toggleFailedSync (state, bool) {
       state.failedSync = bool
+    },
+    toggleNavNewCardDisabled (state, bool) {
+      state.navNewCardDisabled = bool
+    },
+    toggleNavNewCardClicked (state) {
+      state.navNewCardClicked = !state.navNewCardClicked
     }
   },
   actions: {
     navProgress (context, completedCards) {                 //.cards
         let outputString = completedCards + " / "  + context.state.reviewDeck.cards.length
         context.commit('updateProgressCounter', outputString)
+    },
+    navNewCardClicked (context) {
+      context.commit('toggleNavNewCardClicked')
     },
     logout(context) {
       context.commit('deleteJwt')
@@ -143,7 +153,8 @@ const store = new Vuex.Store({
           deck_cid: deck.deck_cid,
           deck_id: deck.deck_id,
           edited: deck.edited,
-          title: deck.title
+          title: deck.title,
+          deck_length: deck.cards.length
         }
         newDecksMeta.push(deckMeta)
       }

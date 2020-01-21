@@ -109,11 +109,14 @@ export default {
         }
     },
     created () {
+
         this.$store.dispatch('updateReviewDeck')
         this.$store.dispatch('navProgress', 0)
         this.$store.dispatch('refreshLastSyncsData')
         this.$store.commit('updateCurrentDeck', this.reviewDeck)
         this.currentCardIndex = 0
+        this.$store.commit('toggleNavNewCardDisabled', false)
+
     },
     components: { vueFlashcard }
 }
