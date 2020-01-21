@@ -26,7 +26,7 @@
                   size="1x" icon="ellipsis-h"/> 
                   <span class="sr-only">Search</span>
                 </template>
-                <b-dropdown-item-button @click="deleteDeck(decksMeta.deck_id)">Delete</b-dropdown-item-button>
+                <b-dropdown-item-button @click="deleteDeck(deckMeta.deck_id)">Delete</b-dropdown-item-button>
                 <b-dropdown-item-button disabled href="#">Export</b-dropdown-item-button>
               </b-dropdown>
             </b-col>
@@ -147,6 +147,7 @@ export default {
   border-radius: 23px;
   text-align: center;
   font-size: 28px;
+  padding-top: 1px;
   color: white;
   margin: auto;
 }
