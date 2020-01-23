@@ -1,4 +1,4 @@
-![Logo](/home/brian/code/Inter-Planetary-Flash-Cards/src/assets/ipfc_logo.png)
+![Logo](./src/assets/ipfc_logo.png)
 
 # Inter-Planetary-Flash-Cards
 
