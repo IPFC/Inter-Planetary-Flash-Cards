@@ -172,10 +172,18 @@ const store = new Vuex.Store({
       // console.log('sync called')
       // console.log('syncing status ',context.state.syncing)
       if (context.state.syncing === true) {
-        console.log('syncing blocked')
+        // console.log('syncing blocked')
         return null
       }
       else{
+        // got to entirely rewrite whole app... everytime access deck, return only undeleted decks. 
+        // only need deleted decks info when syncing... could make a second list to 
+        // get serverDecksMeta (check and update server from pinata first )
+        // 
+        // the server edited is newer, add deck_id to get list. 
+        // if server edited is older, add deck_id to upload list. 
+        // if local deleted is true, but server deleted isn't, add to upload list
+        // if server deleted is true, but local deleted isn't, delete locally (mark as deleted)
         context.commit('toggleSyncing', true)
         context.commit('toggleFailedSync', false)
         // these need to be deep copies, so they don't change in the middle of the sync
@@ -187,11 +195,10 @@ const store = new Vuex.Store({
           decks: decks,
           userCollection: userCollection }
         if (userCollection != lastUserCollection) {
-          console.log('user collection changed')
+          // console.log('user collection changed')
         }
-
         if (decks != lastSyncDecks) {
-        console.log("decks changed (but maybe just order, not content)")
+        // console.log("decks changed (but maybe just order, not content)")
           let lastSyncDecksDeckIds = []
           for (let lastSyncDeck of lastSyncDecks) {
             lastSyncDecksDeckIds.push(lastSyncDeck.deck_id)
@@ -209,7 +216,7 @@ const store = new Vuex.Store({
                     'title': deck.title,
                     'edited': deck.edited 
                 }
-                console.log("starting api call");
+                // console.log("starting api call");
                 context.commit('updateLastSyncsData', thisSyncsData)
                 await fetch(putDeckURL, { 
                     headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
@@ -218,7 +225,10 @@ const store = new Vuex.Store({
                     })
                     .then(response => response.json())
                     .then((responseData) => {
-                        console.log(responseData);
+                         console.log(responseData)
+                        if (responseData.message !== 'Up to date') {
+                          console.log(responseData)
+                        }
                         // console.log('finished syncing')   
                         // if (response data.. says that the server had a newer version) {
                         // prompt user if they want to accept changes from the database. changes made locally during the sync will be discarded
@@ -229,9 +239,9 @@ const store = new Vuex.Store({
                         // context.dispatch('refreshDecksMeta')
                         // context.dispatch('refreshLastSyncsData')
                         // actually, this step should just be logged here, but dealt with after all the decks have synced
-                        }).catch(function(err) {
+                        }).catch(function() {
                             context.commit('toggleFailedSync', true)
-                            console.log(err);
+                            // console.log(err);
                         });
                 }
                 else if (deck.deck_id === lastSyncDeck.deck_id) {
@@ -241,7 +251,7 @@ const store = new Vuex.Store({
               }
             } else {
               // post not put
-              console.log("this is a new deck to upload " + deck.title + " " + deck.deck_id + ' edited: ' + deck.edited)
+              // console.log("this is a new deck to upload " + deck.title + " " + deck.deck_id + ' edited: ' + deck.edited)
               let putDeckURL = context.state.serverURL + '/post_deck';
               let data = {
                 'deck_id': deck.deck_id,
@@ -249,7 +259,7 @@ const store = new Vuex.Store({
                 'title': deck.title,
                 'edited': deck.edited 
               }
-              console.log("starting api call");
+              // console.log("starting api call");
               context.commit('updateLastSyncsData', thisSyncsData)
               await fetch(putDeckURL, { 
                   headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
@@ -257,11 +267,13 @@ const store = new Vuex.Store({
                   method: 'POST',
                   })
                   .then(response => response.json())
-                  .then((responseData) => {
-                      console.log(responseData);
-                      }).catch(function(err) {
+                  //responseData
+                  .then(() => {
+                      // console.log(responseData);
+                      //err
+                      }).catch(function() {
                         context.commit('toggleFailedSync', true)
-                        console.log(err);
+                        // console.log(err);
                       });
             }
           }
