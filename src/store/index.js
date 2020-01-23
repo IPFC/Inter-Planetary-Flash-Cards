@@ -225,9 +225,9 @@ const store = new Vuex.Store({
                     })
                     .then(response => response.json())
                     .then((responseData) => {
-                         console.log(responseData)
+                        //  console.log(responseData)
                         if (responseData.message !== 'Up to date') {
-                          console.log(responseData)
+                          // console.log(responseData)
                         }
                         // console.log('finished syncing')   
                         // if (response data.. says that the server had a newer version) {
