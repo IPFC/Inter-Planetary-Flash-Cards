@@ -33,7 +33,7 @@ Not only could the flashcards themselves be shared, but also user’s performanc
 
 ### Data ownership
 
-Developers and serious users of flashcard apps, especially those who use long term learning Spaced Repetition Software (SRS), who would like their data to be syncable across devices, but worry the current systems available lock them into using one company/organization’s set of apps and don’t give them control of their own data. 
+Developers and serious users of flashcard apps, especially those who use long term learning [Spaced Repetition Software](https://en.wikipedia.org/wiki/Spaced_repetition) (SRS), who would like their data to be syncable across devices, but worry the current systems available lock them into using one company/organization’s set of apps and don’t give them control of their own data. 
 
 Users might fear that the company goes bankrupt, suffers an attack, or changes the user agreement, holding the user’s data hostage. IPFC solves this issue by letting users host their own data on the IPFS. Although the current implementation of IPFC requires a private database for storing user information and passwords, even in its current state, if the IPFC database goes offline, users can immediately access all of their data as it has been constantly backed up on the IPFS. This allows users to feel comfortable using a new service they can get out of any time. 
 

@@ -10,7 +10,9 @@
                     <b-img-lazy class="img" v-if="card.front_image" :src="card.front_image"></b-img-lazy>
                 </b-col>
                 <b-col >
-                    <b-form-textarea class="card-text-input" id="front-text-input" v-model="card.front_text"></b-form-textarea>
+									<div class="quill-editor" :content="card.front_text" @change="onEditorChange($event)" v-quill:myQuillEditor="editorOption"></div>
+                   <!-- <quill v-model="card.front_text" :config="frontCardConfig" class="card-text-input" id="front-text-input"></quill> -->
+                    <!-- <b-form-textarea class="card-text-input" id="front-text-input" v-model="card.front_text"></b-form-textarea> -->
                 </b-col>
             </b-row>
         </b-container>
@@ -100,6 +102,11 @@
 
 <script>
 import _ from 'lodash';   
+// https://github.com/CroudTech/vue-quill#usage
+import Vue from 'vue'
+import VueQuillEditor from 'vue-quill-editor'
+Vue.use(VueQuillEditor);
+
 const uuidv4 = require('uuid/v4');
 
 import { mapState } from 'vuex'
@@ -112,6 +119,10 @@ export default {
             addingTag: false,
             newDeckTitle: "",
             newTagTitle: "",
+            frontCardConfig: {
+              readOnly: false,
+              placeHolder: 'What Goes on the Front?'
+            }
         };
     },
     computed: {
@@ -125,6 +136,7 @@ export default {
             navNewCardClicked: 'navNewCardClicked'
         }),
         card() {
+            // There is a null pointer exception here.
             return this.currentDeck.cards[this.cardIndex]
         },
         cardIndex () {
