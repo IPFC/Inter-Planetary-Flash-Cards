@@ -405,7 +405,14 @@ const store = new Vuex.Store({
               });
           } 
         }
-    
+       
+
+      
+
+
+
+
+      }
       context.commit('toggleSyncing', false)
       context.commit('toggleDataChanged', false)
     }
