@@ -125,6 +125,10 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    deleteDeck (context, id){
+      context.commit('deleteDeck', id)
+      context.dispatch('refreshDecksMeta')
+    },
     navProgress (context, completedCards) {                 //.cards
         let outputString = completedCards + " / "  + context.state.reviewDeck.cards.length
         context.commit('updateProgressCounter', outputString)
@@ -188,7 +192,6 @@ const store = new Vuex.Store({
       }
       context.commit('updateLastSyncsData', lastSyncsData)
     },
-  
     async sync(context) {
               // rewrite API to accept lists of decks to delete, post, put, get.
               // just use the copied 'decks' variable the whole time, commit at the end.
@@ -284,7 +287,7 @@ const store = new Vuex.Store({
             await fetch(getDecksURL, {
               headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
               body: JSON.stringify(decksToDownload),
-              method: 'GET'
+              method: 'POST'
               })
               .then(response => response.json())
               .then((responseData) => {
@@ -391,7 +394,7 @@ const store = new Vuex.Store({
           await fetch(getDecksURL, {
           headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
           body: JSON.stringify(decksToUpdateLocally),
-          method: 'GET'
+          method: 'POST'
           })
           .then(response => response.json())
           .then((responseData) => {

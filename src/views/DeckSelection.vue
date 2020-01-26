@@ -89,8 +89,7 @@ export default {
       }
     },
     deleteDeck(id) {
-      this.$store.commit('deleteDeck', id)
-      this.$store.dispatch('refreshDecksMeta')
+      this.$store.dispatch('deleteDeck', id)
     }
   },
   created () {
