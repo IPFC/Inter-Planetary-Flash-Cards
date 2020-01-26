@@ -187,10 +187,19 @@ const store = new Vuex.Store({
         context.commit('toggleSyncFailed', false)
         console.log("starting sync")
         // get user collection to check for deleted decks 
-        let serverCollection         
+        let serverCollection     
+        let localDecksMeta = JSON.parse(JSON.stringify(context.state.decksMeta))
         let userCollection = JSON.parse(JSON.stringify(context.state.userCollection))
         let lastUserCollection = JSON.parse(JSON.stringify(context.state.lastSyncsData.userCollection))
         let getCollectionURL = context.state.serverURL + '/get_user_collection' 
+        let decks = JSON.parse(JSON.stringify(context.state.decks)) //reload decks, cause they might be changed by above user collection section
+        let lastSyncDecks = JSON.parse(JSON.stringify(context.state.lastSyncsData.decks))
+        let thisSyncsData = {
+          decks: decks,
+          userCollection: userCollection }
+        let decksToDeleteLocally = []  
+        let decksToDeleteOnServer= []  
+
         await fetch(getCollectionURL, {
           headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
           method: 'GET',
@@ -210,6 +219,12 @@ const store = new Vuex.Store({
             // if server deleted, but local deleted isn't, delete locally
             if (!userCollection.deleted_deck_ids.includes(server_deleted_deck_id)) {
               // add to deleted list
+              decksToDeleteLocally.push(server_deleted_deck_id)
+
+              // rewrite API to accept lists of decks to delete, post, put, get.
+              // just use the copied 'decks' variable the whole time, commit at the end.
+              // make sure I'm combining the 'usercollection' on both  client and server.
+
               userCollection.deleted_deck_ids.push(server_deleted_deck_id)
               // remove from included list
               for( var i = 0; i < userCollection.deck_ids.length; i++){ 
@@ -224,32 +239,19 @@ const store = new Vuex.Store({
               let updatedDecks = decks.filter(function (deckToCheck) {
                   return deckToCheck.deck_id !== server_deleted_deck_id
                   }) 
+
+
+              // !!!!! should make all these commits at the end, incase data changes during sync
+
               context.commit('updateDecks', updatedDecks)
               context.dispatch('refreshDecksMeta')
+              context.commit('updateLastSyncsData', thisSyncsData)
             }
           }
           // if local deleted, but server deleted isn't, add to server deleted list
           for (let client_deleted_deck_id of userCollection.deleted_deck_ids) { 
             if (!serverCollection.deleted_deck_ids.includes(client_deleted_deck_id)) {
-              // put call- update user collection
-              // actually we could shorten this by having the database delete call 
-              let putCollectionURL = context.state.serverURL + '/put_user_collection' 
-              let putCollectionData = userCollection
-              await fetch(putCollectionURL, {
-                headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
-                body: JSON.stringify(putCollectionData),
-                method: 'PUT'
-                })
-                .then(response => response.json())
-                .then((responseData) => {
-                    console.log("put collection ", responseData)
-                })
-                .catch(function(err) {  
-                  context.commit('toggleSyncFailed', true)
-                  console.log(err); 
-                  return null
-                });
-              // call delete deck
+              // call delete deck (server will update it's deleted decks list on its end)
               let deleteDeckURL = context.state.serverURL + '/delete_deck' 
               let deleteDeckData = {'deck_id': client_deleted_deck_id}
               await fetch(deleteDeckURL, {
@@ -259,7 +261,7 @@ const store = new Vuex.Store({
                 })
                 .then(response => response.json())
                 .then((responseData) => {
-                    console.log("put collection ", responseData)
+                    console.log("deck deleted", responseData)
                 })
                 .catch(function(err) {  
                   context.commit('toggleSyncFailed', true)
@@ -269,17 +271,149 @@ const store = new Vuex.Store({
             }
           }
         }
-     
-       
         // if there are new decks from server, add their IDs, download the deck.
+        for (let server_deck_id of serverCollection.deck_ids) { 
+          if (!userCollection.deck_ids.includes(server_deck_id)) {
+            let decks = JSON.parse(JSON.stringify(context.state.decks))
+            let getDeckURL = context.state.serverURL + '/get_deck' 
+            let getDeckData = {'deck_id': server_deck_id}
+            await fetch(getDeckURL, {
+              headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+              body: JSON.stringify(getDeckData),
+              method: 'GET'
+              })
+              .then(response => response.json())
+              .then((responseData) => {
+                  console.log("deck downloaded", responseData)
+                  decks.unshift(responseData)
+                  context.commit('updateDecks', decks)
+                  let newUserCollection = JSON.parse(JSON.stringify(context.state.userCollection))
+                  newUserCollection.deck_ids.push(responseData.deck_id)
+                  context.commit('updateUserCollection', newUserCollection)
+                  context.commit('updateLastSyncsData', thisSyncsData)
+              })
+              .catch(function(err) {  
+                context.commit('toggleSyncFailed', true)
+                console.log(err); 
+                return null
+              });
+          }
+        }
         // if there are new decks locally, add their IDs, post the deck.
-
+        for (let client_deck_id of userCollection.deck_ids ) { 
+          if (!serverCollection.deck_ids.includes(client_deck_id)) {
+            let decks = JSON.parse(JSON.stringify(context.state.decks))
+            let deck = decks.filter(function (deckToCheck) {
+              return deckToCheck.deck_id === client_deck_id
+              }) 
+            let postDeckURL = context.state.serverURL + '/post_deck';
+            let postDeckData = {
+              'deck_id': deck.deck_id,
+              'deck': deck,
+              'title': deck.title,
+              'edited': deck.edited 
+            }
+            await fetch(postDeckURL, { 
+              headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+              body: JSON.stringify(postDeckData),
+              method: 'POST',
+              })
+              .then(response => response.json())
+              //responseData
+              .then(() => {
+                  console.log("POST deck ",responseData);
+                  //err
+              }).catch(function() {
+                context.commit('toggleSyncFailed', true)
+                // console.log(err);
+              });
+          }
+        }
         // get serverDecksMeta
-
-        // the server edited is newer, add deck_id to get list. 
-        // if server edited is older, add deck_id to upload list. 
+        let serverDecksMeta = null
+        let getDecksMetaURL = context.state.serverURL + '/get_decks_meta' 
+        await fetch(getDecksMetaURL, {
+          headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+          method: 'GET'
+          })
+          .then(response => response.json())
+          .then((responseData) => {
+              console.log("got decks meta", responseData)
+              serverDecksMeta = responseData
+          })
+          .catch(function(err) {  
+            context.commit('toggleSyncFailed', true)
+            console.log(err); 
+            return null
+          });
+        // compare the edited dates for each deck in local and server decks meta
+        for (let localDeckMeta of localDecksMeta) {
+          let serverDeckMeta = serverDecksMeta.filter(function (deckMetaToCheck) {
+            return deckMetaToCheck.deck_id !== localDeckMeta.deck_id
+            })  
+          // if the local version is newer, upload it
+          if (localDeckMeta.edited > serverDeckMeta.edited) {
+            let decks = JSON.parse(JSON.stringify(context.state.decks))
+            let deck = decks.filter(function (deckToCheck) {
+              return deckToCheck.deck_id === localDeckMeta.deck_id
+              }) 
+            let putDeckURL = context.state.serverURL + '/put_deck';
+            let putDeckData = {
+              'deck_id': deck.deck_id,
+              'deck': deck,
+              'title': deck.title,
+              'edited': deck.edited 
+            }
+            await fetch(putDeckURL, { 
+              headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+              body: JSON.stringify(putDeckData),
+              method: 'PUT',
+              })
+              .then(response => response.json())
+              //responseData
+              .then(() => {
+                  console.log("PUT deck ", responseData);
+              }).catch(function(err) {
+                context.commit('toggleSyncFailed', true)
+                console.log(err);
+              });
+          }  
+          // if the server version is newer, downlaod it
+          else if (localDeckMeta.edited < serverDeckMeta.edited) {
+            let getDeckURL = context.state.serverURL + '/get_deck' 
+            let getDeckData = {'deck_id': localDeckMeta.deck_id}
+            await fetch(getDeckURL, {
+              headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+              body: JSON.stringify(getDeckData),
+              method: 'GET'
+              })
+              .then(response => response.json())
+              .then((responseData) => {
+                  console.log("deck downloaded", responseData)
+                 
+                 
+                  context.commit('updateDeck', responseData)
+                  let newUserCollection = JSON.parse(JSON.stringify(context.state.userCollection))
+                  newUserCollection.deck_ids.push(responseData.deck_id)
+                  context.commit('updateUserCollection', newUserCollection)
+                  context.commit('updateLastSyncsData', thisSyncsData)
+              })
+              .catch(function(err) {  
+                context.commit('toggleSyncFailed', true)
+                console.log(err); 
+                return null
+              });
+          } 
+        }
+       
 
       
+
+
+
+
+
+
         // these need to be deep copies, so they don't change in the middle of the sync
         let decks = JSON.parse(JSON.stringify(context.state.decks)) //reload decks, cause they might be changed by above user collection section
         let lastSyncDecks = JSON.parse(JSON.stringify(context.state.lastSyncsData.decks))
@@ -363,11 +497,10 @@ const store = new Vuex.Store({
                   .then(() => {
                       // console.log(responseData);
                       //err
-                      }).catch(function() {
-                        context.commit('toggleSyncFailed', true)
-
-                        // console.log(err);
-                      });
+                  }).catch(function() {
+                    context.commit('toggleSyncFailed', true)
+                    // console.log(err);
+                  });
             }
           }
         }
