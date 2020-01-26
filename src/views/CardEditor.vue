@@ -306,7 +306,6 @@ export default {
             if (this.newDeckTitle === "" || this.newDeckTitle === " ") {
                 this.toggleAddingDeck()
             } else{
-                let decks = this.decks
                 let emptyDeck = {
                     cards: [this.card],
                     created_by: this.userCollection.user_id,
@@ -324,11 +323,7 @@ export default {
                     visibility:"public",
                     icon_color: this.generateRandomHslaColor()
                     }
-                decks.unshift(emptyDeck)
-                this.$store.commit('updateDecks', decks)
-                let newUserCollection = JSON.parse(JSON.stringify(this.userCollection))
-                newUserCollection.deck_ids.push(emptyDeck.deck_id)
-                this.$store.commit('updateUserCollection', newUserCollection)
+                this.$store.commit('addDeck', emptyDeck)
                 this.newDeckTitle= ""
                 this.toggleAddingDeck()
             }

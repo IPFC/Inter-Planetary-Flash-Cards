@@ -33,11 +33,8 @@ import _ from 'lodash';
                     if (this.userCollection != this.lastSyncsData.userCollection) {
                         // console.log('user collection changed')
                         // console.log('watched user collection for syncing')
-                            this.$store.commit('toggleDataChanged', true)
                             this.sync()
-                    } else {
-                        this.$store.commit('toggleDataChanged', false)
-                    }
+                    } 
                 },
                 deep: true
             },
@@ -45,10 +42,7 @@ import _ from 'lodash';
                 handler: function() {
                     if (this.decks != this.lastSyncsData.decks) { 
                         // console.log('watched decks for syncing')
-                        this.$store.commit('toggleDataChanged', true)
                          this.sync()
-                    } else {
-                        this.$store.commit('toggleDataChanged', false)
                     }
                 },
                 deep: true
