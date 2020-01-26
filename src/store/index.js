@@ -45,6 +45,8 @@ const store = new Vuex.Store({
     navProgressCounter: '',
     lastSyncsData: null,
     syncing: false,
+    syncFailed: false,
+    dataChanged: false,
     serverURL: 'https://ipfc-midware.herokuapp.com',
     navNewCardDisabled: false,
     navNewCardClicked: false
@@ -93,8 +95,11 @@ const store = new Vuex.Store({
     updateLastSyncsData (state, data) {
       state.lastSyncsData = data
     },
-    toggleFailedSync (state, bool) {
-      state.failedSync = bool
+    toggleSyncFailed (state, bool) {
+      state.syncFailed = bool
+    },
+    toggleDataChanged (state, bool) {
+      state.dataChanged = bool
     },
     toggleNavNewCardDisabled (state, bool) {
       state.navNewCardDisabled = bool
@@ -169,27 +174,114 @@ const store = new Vuex.Store({
       context.commit('updateLastSyncsData', lastSyncsData)
     },
     async sync(context) {
+      context.commit('toggleDataChanged', false)
       // console.log('sync called')
-      // console.log('syncing status ',context.state.syncing)
+      // console.log('syncing status ', context.state.syncing)
       if (context.state.syncing === true) {
         // console.log('syncing blocked')
+        context.commit('toggleDataChanged', false)
         return null
       }
       else{
-        // got to entirely rewrite whole app... everytime access deck, return only undeleted decks. 
-        // only need deleted decks info when syncing... could make a second list to 
-        // get serverDecksMeta (check and update server from pinata first )
-        // 
-        // the server edited is newer, add deck_id to get list. 
-        // if server edited is older, add deck_id to upload list. 
-        // if local deleted is true, but server deleted isn't, add to upload list
-        // if server deleted is true, but local deleted isn't, delete locally (mark as deleted)
         context.commit('toggleSyncing', true)
-        context.commit('toggleFailedSync', false)
-        // these need to be deep copies, so they don't change in the middle of the sync
+        context.commit('toggleSyncFailed', false)
+        console.log("starting sync")
+        // get user collection to check for deleted decks 
+        let serverCollection         
         let userCollection = JSON.parse(JSON.stringify(context.state.userCollection))
         let lastUserCollection = JSON.parse(JSON.stringify(context.state.lastSyncsData.userCollection))
-        let decks = JSON.parse(JSON.stringify(context.state.decks))
+        let getCollectionURL = context.state.serverURL + '/get_user_collection' 
+        await fetch(getCollectionURL, {
+          headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+          method: 'GET',
+          })
+          .then(response => response.json())
+          .then((responseData) => {
+              console.log(responseData)
+              serverCollection = responseData
+          })
+          .catch(function(err) {  
+            context.commit('toggleSyncFailed', true)
+            console.log(err); 
+            return null
+          });
+        if (serverCollection !== userCollection){
+          for (let server_deleted_deck_id of serverCollection.deleted_deck_ids) {        
+            // if server deleted, but local deleted isn't, delete locally
+            if (!userCollection.deleted_deck_ids.includes(server_deleted_deck_id)) {
+              // add to deleted list
+              userCollection.deleted_deck_ids.push(server_deleted_deck_id)
+              // remove from included list
+              for( var i = 0; i < userCollection.deck_ids.length; i++){ 
+                if ( userCollection.deck_ids[i] === server_deleted_deck_id) {
+                  userCollection.deck_ids.splice(i, 1);
+                  i--;
+                }
+              }
+              context.commit('updateUserCollection', userCollection)
+              // remove the actual deck
+              let decks = JSON.parse(JSON.stringify(context.state.decks))
+              let updatedDecks = decks.filter(function (deckToCheck) {
+                  return deckToCheck.deck_id !== server_deleted_deck_id
+                  }) 
+              context.commit('updateDecks', updatedDecks)
+              context.dispatch('refreshDecksMeta')
+            }
+          }
+          // if local deleted, but server deleted isn't, add to server deleted list
+          for (let client_deleted_deck_id of userCollection.deleted_deck_ids) { 
+            if (!serverCollection.deleted_deck_ids.includes(client_deleted_deck_id)) {
+              // put call- update user collection
+              // actually we could shorten this by having the database delete call 
+              let putCollectionURL = context.state.serverURL + '/put_user_collection' 
+              let putCollectionData = userCollection
+              await fetch(putCollectionURL, {
+                headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+                body: JSON.stringify(putCollectionData),
+                method: 'PUT'
+                })
+                .then(response => response.json())
+                .then((responseData) => {
+                    console.log("put collection ", responseData)
+                })
+                .catch(function(err) {  
+                  context.commit('toggleSyncFailed', true)
+                  console.log(err); 
+                  return null
+                });
+              // call delete deck
+              let deleteDeckURL = context.state.serverURL + '/delete_deck' 
+              let deleteDeckData = {'deck_id': client_deleted_deck_id}
+              await fetch(deleteDeckURL, {
+                headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+                body: JSON.stringify(deleteDeckData),
+                method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then((responseData) => {
+                    console.log("put collection ", responseData)
+                })
+                .catch(function(err) {  
+                  context.commit('toggleSyncFailed', true)
+                  console.log(err); 
+                  return null
+                });
+            }
+          }
+        }
+     
+       
+        // if there are new decks from server, add their IDs, download the deck.
+        // if there are new decks locally, add their IDs, post the deck.
+
+        // get serverDecksMeta
+
+        // the server edited is newer, add deck_id to get list. 
+        // if server edited is older, add deck_id to upload list. 
+
+      
+        // these need to be deep copies, so they don't change in the middle of the sync
+        let decks = JSON.parse(JSON.stringify(context.state.decks)) //reload decks, cause they might be changed by above user collection section
         let lastSyncDecks = JSON.parse(JSON.stringify(context.state.lastSyncsData.decks))
         let thisSyncsData = {
           decks: decks,
@@ -240,7 +332,7 @@ const store = new Vuex.Store({
                         // context.dispatch('refreshLastSyncsData')
                         // actually, this step should just be logged here, but dealt with after all the decks have synced
                         }).catch(function() {
-                            context.commit('toggleFailedSync', true)
+                            context.commit('toggleSyncFailed', true)
                             // console.log(err);
                         });
                 }
@@ -272,7 +364,8 @@ const store = new Vuex.Store({
                       // console.log(responseData);
                       //err
                       }).catch(function() {
-                        context.commit('toggleFailedSync', true)
+                        context.commit('toggleSyncFailed', true)
+
                         // console.log(err);
                       });
             }
@@ -280,6 +373,7 @@ const store = new Vuex.Store({
         }
       }
       context.commit('toggleSyncing', false)
+      context.commit('toggleDataChanged', false)
     }
   },
   getters: {

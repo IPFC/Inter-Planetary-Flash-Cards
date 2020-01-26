@@ -1,11 +1,19 @@
 <template>
 <div id="body">
-  <b-navbar toggleable="xs" type="dark" variant="primary">
-  <b-navbar-toggle  target="nav-collapse"></b-navbar-toggle>
-  <b-link to="#" ><font-awesome-icon style="color: white;" icon="search"/></b-link>     
-  <b-nav-text style="color: white;" id="session-counter">{{ navProgressCounter }}</b-nav-text>    
-  <b-link @click="newCard()" :disabled="navNewCardDisabled" ><img src="../assets/add card logo.svg" alt="add"></b-link>
-  <b-link @click="callSync()"  class="icon"><font-awesome-icon style="color: white;" icon="cloud"/></b-link>     
+  <b-navbar  toggleable="xs" type="dark" variant="primary">
+  <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+  <b-link to="#" class="icon" ><font-awesome-icon style="color: white;" class="fa-lg"  icon="search"/></b-link>     
+  <b-nav-text style="color: white;" id="session-counter" >{{ navProgressCounter }}</b-nav-text>    
+  <b-link @click="newCard()" :disabled="navNewCardDisabled" class="icon"><img src="../assets/add card logo.svg" alt="add"></b-link>
+  <b-link @click="callSync()" id="sync-link">
+    <font-awesome-layers  class="fa-lg" id="sync-layers">
+      <font-awesome-icon style="color: white;" class="fa-lg" id="cloud" icon="cloud"></font-awesome-icon>
+      <font-awesome-icon style="color: primary;" v-if="syncing" class="fa-xs" id="sync-spinner" spin icon="sync"></font-awesome-icon>
+      <font-awesome-icon style="color: primary;" v-else-if="syncFailed || dataChanged" class="fa-xs" id="exclamation" icon="exclamation"></font-awesome-icon>
+      <font-awesome-icon style="color: primary;" v-else class="fa-xs" id="checkmark" icon="check"></font-awesome-icon>
+
+    </font-awesome-layers>
+  </b-link>     
   <b-collapse id="nav-collapse" is-nav>
     <b-navbar-nav  >
     <b-nav-item to="/home">Review</b-nav-item>
@@ -39,7 +47,10 @@ export default {
 				},
     ...mapState({
             currentDeck: 'currentDeck',
-            navNewCardDisabled: 'navNewCardDisabled'
+            navNewCardDisabled: 'navNewCardDisabled',
+            syncing: 'syncing',
+            syncFailed: 'syncFailed',
+            dataChanged: 'dataChanged'
         }),
   },
   methods: {
@@ -67,5 +78,27 @@ export default {
 </script>
 
 <style scoped>
-
+#sync-layers {
+  margin-top: 3px;
+}
+#sync-link{
+  width: 50px;
+}
+#exclamation{
+  margin: 4px 0px 0px 14px;
+  -webkit-animation: pulsate 1s ease-out;
+  -webkit-animation-iteration-count: infinite; 
+  opacity: 0.0
+}
+#sync-spinner {
+    margin: 4px 0px 0px 9px;
+}
+#checkmark {
+    margin: 5px 0px 0px 9px;
+}
+@-webkit-keyframes pulsate {
+  0% {-webkit-transform: scale(1, 1); opacity: 1;}
+  50% {-webkit-transform: scale(1.1, 1.1); opacity: 1;}
+  100% {-webkit-transform: scale(1, 1); opacity: 1;}
+}
 </style>

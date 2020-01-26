@@ -89,6 +89,20 @@ export default {
       }
     },
     deleteDeck(id) {
+      let newUserCollection = this.$store.state.userCollection
+      for( var i = 0; i < newUserCollection.deck_ids.length; i++){ 
+        if ( newUserCollection.deck_ids[i] === id) {
+          newUserCollection.deck_ids.splice(i, 1);
+          i--;
+        }
+      }
+      if (newUserCollection.deleted_deck_ids) {
+        newUserCollection.deleted_deck_ids.push(id)
+      } else {
+        newUserCollection.deleted_deck_ids = [id]
+      }
+      this.$store.commit('updateUserCollection', newUserCollection)
+
       let decks = this.$store.state.decks
       let updatedDecks = decks.filter(function (deckToCheck) {
           return deckToCheck.deck_id !== id

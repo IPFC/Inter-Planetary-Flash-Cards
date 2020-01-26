@@ -1,7 +1,6 @@
-//https://github.com/chrisvfritz/vue-enterprise-boilerplate
-//https://github.com/vuejs/awesome-vue#scaffold
+
 <template>
-    <b-container fluid id="body">
+    <b-container class="body">
         <b-row id="main-row">
         <b-col id="main-col">
         <b-container class="card">
@@ -60,31 +59,31 @@
             <b-col id="buttons-col">
                 <b-container id="buttons-inner">
                     <b-row>
-                    <b-col >
+                    <b-col class="btn-col">
                         <b-button :disabled="noDeckSelected" class="btn-circle btn-md" 
                             @click="deleteCard()">
                             <font-awesome-icon size="2x" icon="trash-alt"/>
                         </b-button>
                     </b-col>
-                    <b-col>
+                    <b-col class="btn-col">
                         <b-button :disabled="leftNavDisabled" class="btn-circle btn-md" 
                             @click="previousCard()">
                             <font-awesome-icon size="2x" icon="step-backward"/>
                         </b-button>
                     </b-col>
-                    <b-col>    
+                    <b-col class="btn-col">    
                         <b-button :disabled="noDeckSelected" class="btn-circle btn-md" 
                             @click="undo()">
                             <font-awesome-icon size="2x" icon="undo"/>
                         </b-button>
                     </b-col>
-                    <b-col>
+                    <b-col class="btn-col">
                         <b-button :disabled="rightNavDisabled" class="btn-circle btn-md" 
                             @click="nextCard()">
                             <font-awesome-icon size="2x" icon="step-forward"/>
                         </b-button>
                     </b-col>
-                    <b-col>    
+                    <b-col class="btn-col">    
                         <b-button :disabled="noDeckSelected" class="btn-circle btn-md" 
                             @click="doneCheck()">
                             <font-awesome-icon size="2x" icon="check"/>
@@ -327,6 +326,10 @@ export default {
                     }
                 decks.unshift(emptyDeck)
                 this.$store.commit('updateDecks', decks)
+                let newUserCollection = JSON.parse(JSON.stringify(this.userCollection))
+                newUserCollection.deck_ids.push(emptyDeck.deck_id)
+                this.$store.commit('updateUserCollection', newUserCollection)
+                this.newDeckTitle= ""
                 this.toggleAddingDeck()
             }
         },
@@ -343,6 +346,7 @@ export default {
             }else {
                 this.card.card_tags.unshift(this.newTagTitle)
                 this.submit()
+                this.newtagTitle= ""
                 this.toggleAddingTag()
             }
         }
@@ -369,15 +373,26 @@ export default {
 </script>
 
 <style scoped>
-#body{
+.body{
     background-color: C7C7C7;
-    overflow-y: auto;   
+    overflow-y: auto;
+    margin: auto;   
+    max-width: 100vw;
+}
+.body::-webkit-scrollbar {
+    width: .5em;
+}
+.body::-webkit-scrollbar-thumb {
+    background-color: grey;
+    border-radius: 5px;
 }
 #main-col {
-    max-width: 600px;
-    margin: auto;
-}
+ width: 100%;
+ padding: 0px 10px;
+ }
 .card {
+        max-width: 600px;
+
     margin: auto;
     top: 30px;
     border-radius: 10px;
@@ -418,7 +433,6 @@ export default {
     margin-top: .5em;
     object-fit: fill;
     width: 90%;
-    max-height: 50vh;
 }
 
 .flashcard:hover {
@@ -428,12 +442,13 @@ export default {
 
 .tag-chooser {
     margin: 1em auto;
-    margin-right: 0px;
     height: 7em;
     overflow-x: auto;
     white-space: nowrap;
     position: initial;
     padding: 0px;
+        max-width: 600px;
+
 }
 
 .tag-chooser::-webkit-scrollbar {
@@ -461,7 +476,7 @@ export default {
 .white-btn {  background-color: white;}
 
 #tags-bottom {
-    margin-bottom: 80px;
+    margin-bottom: 60px;
 }
 .add-btn {
     border-radius: 10px;
@@ -482,7 +497,7 @@ export default {
     width: 40px; 
     height: 40px; 
     padding: 0px 11px; 
-    margin: 5px auto;
+    margin: 0px auto;
     border-radius: 20px; 
     font-size: 10px; 
     text-align: center; 
@@ -507,6 +522,10 @@ export default {
 #buttons-col {
     max-width: 600px;
     margin: auto;
+}
+.btn-col{
+padding: 0px;
+margin: 5px 2px;
 }
 
 

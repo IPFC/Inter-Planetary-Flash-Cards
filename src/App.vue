@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div class="body" id="app">
             <Navbar id="navbar"/>
             <router-view/>
     </div>
@@ -22,14 +22,34 @@ import _ from 'lodash';
         computed: {
             ...mapState({
                 decks: 'decks',
-                syncing: 'syncing'
+                syncing: 'syncing',
+                userCollection: 'userCollection',
+                lastSyncsData: 'lastSyncsData'
             }),
         },
         watch: {
+            userCollection: {
+                handler: function() {
+                    if (this.userCollection != this.lastSyncsData.userCollection) {
+                        // console.log('user collection changed')
+                        // console.log('watched user collection for syncing')
+                            this.$store.commit('toggleDataChanged', true)
+                            this.sync()
+                    } else {
+                        this.$store.commit('toggleDataChanged', false)
+                    }
+                },
+                deep: true
+            },
             decks: {
                 handler: function() {
-                    // console.log('watched decks for syncing')
-                    this.sync()
+                    if (this.decks != this.lastSyncsData.decks) { 
+                        // console.log('watched decks for syncing')
+                        this.$store.commit('toggleDataChanged', true)
+                         this.sync()
+                    } else {
+                        this.$store.commit('toggleDataChanged', false)
+                    }
                 },
                 deep: true
             }, 
@@ -44,7 +64,7 @@ import _ from 'lodash';
             sync: _.debounce(function(){
                 //  console.log('debounced sync')
                 this.$store.dispatch('sync')  
-            }, 60000),
+            }, 30000),
             async redirectIfAuth () {
                 await this.$store.dispatch('checkJwt')
                 if (this.$store.getters.isAuthenticated) {
@@ -82,4 +102,11 @@ import _ from 'lodash';
   width: 100%;
   z-index: 2000;
     }
+.body::-webkit-scrollbar {
+    width: .5em;
+}
+.body::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 5px;
+}
 </style>
