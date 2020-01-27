@@ -31,8 +31,8 @@ import _ from 'lodash';
             userCollection: {
                 handler: function() {
                     if (this.syncing === false) {
-                        if (!_.isEqual(this.userCollection, this.lastSyncsData.userCollection)) {
-                            // console.log('    watched user collection for syncing')
+                        if (this.$store.getters.dataChanged) {                            
+                            console.log('    watched user collection for syncing')
                             this.sync()
                         }
                     } 
@@ -42,8 +42,8 @@ import _ from 'lodash';
             decks: {
                 handler: function() {
                     if (this.syncing === false) {
-                        if (!_.isEqual(this.decks, this.lastSyncsData.decks)) { 
-                            // console.log('    watched decks for syncing')
+                        if (this.$store.getters.dataChanged) {                            
+                            console.log('    watched decks for syncing')
                             this.sync()
                         }
                     }
@@ -52,8 +52,10 @@ import _ from 'lodash';
             }, 
             syncing: function() {
                 if (this.syncing === false) {
-                    if (!_.isEqual(this.decks, this.lastSyncsData.decks) || !_.isEqual(this.userCollection, this.lastSyncsData.userCollection)) {
-                        // console.log('    watched syncing for syncing')
+                    if (this.$store.getters.dataChanged) {
+                        console.log('    this.decks', this.decks)
+                        console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
+                        console.log('    watched syncing for syncing')
                         this.sync()
                      }
                 }
@@ -63,7 +65,7 @@ import _ from 'lodash';
             sync: _.debounce(function(){
                 //  console.log('debounced sync')
                 this.$store.dispatch('sync')  
-            }, 30000),
+            }, 15000),
             async redirectIfAuth () {
                 await this.$store.dispatch('checkJwt')
                 if (this.$store.getters.isAuthenticated) {

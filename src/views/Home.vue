@@ -71,11 +71,11 @@ export default {
             cardFlipToggle: false,
             cardsCompleted: 0,
             cardsTotal: 0,
+            reviewDeck: this.$store.getters.reviewDeck
         }
     },
     computed: {
         ...mapState({
-            reviewDeck: 'reviewDeck'
         }),
         currentCard () {
             return this.reviewDeck.cards[this.currentCardIndex]
@@ -129,7 +129,6 @@ export default {
     },
     created () {
         this.setAllDeckColors()
-        this.$store.dispatch('updateReviewDeck')
         this.$store.dispatch('navProgress', 0)
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')

@@ -26,7 +26,7 @@ const vuexLocal = new VuexPersistence({
     decksMeta: state.decksMeta,
     decks: state.decks,
     currentDeck: state.deck,
-    reviewDeck: state.reviewDeck,
+    // reviewDeck: state.reviewDeck,
     lastSyncsData: state.lastSyncsData
   })
   // Function that passes a mutation and lets you decide if it should update the state in localStorage.
@@ -41,7 +41,7 @@ const store = new Vuex.Store({
     decksMeta: null,
     decks: null,
     currentDeck: null,
-    reviewDeck: null,
+    // reviewDeck: null,
     cardToEditIndex: null,
     navProgressCounter: '',
     lastSyncsData: '',
@@ -104,9 +104,9 @@ const store = new Vuex.Store({
     updateCurrentDeck(state, data) {
       state.currentDeck = data
     },
-    updateReviewDeck(state, data) {
-      state.reviewDeck = data
-    },
+    // updateReviewDeck(state, data) {
+    //   state.reviewDeck = data
+    // },
     updateProgressCounter(state, data) {
       state.navProgressCounter = data
     },
@@ -132,7 +132,7 @@ const store = new Vuex.Store({
       context.dispatch('refreshDecksMeta')
     },
     navProgress (context, completedCards) {                 //.cards
-        let outputString = completedCards + " / "  + context.state.reviewDeck.cards.length
+        let outputString = completedCards + " / "  + context.getters.reviewDeck.cards.length
         context.commit('updateProgressCounter', outputString)
     },
     navNewCardClicked (context) {
@@ -156,18 +156,6 @@ const store = new Vuex.Store({
         const now = new Date()
         context.commit('toggleJwtValid', now < exp)
       }
-    },
-    updateReviewDeck(context) {
-      let decks = context.state.decks
-      let reviewDeck = {cards: [] } 
-      for (let deck of decks) {
-        for (let card of deck.cards) {
-          if (card.card_tags.includes('Daily Review') && !reviewDeck.cards.includes(card)){
-            reviewDeck.cards.push(card)
-          }
-        }
-      }
-      context.commit('updateReviewDeck', reviewDeck)
     },
     refreshDecksMeta(context) {
       let decks = context.state.decks
@@ -435,18 +423,31 @@ const store = new Vuex.Store({
             return null
           }); 
         }
-        context.commit('updateLastSyncsData', {
-          decks: decks,
-          userCollection: userCollection
-        })
-      }
+      context.commit('updateLastSyncsData', {
+        decks: decks,
+        userCollection: userCollection
+      })
+      context.dispatch('refreshDecksMeta')
       context.commit('toggleSyncing', false)
+      }
     }
   },
   getters: {
     isAuthenticated: state => state.jwtValid,
     getDecks: state => state.decks,
     navProgressCounter: state => state.navProgressCounter,
+    reviewDeck(state) {
+      let decks = state.decks
+      let reviewDeck = {cards: [] } 
+      for (let deck of decks) {
+        for (let card of deck.cards) {
+          if (card.card_tags.includes('Daily Review') && !reviewDeck.cards.includes(card)){
+            reviewDeck.cards.push(card)
+          }
+        }
+      }
+      return reviewDeck
+    },
     dataChanged (state) {
       if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || _.isEqual(!state.decks, state.lastSyncsData.decks)) {
         return true

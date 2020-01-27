@@ -63,6 +63,7 @@ export default {
       }
             //.cards
       this.currentDeck.cards.push(newCard)
+      this.currentDeck.edited = Math.round(new Date().getTime() / 1000);
       // if coming from the home screen, it won't have a current deck. we want to make a new card, but not assigned to any deck yet
       this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1)
       if (this.$route.name !== 'card-editor' ) {

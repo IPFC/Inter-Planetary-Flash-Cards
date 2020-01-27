@@ -324,6 +324,7 @@ export default {
                     icon_color: this.generateRandomHslaColor()
                     }
                 this.$store.commit('addDeck', emptyDeck)
+                this.$store.dispatch('refreshDecksMeta')
                 this.newDeckTitle= ""
                 this.toggleAddingDeck()
             }
