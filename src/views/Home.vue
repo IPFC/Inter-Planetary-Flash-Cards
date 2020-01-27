@@ -70,13 +70,15 @@ export default {
             currentCardIndex: 0,
             cardFlipToggle: false,
             cardsCompleted: 0,
-            cardsTotal: 0,
-            reviewDeck: this.$store.getters.reviewDeck
+            cardsTotal: 0
         }
     },
     computed: {
         ...mapState({
         }),
+        reviewDeck() { 
+            return this.$store.getters.reviewDeck
+        },
         currentCard () {
             return this.reviewDeck.cards[this.currentCardIndex]
         },
