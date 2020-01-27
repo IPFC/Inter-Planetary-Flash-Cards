@@ -46,11 +46,13 @@ export default {
 				return this.$store.getters.navProgressCounter
 				},
     ...mapState({
-            currentDeck: 'currentDeck',
             navNewCardDisabled: 'navNewCardDisabled',
             syncing: 'syncing',
             syncFailed: 'syncFailed',
-        }),
+    }),
+    currentDeck() {
+      return this.$store.getters.currentDeck
+    }
   },
   methods: {
     newCard() {

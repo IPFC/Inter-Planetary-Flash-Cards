@@ -58,12 +58,7 @@ export default {
   },  
   methods: {
     openDeck (id) {
-      var deck
-      for (deck of this.$store.getters.getDecks) {
-        if (deck.deck_id === id) {
-          this.$store.commit('updateCurrentDeck', deck)
-        }
-      }
+      this.$store.commit('updateCurrentDeckId', id)
       this.$router.push('/deck-editor')
     },
     cardOrCards (deckLength) {

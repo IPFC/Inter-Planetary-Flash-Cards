@@ -135,7 +135,7 @@ export default {
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
         }
-        this.$store.commit('updateCurrentDeck', this.reviewDeck)
+        this.$store.commit('updateCurrentDeckID', 'reviewDeck')
         this.currentCardIndex = 0
         this.$store.commit('toggleNavNewCardDisabled', false)
 

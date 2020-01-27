@@ -123,6 +123,9 @@ export default {
             jwt: 'jwt',
             navNewCardClicked: 'navNewCardClicked'
         }),
+        currentDeck() {
+            return this.$store.getters.currentDeck
+        },
         card() {
             return this.currentDeck.cards[this.cardIndex]
         },

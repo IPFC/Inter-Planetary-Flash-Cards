@@ -25,7 +25,7 @@ const vuexLocal = new VuexPersistence({
     userCollection: state.userCollection,
     decksMeta: state.decksMeta,
     decks: state.decks,
-    currentDeck: state.deck,
+    currentDeckId: state.deck,
     // reviewDeck: state.reviewDeck,
     lastSyncsData: state.lastSyncsData
   })
@@ -40,7 +40,7 @@ const store = new Vuex.Store({
     userCollection: '',
     decksMeta: null,
     decks: null,
-    currentDeck: null,
+    currentDeckId: null,
     // reviewDeck: null,
     cardToEditIndex: null,
     navProgressCounter: '',
@@ -105,8 +105,8 @@ const store = new Vuex.Store({
         state.decks.splice(deckIndex, 1);
       }
     },
-    updateCurrentDeck(state, data) {
-      state.currentDeck = data
+    updateCurrentDeckId(state, data) {
+      state.currentDeckId = data
     },
     // updateReviewDeck(state, data) {
     //   state.reviewDeck = data
@@ -437,6 +437,16 @@ const store = new Vuex.Store({
     }
   },
   getters: {
+    currentDeck(state, getters) {
+        if (state.currentDeckId === "reviewDeck") {
+            return getters.reviewDeck
+        } else {
+            let getCurrentDeck = state.decks.filter( function(deckToCheck){
+                return deckToCheck.deck_id === state.currentDeckId
+            })
+            return getCurrentDeck[0]
+        }
+    },
     isAuthenticated: state => state.jwtValid,
     getDecks: state => state.decks,
     navProgressCounter: state => state.navProgressCounter,
