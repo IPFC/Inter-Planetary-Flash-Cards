@@ -32,7 +32,7 @@ import _ from 'lodash';
                 handler: function() {
                     if (this.syncing === false) {
                         if (this.$store.getters.dataChanged) {                            
-                            console.log('    watched user collection for syncing')
+                            // console.log('    watched user collection for syncing')
                             this.sync()
                         }
                     } 
@@ -43,7 +43,7 @@ import _ from 'lodash';
                 handler: function() {
                     if (this.syncing === false) {
                         if (this.$store.getters.dataChanged) {                            
-                            console.log('    watched decks for syncing')
+                            // console.log('    watched decks for syncing')
                             this.sync()
                         }
                     }
@@ -53,9 +53,9 @@ import _ from 'lodash';
             syncing: function() {
                 if (this.syncing === false) {
                     if (this.$store.getters.dataChanged) {
-                        console.log('    this.decks', this.decks)
-                        console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
-                        console.log('    watched syncing for syncing')
+                        // console.log('    this.decks', this.decks)
+                        // console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
+                        // console.log('    watched syncing for syncing')
                         this.sync()
                      }
                 }
