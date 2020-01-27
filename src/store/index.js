@@ -74,11 +74,15 @@ const store = new Vuex.Store({
       state.decks.unshift(newDeck)
       state.userCollection.deck_ids.push(newDeck.deck_id)
     },
-    updateDeck(state, data) {
-      for (let deck of state.decks) {
-        if (deck.deck_id === data.deck_id) {
-          deck = data
-          }
+    updateDeck(state, newerDeck) {
+        let oldDeckLst = state.decks.filter(function(deckToCheck) {
+          return deckToCheck.deck_id === newerDeck.deck_id
+        })
+        if (oldDeckLst.length > 0) {
+          let oldDeck = oldDeckLst[0]
+          let oldDeckIndex = state.decks.indexOf(oldDeck)
+          state.decks.splice(oldDeckIndex, 1);
+          state.decks.push(newerDeck)
       }
     },
     updateDecks(state, data) {
