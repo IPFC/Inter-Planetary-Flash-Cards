@@ -449,7 +449,7 @@ const store = new Vuex.Store({
       return reviewDeck
     },
     dataChanged (state) {
-      if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(!state.decks, state.lastSyncsData.decks)) {
+      if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
         return true
       } else {
         return false
