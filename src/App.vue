@@ -30,27 +30,32 @@ import _ from 'lodash';
         watch: {
             userCollection: {
                 handler: function() {
-                    if (this.userCollection != this.lastSyncsData.userCollection) {
-                        // console.log('user collection changed')
-                        // console.log('watched user collection for syncing')
+                    if (this.syncing === false) {
+                        if (!_.isEqual(this.userCollection, this.lastSyncsData.userCollection)) {
+                            // console.log('    watched user collection for syncing')
                             this.sync()
+                        }
                     } 
                 },
                 deep: true
             },
             decks: {
                 handler: function() {
-                    if (this.decks != this.lastSyncsData.decks) { 
-                        // console.log('watched decks for syncing')
-                         this.sync()
+                    if (this.syncing === false) {
+                        if (!_.isEqual(this.decks, this.lastSyncsData.decks)) { 
+                            // console.log('    watched decks for syncing')
+                            this.sync()
+                        }
                     }
                 },
                 deep: true
             }, 
             syncing: function() {
                 if (this.syncing === false) {
-                    // console.log('watched syncing for syncing')
-                    this.sync()
+                    if (!_.isEqual(this.decks, this.lastSyncsData.decks) || !_.isEqual(this.userCollection, this.lastSyncsData.userCollection)) {
+                        // console.log('    watched syncing for syncing')
+                        this.sync()
+                     }
                 }
             }
         },

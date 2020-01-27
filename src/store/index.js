@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist';
 import Cookies from 'js-cookie'
+import _ from 'lodash';   
 
 Vue.use(Vuex)
 
@@ -36,14 +37,14 @@ const store = new Vuex.Store({
   state: {
     jwt: null,
     jwtValid: false,
-    userCollection: null,
+    userCollection: '',
     decksMeta: null,
     decks: null,
     currentDeck: null,
     reviewDeck: null,
     cardToEditIndex: null,
     navProgressCounter: '',
-    lastSyncsData: null,
+    lastSyncsData: '',
     syncing: false,
     syncFailed: false,
     serverURL: 'https://ipfc-midware.herokuapp.com',
@@ -91,9 +92,10 @@ const store = new Vuex.Store({
       state.userCollection.deck_ids.splice(deck_idIndex, 1);
 
       // remove the deck from 'decks' 
-      let deckToDelete = state.decks.filter(function (deckToCheck) {
+      let deckToDeleteLst = state.decks.filter(function (deckToCheck) {
         return deckToCheck.deck_id === deck_id
-        }) 
+        })
+      let deckToDelete = deckToDeleteLst[0]
       let deckIndex = state.decks.indexOf(deckToDelete)
       if (deckIndex !== -1) { //just in case its alraady not there 
         state.decks.splice(deckIndex, 1);
@@ -184,8 +186,8 @@ const store = new Vuex.Store({
       context.commit('updateDecksMeta', newDecksMeta)
     },
     refreshLastSyncsData(context) {
-      let lastDecks = context.state.decks
-      let lastUserCollection = context.state.userCollection
+      let lastDecks = JSON.parse(JSON.stringify(context.state.decks))
+      let lastUserCollection = JSON.parse(JSON.stringify(context.state.userCollection))
       let lastSyncsData = {
           decks: lastDecks,
           userCollection: lastUserCollection
@@ -197,15 +199,15 @@ const store = new Vuex.Store({
               // just use the copied 'decks' variable the whole time, commit at the end.
               // make sure I'm combining the 'usercollection' on both  client and server.
 
-      // console.log('sync called')
+      // console.log('    sync called')
       if (context.state.syncing === true) {
-        // console.log('syncing blocked')
+        // console.log('    syncing blocked')
         return null
       }
       else{
         context.commit('toggleSyncing', true)
         context.commit('toggleSyncFailed', false)
-        console.log("starting sync")
+        // console.log("    starting sync")
         let serverCollection     
         let localDecksMeta = JSON.parse(JSON.stringify(context.state.decksMeta)) 
         let decks = JSON.parse(JSON.stringify(context.state.decks)) //reload decks, cause they might be changed by above user collection section
@@ -219,12 +221,12 @@ const store = new Vuex.Store({
           })
           .then(response => response.json())
           .then((responseData) => {
-              console.log(responseData)
+              // console.log("    Get Collection ",responseData)
               serverCollection = responseData
           })
-          .catch(function(err) {  
+          .catch(function() {  
             context.commit('toggleSyncFailed', true)
-            console.log(err); 
+            // console.log(err); 
             return null
           });
 
@@ -236,17 +238,21 @@ const store = new Vuex.Store({
               userCollection.deleted_deck_ids.push(server_deleted_deck_id)
               // remove from usercollection included list
               let deck_idIndex = userCollection.deck_ids.indexOf(server_deleted_deck_id)
-              userCollection.deck_ids.splice(deck_idIndex, 1);
-              // remove the deck from 'decks'  // note this is only for 'lastsyncsdata' purposes.
-              let deckToDelete = decks.filter(function (deckToCheck) {
-                return deckToCheck.deck_id === server_deleted_deck_id
-                }) 
-              let deckIndex = decks.indexOf(deckToDelete)
-              if (deckIndex !== -1) { //just in case its not there alraady
-                decks.splice(deckIndex, 1);
+              // if its actually in local
+              if (deck_idIndex !== -1)  {
+                userCollection.deck_ids.splice(deck_idIndex, 1);
+                // remove the deck from 'decks'  // note this is only for 'lastsyncsdata' purposes.
+                let deckToDeleteLst = decks.filter(function (deckToCheck) {
+                  return deckToCheck.deck_id === server_deleted_deck_id
+                  }) 
+                let deckToDelete = deckToDeleteLst[0]
+                let deckIndex = decks.indexOf(deckToDelete)
+                if (deckIndex !== -1) { //just in case its not there alraady
+                  decks.splice(deckIndex, 1);
+                }
+                // actually remove from store, decks and user collection
+                context.commit('deleteDeck', server_deleted_deck_id)
               }
-              // actually remove from store
-              context.commit('deleteDeck', server_deleted_deck_id)
             }
           }
           // if local deleted, but server deleted isn't, add to server deleted list
@@ -265,12 +271,12 @@ const store = new Vuex.Store({
               method: 'DELETE'
               })
               .then(response => response.json())
-              .then((responseData) => {
-                  console.log("decks deleted: ", responseData)
+              .then(() => {
+                  // console.log("    decks deleted: ", responseData)
               })
-              .catch(function(err) {  
+              .catch(function() {  
                 context.commit('toggleSyncFailed', true)
-                console.log(err); 
+                // console.log(err); 
                 return null
               });
           }
@@ -291,16 +297,16 @@ const store = new Vuex.Store({
               })
               .then(response => response.json())
               .then((responseData) => {
-                  console.log("decks downloaded", responseData)
+                  // console.log("    decks downloaded", responseData)
                   for (let downloadedDeck of responseData) {
                     decks.unshift(downloadedDeck)
                     userCollection.deck_ids.push(downloadedDeck.deck_id)
                     context.commit('addDeck', downloadedDeck)
                   }
               })
-              .catch(function(err) {  
+              .catch(function() {  
                 context.commit('toggleSyncFailed', true)
-                console.log(err); 
+                // console.log(err); 
                 return null
               });
           }
@@ -309,13 +315,17 @@ const store = new Vuex.Store({
           let decksToPost = []
           for (let client_deck_id of userCollection.deck_ids ) { 
             if (!serverCollection.deck_ids.includes(client_deck_id)) {
-              let deckToPost = decks.filter(function (deckToCheck) {
+              let deckToPostLst = decks.filter(function (deckToCheck) {
                 return deckToCheck.deck_id === client_deck_id
                 }) 
+              if (deckToPostLst.length > 0) {
+                      let deckToPost = deckToPostLst[0]
               decksToPost.push(deckToPost)
+              }  
             }
           }
           if (decksToPost.length > 0) {
+            // console.log('    posting decks ', decksToPost)
             let postDecksURL = context.state.serverURL + '/post_decks';
             await fetch(postDecksURL, { 
               headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
@@ -324,11 +334,11 @@ const store = new Vuex.Store({
               })
               .then(response => response.json())
               //responseData
-              .then((responseData) => {
-                  console.log("POSTed decks ", responseData);
+              .then(() => {
+                  // console.log("    POSTed decks ", responseData);
                   //err
               }).catch(function() {
-                context.commit('toggleSyncFailed', true)
+                // context.commit('toggleSyncFailed', true)
                 // console.log(err);
               });
           }
@@ -343,32 +353,39 @@ const store = new Vuex.Store({
           })
           .then(response => response.json())
           .then((responseData) => {
-              console.log("got decks meta", responseData)
+              // console.log("    got decks meta", responseData)
               serverDecksMeta = responseData
           })
-          .catch(function(err) {  
+          .catch(function() {  
             context.commit('toggleSyncFailed', true)
-            console.log(err); 
+            // console.log(err); 
             return null
           });
         let decksToPut = []
         let decksToUpdateLocally = []
         // compare the edited dates for each deck in local and server decks meta
         for (let localDeckMeta of localDecksMeta) {
-          let serverDeckMeta = serverDecksMeta.filter(function (deckMetaToCheck) {
+          let serverDeckMetaLst = serverDecksMeta.filter(function (deckMetaToCheck) {
             return deckMetaToCheck.deck_id === localDeckMeta.deck_id
-            })  
-          // if the local version is newer, upload it
-          if (localDeckMeta.edited > serverDeckMeta.edited) {
-            let deckToUpdate = decks.filter(function (deckToCheck) {
-              return deckToCheck.deck_id === localDeckMeta.deck_id
-              }) 
-            decksToPut.push(deckToUpdate)
+            })
+          if (serverDeckMetaLst.length > 0) {
+            let serverDeckMeta = serverDeckMetaLst[0]
+            // if the local version is newer, upload it
+            if (localDeckMeta.edited > serverDeckMeta.edited) {
+              let deckToUpdateLst = decks.filter(function (deckToCheck) {
+                return deckToCheck.deck_id === localDeckMeta.deck_id
+                }) 
+              if (deckToUpdateLst.length >0) {
+                    let deckToUpdate = deckToUpdateLst[0]
+              decksToPut.push(deckToUpdate)
+              }
+            }
+            // if the server version is newer, downlaod it
+            else if (localDeckMeta.edited < serverDeckMeta.edited) {
+              decksToUpdateLocally.push(serverDeckMeta.deck_id)
+            } 
           }
-          // if the server version is newer, downlaod it
-          else if (localDeckMeta.edited < serverDeckMeta.edited) {
-            decksToUpdateLocally.push(serverDeckMeta.deck_id)
-          } 
+          
         }
         // upload all the decks to put
         if (decksToPut.length > 0) {
@@ -380,11 +397,11 @@ const store = new Vuex.Store({
             })
             .then(response => response.json())
             //responseData
-            .then((responseData) => {
-                console.log("PUT decks ", responseData);
-            }).catch(function(err) {
+            .then(() => {
+                // console.log("    PUT decks ", responseData);
+            }).catch(function() {
               context.commit('toggleSyncFailed', true)
-              console.log(err);
+              // console.log(err);
             });
         }
        
@@ -398,20 +415,23 @@ const store = new Vuex.Store({
           })
           .then(response => response.json())
           .then((responseData) => {
-              console.log("decks downloaded", responseData)
+              // console.log("    decks downloaded", responseData)
               for (let newerDeck of responseData) {
-                let oldDeck = decks.filter(function(deckToCheck) {
+                let oldDeckLst = decks.filter(function(deckToCheck) {
                   return deckToCheck.deck_id === newerDeck.deck_id
                 })
-                let oldDeckIndex = decks.indexOf(oldDeck)
-                decks.splice(oldDeckIndex, 1);
-                decks.push(newerDeck)
-                context.commit('updateDeck', newerDeck)
+                if (oldDeckLst.length > 0) {
+                  let oldDeck = oldDeckLst[0]
+                  let oldDeckIndex = decks.indexOf(oldDeck)
+                  decks.splice(oldDeckIndex, 1);
+                  decks.push(newerDeck)
+                  context.commit('updateDeck', newerDeck)
+                }
               }
           })
-          .catch(function(err) {  
+          .catch(function() {  
             context.commit('toggleSyncFailed', true)
-            console.log(err); 
+            // console.log(err); 
             return null
           }); 
         }
@@ -419,8 +439,8 @@ const store = new Vuex.Store({
           decks: decks,
           userCollection: userCollection
         })
-        context.commit('toggleSyncing', false)
       }
+      context.commit('toggleSyncing', false)
     }
   },
   getters: {
@@ -428,7 +448,7 @@ const store = new Vuex.Store({
     getDecks: state => state.decks,
     navProgressCounter: state => state.navProgressCounter,
     dataChanged (state) {
-      if(state.userCollection != state.lastSyncsData.userCollection || state.decks != state.lastSyncsData.decks) {
+      if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || _.isEqual(!state.decks, state.lastSyncsData.decks)) {
         return true
       } else {
         return false

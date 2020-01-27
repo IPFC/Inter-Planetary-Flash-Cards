@@ -131,7 +131,7 @@ export default {
         this.setAllDeckColors()
         this.$store.dispatch('updateReviewDeck')
         this.$store.dispatch('navProgress', 0)
-        if (this.$store.state.lastSyncsData === null) {
+        if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
         }
         this.$store.commit('updateCurrentDeck', this.reviewDeck)
