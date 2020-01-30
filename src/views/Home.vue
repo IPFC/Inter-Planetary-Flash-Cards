@@ -110,6 +110,37 @@ export default {
             this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card))
             this.$router.push('/card-editor')
         }
+        // duplicateChecker () {
+        //     for (let deck of this.$store.state.decks) {
+        //         for (let dupDeck of this.$store.state.decks) {
+        //             let dupCount = 0
+        //             if (deck.deck_id === dupDeck.deck_id) {
+        //                 dupCount ++
+        //                 console.log("    dupCount", dupCount)    
+        //                 if (dupCount > 1) {
+        //                     console.log("    duplicate deck  detected", dupDeck)
+        //                     this.$store.commit('deleteDeck', dupDeck.deck_id)
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     for (let deck of this.$store.state.decks) {
+        //         for (let card of deck.cards) {
+        //             let dupCount = 0
+        //             for (let cardDup of deck.cards) {
+        //                 if (card.card_id === cardDup.card_id) {
+        //                     dupCount ++
+        //                     console.log("    dupCount", dupCount)    
+        //                     if (dupCount > 1) {
+        //                         console.log("    duplicate card  detected", cardDup)
+        //                         let deleteData = { deck_id: deck.deck_id, card_id:  cardDup.card_id,}
+        //                         this.$store.commit('deleteCard', deleteData)
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         // generateRandomHslaColor (){
         //     // round to an interval of 20, 0-360
         //     let hue = Math.round(Math.random() * 360 / 20) * 20
@@ -132,6 +163,7 @@ export default {
     },
     created () {
         // this.setAllDeckColors()
+        // this.duplicateChecker()
         this.$store.dispatch('navProgress', 0)
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
