@@ -106,36 +106,38 @@ export default {
             this.$store.dispatch('navProgress', this.cardsCompleted)
         },
         editCard(card, reviewDeck) {
+            this.$store.commit('updateNavToCardEditorFromReview', true)
             this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card))
             this.$router.push('/card-editor')
-        },
-        generateRandomHslaColor (){
-            // round to an interval of 20, 0-360
-            let hue = Math.round(Math.random() * 360 / 20) * 20
-            let color = `hsla(${hue}, 100%, 50%, 1)`
-            return color
-        },
-        setAllDeckColors () {
-            let decks = this.$store.state.decks
-            for (let deck of decks) {
-                if (!deck.icon_color) {
-                // console.log("setting deck icons")
-
-                 deck.icon_color = this.generateRandomHslaColor()
-                    deck.edited = Math.round(new Date().getTime() / 1000);
-            this.$store.commit('updateDeck', deck)
-                }
-            
-            }
         }
+        // generateRandomHslaColor (){
+        //     // round to an interval of 20, 0-360
+        //     let hue = Math.round(Math.random() * 360 / 20) * 20
+        //     let color = `hsla(${hue}, 100%, 50%, 1)`
+        //     return color
+        // },
+        // setAllDeckColors () {
+        //     let decks = this.$store.state.decks
+        //     for (let deck of decks) {
+        //         if (!deck.icon_color) {
+        //         // console.log("setting deck icons")
+
+        //          deck.icon_color = this.generateRandomHslaColor()
+        //             deck.edited = Math.round(new Date().getTime() / 1000);
+        //     this.$store.commit('updateDeck', deck)
+        //         }
+            
+        //     }
+        // }
     },
     created () {
-        this.setAllDeckColors()
+        // this.setAllDeckColors()
         this.$store.dispatch('navProgress', 0)
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
         }
-        this.$store.commit('updateCurrentDeckID', 'reviewDeck')
+        this.$store.commit('updateCurrentDeckId', 'reviewDeck')
+        this.$store.commit('updateNavToCardEditorFromReview', false)
         this.currentCardIndex = 0
         this.$store.commit('toggleNavNewCardDisabled', false)
 

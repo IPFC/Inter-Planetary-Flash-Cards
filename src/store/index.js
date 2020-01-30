@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist';
 import Cookies from 'js-cookie'
 import _ from 'lodash';   
+const uuidv4 = require('uuid/v4');
 
 Vue.use(Vuex)
 
@@ -23,10 +24,8 @@ const vuexLocal = new VuexPersistence({
   // Function that passes the state and returns the state with only the objects you want to store.
   reducer: (state) => ({
     userCollection: state.userCollection,
-    decksMeta: state.decksMeta,
     decks: state.decks,
     currentDeckId: state.deck,
-    // reviewDeck: state.reviewDeck,
     lastSyncsData: state.lastSyncsData
   })
   // Function that passes a mutation and lets you decide if it should update the state in localStorage.
@@ -38,10 +37,8 @@ const store = new Vuex.Store({
     jwt: null,
     jwtValid: false,
     userCollection: '',
-    decksMeta: null,
     decks: null,
     currentDeckId: null,
-    // reviewDeck: null,
     cardToEditIndex: null,
     navProgressCounter: '',
     lastSyncsData: '',
@@ -49,7 +46,8 @@ const store = new Vuex.Store({
     syncFailed: false,
     serverURL: 'https://ipfc-midware.herokuapp.com',
     navNewCardDisabled: false,
-    navNewCardClicked: false
+    navNewCardClicked: false,
+    navToCardEditorFromReview: false,
   },
   mutations: {
     updateJwt(state, newJwt) {
@@ -66,9 +64,6 @@ const store = new Vuex.Store({
     },
     updateUserCollection(state, data) {
       state.userCollection = data
-    },
-    updateDecksMeta(state, data) {
-      state.decksMeta = data
     },
     addDeck(state, newDeck) {
       state.decks.unshift(newDeck)
@@ -92,25 +87,101 @@ const store = new Vuex.Store({
       // add to usercollection deleted list
       state.userCollection.deleted_deck_ids.push(deck_id)
       // remove from usercollection included list
-      let deck_idIndex = state.userCollection.deck_ids.indexOf(deck_id)
-      state.userCollection.deck_ids.splice(deck_idIndex, 1);
+      let deckIdIndex = state.userCollection.deck_ids.indexOf(deck_id)
+      state.userCollection.deck_ids.splice(deckIdIndex, 1);
 
       // remove the deck from 'decks' 
-      let deckToDeleteLst = state.decks.filter(function (deckToCheck) {
-        return deckToCheck.deck_id === deck_id
-        })
-      let deckToDelete = deckToDeleteLst[0]
-      let deckIndex = state.decks.indexOf(deckToDelete)
+      let deckIndex 
+      for (let deck of state.decks) {
+        if (deck.deck_id === deck_id) {
+          deckIndex = state.decks.indexOf(deck)
+          break
+        }
+      }
       if (deckIndex !== -1) { //just in case its alraady not there 
         state.decks.splice(deckIndex, 1);
+      }
+    },
+    newCard (state, deck_id) {
+      // new blank card
+      let newCard = {
+        back_text:"",
+        card_id: uuidv4(),
+        card_tags: ["Daily Review"],
+        front_text: ""
+      }
+      for (let deck of state.decks) {
+        if (deck.deck_id === deck_id) {
+            deck.cards.push(newCard)
+            deck.edited = new Date().getTime() / 1000
+          }
+          break
+        }
+    },
+    addCard (state, data) {
+      // insert card with data
+      let deck_id = data.deck_id 
+      let card = data.card
+      for (let deck of state.decks) {
+        if (deck.deck_id === deck_id) {
+          let sameCount = 0
+          for (let origCard of deck.cards){
+            if (origCard.card_id === card.card_id){
+              sameCount ++
+              break
+            }
+          }
+          if (sameCount === 0) {
+            deck.cards.push(card)
+            deck.edited = new Date().getTime() / 1000
+          }
+          break
+        }
+      }
+    },
+    deleteCard (state, data) {
+      let deck_id = data.deck_id 
+      let card_id = data.card_id
+      let cardIndex
+      for (let deck of state.decks) {
+        if (deck.deck_id === deck_id) {
+          for (let card of deck.cards) {
+            if (card.card_id === card_id) {
+              cardIndex = deck.cards.indexOf(card)
+              if (cardIndex !== -1) { //just in case its alraady not there 
+                deck.cards.splice(cardIndex, 1)
+                deck.edited = new Date().getTime() / 1000
+                break
+              }
+            }
+          }
+          break
+        }
+      }
+    },
+    updateCard(state, data) {
+      let deck_id = data.deck_id 
+      let newCard = JSON.parse(JSON.stringify(data.card)) 
+      let cardIndex
+      for (let deck of state.decks) {
+        if (deck.deck_id === deck_id) {
+          for (let oldCard of deck.cards) {
+            if (oldCard.card_id === newCard.card_id) {
+              cardIndex = deck.cards.indexOf(oldCard)
+              if (cardIndex !== -1) { //just in case its not there 
+                deck.cards.splice(cardIndex, 1, newCard)
+                deck.edited = new Date().getTime() / 1000
+                break
+              }
+            }
+          }
+          break
+        }
       }
     },
     updateCurrentDeckId(state, data) {
       state.currentDeckId = data
     },
-    // updateReviewDeck(state, data) {
-    //   state.reviewDeck = data
-    // },
     updateProgressCounter(state, data) {
       state.navProgressCounter = data
     },
@@ -126,21 +197,25 @@ const store = new Vuex.Store({
     toggleNavNewCardDisabled (state, bool) {
       state.navNewCardDisabled = bool
     },
-    toggleNavNewCardClicked (state) {
+    updateNavToCardEditorFromReview (state, bool) {
+      state.navToCardEditorFromReview = bool
+    },
+    toggleNewCardClicked (state) {
       state.navNewCardClicked = !state.navNewCardClicked
+    },
+    updateDeckEdited(state, deck_id) {
+      for (let deck of state.decks) {
+        if (deck.deck_id === deck_id) {
+          deck.edited = new Date().getTime() / 1000
+          break
+        }
+      }
     }
   },
   actions: {
-    deleteDeck (context, id){
-      context.commit('deleteDeck', id)
-      context.dispatch('refreshDecksMeta')
-    },
     navProgress (context, completedCards) {                 //.cards
         let outputString = completedCards + " / "  + context.getters.reviewDeck.cards.length
         context.commit('updateProgressCounter', outputString)
-    },
-    navNewCardClicked (context) {
-      context.commit('toggleNavNewCardClicked')
     },
     logout(context) {
       context.commit('deleteJwt')
@@ -160,22 +235,6 @@ const store = new Vuex.Store({
         const now = new Date()
         context.commit('toggleJwtValid', now < exp)
       }
-    },
-    refreshDecksMeta(context) {
-      let decks = context.state.decks
-      let newDecksMeta = []
-      for (let deck of decks) {
-        let deckMeta = {
-          deck_cid: deck.deck_cid,
-          deck_id: deck.deck_id,
-          edited: deck.edited,
-          title: deck.title,
-          deck_length: deck.cards.length,
-          icon_color: deck.icon_color
-        }
-        newDecksMeta.push(deckMeta)
-      }
-      context.commit('updateDecksMeta', newDecksMeta)
     },
     refreshLastSyncsData(context) {
       let lastDecks = JSON.parse(JSON.stringify(context.state.decks))
@@ -201,7 +260,8 @@ const store = new Vuex.Store({
         context.commit('toggleSyncFailed', false)
         // console.log("    starting sync")
         let serverCollection     
-        let localDecksMeta = JSON.parse(JSON.stringify(context.state.decksMeta)) 
+        let localDecksMeta = JSON.parse(JSON.stringify(context.getters.decksMeta)) 
+        // console.log('    localDecksMeta ', localDecksMeta)
         let decks = JSON.parse(JSON.stringify(context.state.decks)) //reload decks, cause they might be changed by above user collection section
         let userCollection = JSON.parse(JSON.stringify(context.state.userCollection))
         let getCollectionURL = context.state.serverURL + '/get_user_collection' 
@@ -431,21 +491,43 @@ const store = new Vuex.Store({
         decks: decks,
         userCollection: userCollection
       })
-      context.dispatch('refreshDecksMeta')
       context.commit('toggleSyncing', false)
       }
     }
   },
   getters: {
-    currentDeck(state, getters) {
-        if (state.currentDeckId === "reviewDeck") {
-            return getters.reviewDeck
-        } else {
-            let getCurrentDeck = state.decks.filter( function(deckToCheck){
-                return deckToCheck.deck_id === state.currentDeckId
-            })
-            return getCurrentDeck[0]
+    // decksMeta should ge a getter, it should always be sorted. who needs sorted decks, the deck selecter, and create card.
+  
+    decksMeta(state) {
+      let decks = state.decks
+      let newDecksMeta = []
+      for (let deck of decks) {
+        let deckMeta = {
+          deck_cid: deck.deck_cid,
+          deck_id: deck.deck_id,
+          edited: deck.edited,
+          title: deck.title,
+          deck_length: deck.cards.length,
+          icon_color: deck.icon_color
         }
+        newDecksMeta.push(deckMeta)
+      }
+      newDecksMeta.sort(function(a, b) { 
+        return b.edited - a.edited;
+    })
+      return newDecksMeta
+    },
+    currentDeck(state, getters) {
+      if (state.currentDeckId === "reviewDeck") {
+          return getters.reviewDeck
+      }
+      else {
+        for (let deck of state.decks) {
+          if (deck.deck_id === state.currentDeckId) {
+            return deck
+          }
+        }
+      }
     },
     isAuthenticated: state => state.jwtValid,
     getDecks: state => state.decks,

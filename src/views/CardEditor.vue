@@ -28,11 +28,11 @@
                     </b-form-input>
                 </b-button>
             </p>
-            <b-button  @click="removeCardFromDeck(deck.title)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.deck_id" > 
+            <b-button  @click="removeCardFromDeck(deck.deck_id)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.deck_id" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
             <br>
-            <b-button  @click="addCardToDeck(deck.title)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.deck_id" > 
+            <b-button  @click="addCardToDeck(deck.deck_id)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.deck_id" > 
                     {{ deck.title.slice(0, 24) }}
             </b-button>
         </b-container>
@@ -109,6 +109,7 @@ export default {
             initialDeckState : null,
             addingDeck: false,
             addingTag: false,
+            addingCard: false,
             newDeckTitle: "",
             newTagTitle: "",
         };
@@ -117,21 +118,20 @@ export default {
         ...mapState({
             userCollection: 'userCollection',
             cardToEditIndex: 'cardToEditIndex',
-            decksMeta: 'decksMeta',
             decks: 'decks',
-            currentDeck: 'currentDeck',
             jwt: 'jwt',
-            navNewCardClicked: 'navNewCardClicked'
+            navNewCardClicked: 'navNewCardClicked',
+            navToCardEditorFromReview: 'navToCardEditorFromReview'
         }),
+        decksMeta () {
+            return this.$store.getters.decksMeta
+
+        },
         currentDeck() {
             return this.$store.getters.currentDeck
         },
         card() {
-            return this.currentDeck.cards[this.cardIndex]
-        },
-        cardIndex () {
-            return this.cardToEditIndex
-
+            return this.currentDeck.cards[this.cardToEditIndex]
         },
         includedDecks () {
             var card = this.card
@@ -208,88 +208,88 @@ export default {
     methods: {
         deleteCard () {
             // for each of the included decks, filter out the current card from its .cards
-            let changedDecks = this.unincludedDecks
-            for (let deck of this.includedDecks) {
-                let card = this.card
-                let updatedDeckCards = deck.cards.filter(function (cards) {
-                    return cards.card_id != card.card_id
-                    }) 
-                deck.cards = updatedDeckCards
-                deck.edited = Math.round(new Date().getTime() / 1000);
-                changedDecks.push(deck)
+            let card = JSON.parse(JSON.stringify(this.card))
+            let currentDeckLength = JSON.parse(JSON.stringify(this.currentDeck.cards.length))
+            let includedDecks = JSON.parse(JSON.stringify(this.includedDecks))
+            let wasLastCard
+            if (this.rightNavDisabled) {
+                wasLastCard = true
             }
-            this.$store.commit('updateDecks', changedDecks)
-            this.$store.dispatch('refreshDecksMeta')
-            this.$router.go(-1)
+            let card_id = card.card_id
+            for (let deck of includedDecks) {
+                let deleteData = {deck_id: deck.deck_id, card_id: card_id}
+                this.$store.commit('deleteCard', deleteData)
+            }
+            if (currentDeckLength === 1 || this.navToCardEditorFromReview) {
+                this.$router.go(-1)
+            }
+            else if (wasLastCard) {
+               this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
+            }
         },
         previousCard() {
-             if (this.unChanged === false) {
-                    this.submit()
-            }    
+            this.submit()
             this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
         },
         undo () {
             return null
         },
         nextCard() {
-            if (this.unChanged === false) {
-                    this.submit()
-            }    
+            this.submit()
             this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
         },
         doneCheck () {
             this.submit()
-            this.$router.go(-1)
+            let wasLastCard
+            if (this.rightNavDisabled) {
+                wasLastCard = true
+            }
+            let currentDeckLength = JSON.parse(JSON.stringify(this.currentDeck.cards.length))
+            if (currentDeckLength === 1 || this.navToCardEditorFromReview) {
+                this.$router.go(-1)
+            }
+            else if (wasLastCard) {
+               this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
+            }
+            else {
+                this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
+            }
         },
         submit () {
-            for (let deck of this.includedDecks) {
-                let card = this.card
-                // get original index, as to insert in original position
-                let cardInCurrentDeck = deck.cards.filter(function (cardToCheck){
-                    return cardToCheck.card_id === card.card_id
-                })
-                let indexOfCard = deck.cards.indexOf(cardInCurrentDeck)
-
-                // filter out the old version card from .cards
-                let updatedDeckCards = deck.cards.filter(function (cardToCheck) {
-                    return cardToCheck.card_id != card.card_id
-                    })
-                // then add new one back
-                updatedDeckCards.splice(indexOfCard, 0, card)
-                deck.cards = updatedDeckCards
-                deck.edited = Math.round(new Date().getTime() / 1000);
-                this.$store.commit('updateDeck', deck)
+            if (this.card.front_text === "" && this.card.back_text === "" && !this.addingCard) {
+                this.deleteCard()
             }
-            this.$store.dispatch('refreshDecksMeta')
-        },
-        removeCardFromDeck (title) {
-            // console.log('removing from deck ' + title)
-            for (let deck of this.decks) {
-                let card = this.card
-                if (deck.title === title){
-                let updatedDeckCards = deck.cards.filter(function (cards) {
-                    return cards.card_id != card.card_id
-                    }) 
-                deck.cards = updatedDeckCards
-                deck.edited = Math.round(new Date().getTime() / 1000);
-                this.$store.commit('updateDeck', deck)
-                this.$store.dispatch('refreshDecksMeta')
-
+            else {
+                if (!this.unChanged) {
+                    let includedDecks = JSON.parse(JSON.stringify(this.includedDecks))
+                    for (let deck of includedDecks) {
+                        let updateData = {deck_id: deck.deck_id, card: this.card}
+                        this.$store.commit('updateCard', updateData)
+                    }
                 }
             }
+            this.addingCard = false
         },
-        addCardToDeck (title) {
-            // console.log('adding to deck ' + title)
-            for (let deck of this.decks) {
-                let card = this.card
-                if (deck.title == title){
-                    deck.cards.push(card)
+        removeCardFromDeck (passedInDeck_id) {
+            let deck_id = JSON.parse(JSON.stringify(passedInDeck_id))
+            // if deck is current deck, switch current deck
+            if (deck_id === this.currentDeck.deck_id) {
+                for (let deck of this.includedDecks) {
+                    if (deck.deck_id !== this.currentDeck.deck_id) {
+                        this.$store.commit('updateCurrentDeckId', deck.deck_id)
+                        break
+                    }
                 }
-            deck.edited = Math.round(new Date().getTime() / 1000);
-            this.$store.commit('updateDeck', deck)
-            this.$store.dispatch('refreshDecksMeta')
-
             }
+            let card= JSON.parse(JSON.stringify(this.card))
+            if (this.includedDecks.length !== 1) {
+                let deleteData = {deck_id: deck_id, card_id: card.card_id}
+                this.$store.commit('deleteCard', deleteData)
+            }
+        },
+        addCardToDeck (deck_id) {
+            let addData = {deck_id: deck_id, card: this.card}
+            this.$store.commit('addCard', addData)
         },
         removeTagFromCard(tag){
             this.card.card_tags.splice(this.card.card_tags.indexOf(tag),1)
@@ -327,7 +327,6 @@ export default {
                     icon_color: this.generateRandomHslaColor()
                     }
                 this.$store.commit('addDeck', emptyDeck)
-                this.$store.dispatch('refreshDecksMeta')
                 this.newDeckTitle= ""
                 this.toggleAddingDeck()
             }
@@ -342,7 +341,7 @@ export default {
             let allTags = this.unincludedTags.concat(this.card.card_tags)
             if (allTags.includes(this.newTagTitle) || this.newTagTitle === "" || this.newTagTitle === " ") {
                 this.toggleAddingTag()
-            }else {
+            } else {
                 this.card.card_tags.unshift(this.newTagTitle)
                 this.submit()
                 this.newtagTitle= ""
@@ -352,12 +351,14 @@ export default {
         
     },
     created () {
-        this.$store.commit('toggleNavNewCardDisabled', true)
         // deep copy so it doesnt change
         this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck))
     },
     watch: {
         navNewCardClicked: function() {
+            this.$store.commit('toggleNavNewCardDisabled', false)
+            // avoid deleting a new card just cause its blank
+            this.addingCard = true
             this.submit()
         },
         unChanged: function () {

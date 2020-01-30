@@ -63,7 +63,7 @@ export default {
     },
     computed: {
       deck () {
-          return this.$store.getters.currentDeck
+        return this.$store.getters.currentDeck
       }
     },
     methods: {
@@ -72,10 +72,10 @@ export default {
             this.editingDeckTitle = !this.editingDeckTitle
         },
         commitDeckTitle() {
+            // check to make sure it was changed
             this.deck.title = this.newDeckTitle
             this.deck.edited = Math.round(new Date().getTime() / 1000);
             this.$store.commit('updateDeck', this.deck)
-            this.$store.dispatch('refreshDecksMeta')
             this.toggleEditDeckTitle()
         },
         editCard(card) {

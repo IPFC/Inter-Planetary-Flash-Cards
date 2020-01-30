@@ -32,7 +32,6 @@
 </template>
 
 <script>
-const uuidv4 = require('uuid/v4');
 
 import { mapState } from 'vuex'
 export default {
@@ -56,17 +55,14 @@ export default {
   },
   methods: {
     newCard() {
-      this.$store.dispatch('navNewCardClicked')
-      let newCard = {
-          back_text:"",
-          card_id: uuidv4(),
-          card_tags: ["Daily Review"],
-          front_text: ""
-      }
-            //.cards
-      this.currentDeck.cards.push(newCard)
-      this.currentDeck.edited = Math.round(new Date().getTime() / 1000);
-      // if coming from the home screen, it won't have a current deck. we want to make a new card, but not assigned to any deck yet
+      this.$store.commit('toggleNewCardClicked')
+      if (this.$store.state.currentDeckId === 'reviewDeck' || this.$store.state.currentDeckId === 'defaultDeck') {
+        if (this.$store.state.currentDeckId === 'reviewDeck') {
+              this.$store.commit('updateNavToCardEditorFromReview', true)
+          }                                   // this will be the most recent edited deck
+        this.$store.commit('updateCurrentDeckId', this.$store.getters.decksMeta[0].deck_id)
+     } 
+      this.$store.commit('newCard', this.currentDeck.deck_id)      
       this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1)
       if (this.$route.name !== 'card-editor' ) {
         this.$router.push('/card-editor')
