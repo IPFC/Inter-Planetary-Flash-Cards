@@ -2,7 +2,7 @@
   <div id="main">
       <!-- <h3>Decks</h3> -->
     <b-list-group >
-    <b-list-group-item id="list-group-item" v-for="deckMeta in decksMeta" :key="deckMeta.deck_id" > 
+    <b-list-group-item id="list-group-item" v-for="(deckMeta, index) in decksMeta" :key="index" > 
       <b-container id="list-group-item-container">
         <b-row id="list-group-item-row">
          <b-col id="icon-col" cols="1" class="align-self-center">
@@ -12,7 +12,7 @@
          </b-col>
          <b-col id="text-and-edit-col" cols="11">
           <b-row>
-            <b-col id="text-col" @click="openDeck(deckMeta.deck_id)">
+            <b-col id="text-col" @click="openDeck(decksMeta[index].deck_id)">
               <p class="text title" >{{ deckMeta.title }}</p> 
               <p class="text card-count">
                 {{ deckMeta.deck_length }} card{{cardOrCards(deckMeta.deck_length)}}
@@ -44,7 +44,6 @@
 
 
 <script>
-import { mapState } from 'vuex'
 export default {
   name: 'deck-selection',
   data () {
@@ -52,18 +51,13 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-      'decksMeta'
-    ])
+    decksMeta () {
+      return this.$store.getters.decksMeta
+    }
   },  
   methods: {
     openDeck (id) {
-      var deck
-      for (deck of this.$store.getters.getDecks) {
-        if (deck.deck_id === id) {
-          this.$store.commit('updateCurrentDeck', deck)
-        }
-      }
+      this.$store.commit('updateCurrentDeckId', id)
       this.$router.push('/deck-editor')
     },
     cardOrCards (deckLength) {
@@ -89,17 +83,13 @@ export default {
       }
     },
     deleteDeck(id) {
-      let decks = this.$store.state.decks
-      let updatedDecks = decks.filter(function (deckToCheck) {
-          return deckToCheck.deck_id !== id
-          }) 
-      this.$store.commit('updateDecks', updatedDecks)
-      this.$store.dispatch('refreshDecksMeta')
+      this.$store.commit('deleteDeck', id)
     }
   },
   created () {
-    this.$store.dispatch('refreshDecksMeta')
     this.$store.commit('toggleNavNewCardDisabled', false)
+    this.$store.commit('updateCurrentDeckId', 'defaultDeck')
+
   }
 }
 </script>

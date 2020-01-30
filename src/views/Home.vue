@@ -70,13 +70,15 @@ export default {
             currentCardIndex: 0,
             cardFlipToggle: false,
             cardsCompleted: 0,
-            cardsTotal: 0,
+            cardsTotal: 0
         }
     },
     computed: {
         ...mapState({
-            reviewDeck: 'reviewDeck'
         }),
+        reviewDeck() { 
+            return this.$store.getters.reviewDeck
+        },
         currentCard () {
             return this.reviewDeck.cards[this.currentCardIndex]
         },
@@ -104,37 +106,70 @@ export default {
             this.$store.dispatch('navProgress', this.cardsCompleted)
         },
         editCard(card, reviewDeck) {
+            this.$store.commit('updateNavToCardEditorFromReview', true)
             this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card))
             this.$router.push('/card-editor')
-        },
-        generateRandomHslaColor (){
-            // round to an interval of 20, 0-360
-            let hue = Math.round(Math.random() * 360 / 20) * 20
-            let color = `hsla(${hue}, 100%, 50%, 1)`
-            return color
-        },
-        setAllDeckColors () {
-            let decks = this.$store.state.decks
-            for (let deck of decks) {
-                if (!deck.icon_color) {
-                // console.log("setting deck icons")
-
-                 deck.icon_color = this.generateRandomHslaColor()
-                    deck.edited = Math.round(new Date().getTime() / 1000);
-            this.$store.commit('updateDeck', deck)
-                }
-            
-            }
         }
+        // duplicateChecker () {
+        //     for (let deck of this.$store.state.decks) {
+        //         for (let dupDeck of this.$store.state.decks) {
+        //             let dupCount = 0
+        //             if (deck.deck_id === dupDeck.deck_id) {
+        //                 dupCount ++
+        //                 console.log("    dupCount", dupCount)    
+        //                 if (dupCount > 1) {
+        //                     console.log("    duplicate deck  detected", dupDeck)
+        //                     this.$store.commit('deleteDeck', dupDeck.deck_id)
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     for (let deck of this.$store.state.decks) {
+        //         for (let card of deck.cards) {
+        //             let dupCount = 0
+        //             for (let cardDup of deck.cards) {
+        //                 if (card.card_id === cardDup.card_id) {
+        //                     dupCount ++
+        //                     console.log("    dupCount", dupCount)    
+        //                     if (dupCount > 1) {
+        //                         console.log("    duplicate card  detected", cardDup)
+        //                         let deleteData = { deck_id: deck.deck_id, card_id:  cardDup.card_id,}
+        //                         this.$store.commit('deleteCard', deleteData)
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // generateRandomHslaColor (){
+        //     // round to an interval of 20, 0-360
+        //     let hue = Math.round(Math.random() * 360 / 20) * 20
+        //     let color = `hsla(${hue}, 100%, 50%, 1)`
+        //     return color
+        // },
+        // setAllDeckColors () {
+        //     let decks = this.$store.state.decks
+        //     for (let deck of decks) {
+        //         if (!deck.icon_color) {
+        //         // console.log("setting deck icons")
+
+        //          deck.icon_color = this.generateRandomHslaColor()
+        //             deck.edited = Math.round(new Date().getTime() / 1000);
+        //     this.$store.commit('updateDeck', deck)
+        //         }
+            
+        //     }
+        // }
     },
     created () {
-        this.setAllDeckColors()
-        this.$store.dispatch('updateReviewDeck')
+        // this.setAllDeckColors()
+        // this.duplicateChecker()
         this.$store.dispatch('navProgress', 0)
-        if (this.$store.state.lastSyncsData === null) {
+        if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
         }
-        this.$store.commit('updateCurrentDeck', this.reviewDeck)
+        this.$store.commit('updateCurrentDeckId', 'reviewDeck')
+        this.$store.commit('updateNavToCardEditorFromReview', false)
         this.currentCardIndex = 0
         this.$store.commit('toggleNavNewCardDisabled', false)
 

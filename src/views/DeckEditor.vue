@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
     name: 'deck-editor',
     data() {
@@ -63,9 +62,9 @@ export default {
         };
     },
     computed: {
-        ...mapState({
-            deck: 'currentDeck'
-        }),
+      deck () {
+        return this.$store.getters.currentDeck
+      }
     },
     methods: {
         toggleEditDeckTitle(){
@@ -73,10 +72,10 @@ export default {
             this.editingDeckTitle = !this.editingDeckTitle
         },
         commitDeckTitle() {
+            // check to make sure it was changed
             this.deck.title = this.newDeckTitle
             this.deck.edited = Math.round(new Date().getTime() / 1000);
             this.$store.commit('updateDeck', this.deck)
-            this.$store.dispatch('refreshDecksMeta')
             this.toggleEditDeckTitle()
         },
         editCard(card) {
@@ -114,8 +113,7 @@ export default {
 
 <style scoped>
 #card {
-    max-width: 600px;
-    margin: 10px auto;
+    margin: 10px 10px;
     box-shadow: 0px 0px 15px 5px
     rgba(0, 0, 0, 0.1);
 }
@@ -133,11 +131,13 @@ export default {
 
 #main-col {
     margin: auto;
+    width:auto;
     max-width: 600px;
-    width: 100%;
-    padding: 0;
+    padding: 15;
 }
-
+#title-row{
+    width: 100%;
+}
 #text-col{
   padding: 0px 0px 10px 20px ;
 }
@@ -156,7 +156,6 @@ export default {
 }
 #icon-col{
   width: 50px;
-  padding: 0px; 
   height: 50px;
 }
 #icon:hover{

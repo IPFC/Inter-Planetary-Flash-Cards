@@ -11,12 +11,17 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEllipsisH, faPlusCircle, faStepForward, faStepBackward, faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
+  faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, 
+  faSpinner, faExclamation} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon, FontAwesomeLayers} from '@fortawesome/vue-fontawesome'
 
-library.add(faEllipsisH, faPlusCircle, faStepForward, faStepBackward, faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, faSpinner)
+library.add(faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
+  faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, 
+  faSpinner, faExclamation)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-layers', FontAwesomeLayers)
 import App from './App.vue'
 
 Vue.use(BootstrapVue)

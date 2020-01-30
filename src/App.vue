@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div class="body" id="app">
             <Navbar id="navbar"/>
             <router-view/>
     </div>
@@ -23,21 +23,42 @@ import _ from 'lodash';
         computed: {
             ...mapState({
                 decks: 'decks',
-                syncing: 'syncing'
+                syncing: 'syncing',
+                userCollection: 'userCollection',
+                lastSyncsData: 'lastSyncsData'
             }),
         },
         watch: {
+            userCollection: {
+                handler: function() {
+                    if (this.syncing === false) {
+                        if (this.$store.getters.dataChanged) {                            
+                            // console.log('    watched user collection for syncing')
+                            this.sync()
+                        }
+                    } 
+                },
+                deep: true
+            },
             decks: {
                 handler: function() {
-                    // console.log('watched decks for syncing')
-                    this.sync()
+                    if (this.syncing === false) {
+                        if (this.$store.getters.dataChanged) {                            
+                            // console.log('    watched decks for syncing')
+                            this.sync()
+                        }
+                    }
                 },
                 deep: true
             },
             syncing: function() {
                 if (this.syncing === false) {
-                    // console.log('watched syncing for syncing')
-                    this.sync()
+                    if (this.$store.getters.dataChanged) {
+                        // console.log('    this.decks', this.decks)
+                        // console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
+                        // console.log('    watched syncing for syncing')
+                        this.sync()
+                     }
                 }
             }
         },
@@ -46,6 +67,7 @@ import _ from 'lodash';
                 //  console.log('debounced sync')
                 this.$store.dispatch('sync')
             }, 60000),
+
             async redirectIfAuth () {
                 await this.$store.dispatch('checkJwt')
                 if (this.$store.getters.isAuthenticated) {
@@ -83,4 +105,11 @@ import _ from 'lodash';
   width: 100%;
   z-index: 2000;
     }
+.body::-webkit-scrollbar {
+    width: .5em;
+}
+.body::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 5px;
+}
 </style>

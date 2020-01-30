@@ -197,25 +197,23 @@ export default {
                 .then((data) => {
                     // console.log(data);
                     if (!data['token']) {
-                        this.failedLogin = true
-                        this.apiErrorMsg = data['error']
+                        // this.failedLogin = true
+                        // this.apiErrorMsg = data['error']
                     }
                     else {
                         this.$store.commit('updateJwt', data['token']);
                         this.$store.dispatch('checkJwt')
                         this.$store.commit('updateUserCollection', data['user_collection'])
-                        this.$store.commit('updateDecksMeta', data['decks_meta'])
                         this.$store.commit('updateDecks', data['decks'])
                         this.$store.dispatch('refreshLastSyncsData')
                         this.$router.push('home');
                     }
                     this.loggingIn = false
                     })
-                    .catch(function() {
-                        //console.log(error);
-                        // this returns an error
-                        this.failedLogin = true
-                        this.apiErrorMsg = 'Server error'
+                    .catch(function(err) {
+                        //console.log(err);
+                        // this.failedLogin = true    // this should be added to store, says this is undefined
+                        this.apiErrorMsg = err
                     });
                     
         },
@@ -239,15 +237,15 @@ export default {
                     // console.log(data);
                     if (!data['message']) {
                         this.failedLogin = true
-                        this.apiErrorMsg = data['error']
+                        // this.apiErrorMsg = data['error']
                     }
                     else {
                         this.login ();
                     }
                     this.loggingIn = false
-                    }).catch(function() {
+                    }).catch(function(err) {
                         this.failedLogin = true
-                        this.apiErrorMsg = 'Server error'
+                        this.apiErrorMsg = err
                         //console.log(error);
                     });
             
@@ -255,9 +253,7 @@ export default {
         toggleSigningUp () {
             this.signingUp = !this.signingUp
         },
-        changeErrorMsg (msg) {
-            this.emailValidationErrorMsg = msg
-        },
+
         OpenPinata () {
             window.open("https://pinata.cloud/signup", "_blank")
         },

@@ -1,11 +1,19 @@
 <template>
 <div id="body">
-  <b-navbar toggleable="xs" type="dark" variant="primary">
-  <b-navbar-toggle  target="nav-collapse"></b-navbar-toggle>
-  <b-link to="#" ><font-awesome-icon style="color: white;" icon="search"/></b-link>     
-  <b-nav-text style="color: white;" id="session-counter">{{ navProgressCounter }}</b-nav-text>    
-  <b-link @click="newCard()" :disabled="navNewCardDisabled" ><img src="../assets/add card logo.svg" alt="add"></b-link>
-  <b-link @click="callSync()"  class="icon"><font-awesome-icon style="color: white;" icon="cloud"/></b-link>     
+  <b-navbar  toggleable="xs" type="dark" variant="primary">
+  <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+  <b-link to="#" class="icon" ><font-awesome-icon style="color: white;" class="fa-lg"  icon="search"/></b-link>     
+  <b-nav-text style="color: white;" id="session-counter" >{{ navProgressCounter }}</b-nav-text>    
+  <b-link @click="newCard()" :disabled="navNewCardDisabled" class="icon"><img src="../assets/add card logo.svg" alt="add"></b-link>
+  <b-link @click="callSync()" id="sync-link">
+    <font-awesome-layers  class="fa-lg" id="sync-layers">
+      <font-awesome-icon style="color: white;" class="fa-lg" id="cloud" icon="cloud"></font-awesome-icon>
+      <font-awesome-icon style="color: primary;" v-if="syncing" class="fa-xs" id="sync-spinner" spin icon="sync"></font-awesome-icon>
+      <font-awesome-icon style="color: primary;" v-else-if="syncFailed || $store.getters.dataChanged" class="fa-xs" id="exclamation" icon="exclamation"></font-awesome-icon>
+      <font-awesome-icon style="color: primary;" v-else class="fa-xs" id="checkmark" icon="check"></font-awesome-icon>
+
+    </font-awesome-layers>
+  </b-link>     
   <b-collapse id="nav-collapse" is-nav>
     <b-navbar-nav  >
     <b-nav-item to="/home">Review</b-nav-item>
@@ -24,7 +32,6 @@
 </template>
 
 <script>
-const uuidv4 = require('uuid/v4');
 
 import { mapState } from 'vuex'
 export default {
@@ -38,22 +45,24 @@ export default {
 				return this.$store.getters.navProgressCounter
 				},
     ...mapState({
-            currentDeck: 'currentDeck',
-            navNewCardDisabled: 'navNewCardDisabled'
-        }),
+            navNewCardDisabled: 'navNewCardDisabled',
+            syncing: 'syncing',
+            syncFailed: 'syncFailed',
+    }),
+    currentDeck() {
+      return this.$store.getters.currentDeck
+    }
   },
   methods: {
     newCard() {
-      this.$store.dispatch('navNewCardClicked')
-      let newCard = {
-          back_text:"",
-          card_id: uuidv4(),
-          card_tags: ["Daily Review"],
-          front_text: ""
-      }
-            //.cards
-      this.currentDeck.cards.push(newCard)
-      // if coming from the home screen, it won't have a current deck. we want to make a new card, but not assigned to any deck yet
+      this.$store.commit('toggleNewCardClicked')
+      if (this.$store.state.currentDeckId === 'reviewDeck' || this.$store.state.currentDeckId === 'defaultDeck') {
+        if (this.$store.state.currentDeckId === 'reviewDeck') {
+              this.$store.commit('updateNavToCardEditorFromReview', true)
+          }                                   // this will be the most recent edited deck
+        this.$store.commit('updateCurrentDeckId', this.$store.getters.decksMeta[0].deck_id)
+     } 
+      this.$store.commit('newCard', this.currentDeck.deck_id)      
       this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1)
       if (this.$route.name !== 'card-editor' ) {
         this.$router.push('/card-editor')
@@ -67,5 +76,27 @@ export default {
 </script>
 
 <style scoped>
-
+#sync-layers {
+  margin-top: 3px;
+}
+#sync-link{
+  width: 50px;
+}
+#exclamation{
+  margin: 4px 0px 0px 14px;
+  -webkit-animation: pulsate 1s ease-out;
+  -webkit-animation-iteration-count: infinite; 
+  opacity: 0.0
+}
+#sync-spinner {
+    margin: 4px 0px 0px 9px;
+}
+#checkmark {
+    margin: 5px 0px 0px 9px;
+}
+@-webkit-keyframes pulsate {
+  0% {-webkit-transform: scale(1, 1); opacity: 1;}
+  50% {-webkit-transform: scale(1.1, 1.1); opacity: 1;}
+  100% {-webkit-transform: scale(1, 1); opacity: 1;}
+}
 </style>
