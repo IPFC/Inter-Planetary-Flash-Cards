@@ -7,8 +7,9 @@
 
 <script>
 import Navbar from './components/Navbar'
+
 import { mapState } from 'vuex'
-import _ from 'lodash';   
+import _ from 'lodash';
 
     export default {
         name: 'App',
@@ -49,7 +50,7 @@ import _ from 'lodash';
                     }
                 },
                 deep: true
-            }, 
+            },
             syncing: function() {
                 if (this.syncing === false) {
                     if (this.$store.getters.dataChanged) {
@@ -64,8 +65,9 @@ import _ from 'lodash';
         methods: {
             sync: _.debounce(function(){
                 //  console.log('debounced sync')
-                this.$store.dispatch('sync')  
-            }, 1500000000),
+                this.$store.dispatch('sync')
+            }, 60000),
+
             async redirectIfAuth () {
                 await this.$store.dispatch('checkJwt')
                 if (this.$store.getters.isAuthenticated) {
