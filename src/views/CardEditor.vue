@@ -230,14 +230,18 @@ export default {
         }
     },
     methods: {
-        // onFrontCardEditorChange({ quill, html, text }) {
-        //     // console.log('front editor change!', quill, html, text)
-        //     //this.content = html
-        // },
-        // onBackCardEditorChange({ quill, html, text }) {
-        //     // console.log('back editor change!', quill, html, text)
-        //     //this.content = html
-        //     },
+        onFrontCardEditorChange() {
+            // { quill, html, text }
+            // console.log('front editor change!', quill, html, text)
+            //this.content = html
+            return null
+        },
+        onBackCardEditorChange() {
+            // console.log('back editor change!', quill, html, text)
+            //this.content = html
+                        return null
+
+            },
         deleteCard () {
             // for each of the included decks, filter out the current card from its .cards
             let card = JSON.parse(JSON.stringify(this.card))
