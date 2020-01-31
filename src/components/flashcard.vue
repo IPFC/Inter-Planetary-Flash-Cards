@@ -2,21 +2,11 @@
     <div id="main">
         <div v-bind:style="{ backgroundColor: colorFront, color: colorTextFront}"
         v-show="!isToggle" class="animated flipInY flashcard">
-            <div class="card-content">
-                <!--<p v-bind:style="{fontSize: textSizeFront,fontWeight: 'bold'}">{{front}}</p>
-                <img class="img" v-if="imgFront!=''" :src="imgFront">
-              -->
-            </div>
-            <div v-html="front"></div>
+            <div class="card-content" v-html="front"></div>
         </div>
         <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}"
         v-show="isToggle" class="animated flipInY flashcard">
-            <div class="card-content">
-                <!--<p v-bind:style="{fontSize: textSizeBack, fontWeight: 'bold'}">{{back}}</p>
-                <img class="img" v-if="imgBack!=''" :src="imgBack">
-              -->
-              <div v-html="back"></div>
-            </div>
+            <div class="card-content" v-html="back"></div>
         </div>
     </div>
 </template>
