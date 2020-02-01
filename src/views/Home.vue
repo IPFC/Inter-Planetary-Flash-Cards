@@ -60,10 +60,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import vueFlashcard from '../components/flashcard.vue';
 
 export default {
+
     name: "home",
     data() {
         return {
@@ -74,8 +75,9 @@ export default {
         }
     },
     computed: {
-        ...mapState({
-        }),
+        ...mapGetters([
+            'reviewDeck'
+        ]),
         reviewDeck() { 
             return this.$store.getters.reviewDeck
         },

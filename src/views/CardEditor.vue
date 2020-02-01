@@ -10,8 +10,9 @@
             <b-col >
               <quill-editor v-model="card.front_text"
               ref="myQuillEditor"
-               :options="frontCardEditorOption"
-               @change="onFrontCardEditorChange($event)"></quill-editor>
+               :options="editorOption"
+               @change="onFrontCardEditorChange($event)"
+               ></quill-editor>
             </b-col>
         </b-row>
       </b-container>
@@ -20,7 +21,7 @@
         <!--<b-form-textarea class="card-text-input" id="back-text-input" v-model="card.back_text"></b-form-textarea>-->
         <quill-editor id="back-text-input" v-model="card.back_text"
         ref="myQuillEditor"
-         :options="backCardEditorOption"
+         :options="editorOption"
          @change="onBackCardEditorChange($event)"></quill-editor>
 
         <b-img-lazy v-if="card.back_image" class="img" :src="card.back_image"></b-img-lazy>
@@ -75,31 +76,31 @@
     <b-col id="buttons-col">
       <b-container id="buttons-inner">
         <b-row>
-          <b-col >
+          <b-col class= "btn-col">
             <b-button :disabled="noDeckSelected" class="btn-circle btn-md"
             @click="deleteCard()">
             <font-awesome-icon size="2x" icon="trash-alt"/>
           </b-button>
         </b-col>
-        <b-col>
+        <b-col class= "btn-col">
           <b-button :disabled="leftNavDisabled" class="btn-circle btn-md"
           @click="previousCard()">
           <font-awesome-icon size="2x" icon="step-backward"/>
         </b-button>
       </b-col>
-      <b-col>
+      <b-col class= "btn-col">
         <b-button :disabled="noDeckSelected" class="btn-circle btn-md"
         @click="undo()">
         <font-awesome-icon size="2x" icon="undo"/>
       </b-button>
     </b-col>
-    <b-col>
+    <b-col class= "btn-col">
       <b-button :disabled="rightNavDisabled" class="btn-circle btn-md"
       @click="nextCard()">
       <font-awesome-icon size="2x" icon="step-forward"/>
     </b-button>
   </b-col>
-  <b-col>
+  <b-col class= "btn-col">
     <b-button :disabled="noDeckSelected" class="btn-circle btn-md"
     @click="doneCheck()">
     <font-awesome-icon size="2x" icon="check"/>
@@ -128,16 +129,33 @@ export default {
   name: 'card-editor',
   data() {
     return {
-      initialDeckState : null,
-      addingDeck: false,
-      addingTag: false,            
-      newDeckTitle: "",
-      newTagTitle: "",
-      frontCardEditorOption: {
-        readOnly: false,
-        placeHolder: 'What Goes on the Front?'
-      },
-      backCardEditorOption: {},
+        initialDeckState : null,
+        addingDeck: false,
+        addingTag: false,            
+        newDeckTitle: "",
+        newTagTitle: "",
+     
+        editorOption: {
+            modules: {
+                toolbar: [
+            [
+            'bold', 
+            'italic', 
+            'underline', 
+            'strike', 
+            'code-block', 
+            { 'script': 'sub' }, 
+            { 'script': 'super' },
+            { 'size': ['small', false, 'large', 'huge'] },  // custom dropdown
+            { 'header': [1, 2, 3, 4, 5, 6, false] },
+
+            { 'color': [] }, { 'background': [] },          // dropdown with defaults from theme
+            { 'align': [] }
+            ],
+            ['image']
+        ]
+            }
+        }
     };
   },
     computed: {
@@ -146,7 +164,8 @@ export default {
         cardToEditIndex: 'cardToEditIndex',
         decks: 'decks',
         jwt: 'jwt',
-        navNewCardClicked: 'navNewCardClicked'
+        navNewCardClicked: 'navNewCardClicked',
+        navToCardEditorFromReview: 'navToCardEditorFromReview'
         }),
         decksMeta () {
             return this.$store.getters.decksMeta
