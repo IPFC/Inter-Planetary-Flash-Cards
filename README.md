@@ -1,5 +1,7 @@
 ![Logo](./src/assets/ipfc_logo.png)
 
+For a detailed introduction, see our [powerpoint](https://www.slideshare.net/OyVey1/an-introduction-to-inter-planetary-flash-cards-226862993)
+
 # Inter-Planetary-Flash-Cards
 
 Universal flashcard converter, decentralized flashcard cloud storage, and flashcard app
