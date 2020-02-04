@@ -3,18 +3,18 @@
     <b-row id="main-row">
       <b-col id="main-col">
         <b-container class="card">
-          <b-row  class="card-row">
+          <!-- <b-row  class="card-row">
             <b-col v-if="card.front_image">
               <b-img-lazy class="img" v-if="card.front_image" :src="card.front_image"></b-img-lazy>
             </b-col>
-            <b-col >
-              <quill-editor v-model="card.front_text"
+            <b-col > -->
+              <quill-editor v-model="card.front_text" class="quill"
               ref="myQuillEditor"
                :options="editorOption"
                @change="onFrontCardEditorChange($event)"
                ></quill-editor>
-            </b-col>
-        </b-row>
+            <!-- </b-col>
+        </b-row> -->
       </b-container>
       <br>
       <b-container class="card">
@@ -117,10 +117,6 @@
 
 <script>
 import _ from 'lodash';
-// https://github.com/CroudTech/vue-quill#usage
-import Vue from 'vue'
-import VueQuillEditor from 'vue-quill-editor'
-Vue.use(VueQuillEditor);
 
 const uuidv4 = require('uuid/v4');
 
@@ -138,26 +134,27 @@ export default {
         editorOption: {
             modules: {
                 toolbar: [
-            [
-            'bold', 
-            'italic', 
-            'underline', 
-            'strike', 
-            'code-block', 
-            { 'script': 'sub' }, 
-            { 'script': 'super' },
-            { 'size': ['small', false, 'large', 'huge'] },  // custom dropdown
-            { 'header': [1, 2, 3, 4, 5, 6, false] },
-
-            { 'color': [] }, { 'background': [] },          // dropdown with defaults from theme
-            { 'align': [] }
-            ],
-            ['image']
-        ]
+                    'bold', 
+                    'italic', 
+                    'underline', 
+                    'strike', 
+                    'code-block', 
+                    { 'script': 'sub' }, 
+                    { 'script': 'super' },
+                    { 'size': ['small', false, 'large', 'huge'] },  // custom dropdown
+                    { 'header': [1, 2, 3, 4, 5, 6, false] },
+                    { 'color': [] }, { 'background': [] },          // dropdown with defaults from theme
+                    { 'align': [] },
+                    'image'
+                    ]
+                    
+                },
+                syntax: {
+                    highlight: text => window.hljs.highlightAuto(text).value
+                }
             }
         }
-    };
-  },
+    },
     computed: {
         ...mapState({
         userCollection: 'userCollection',
@@ -439,9 +436,13 @@ export default {
     background-color: grey;
     border-radius: 5px;
 }
+
 #main-col {
  width: 100%;
  padding: 0px 10px;
+ }
+ #card-container {
+     padding: 0;
  }
 .card {
     max-width: 600px;
@@ -450,7 +451,7 @@ export default {
     border-radius: 10px;
     cursor: pointer;
     font-size: 1.5em;
-    padding: 0px 20px 0px;
+    padding: 0px 5px 0px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.51);
     text-align: left;
     overflow-y: auto;
