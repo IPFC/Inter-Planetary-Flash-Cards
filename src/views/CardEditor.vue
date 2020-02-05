@@ -7,6 +7,7 @@
                     ref="myQuillEditor"
                     :options="editorOption"
                     @change="onFrontCardEditorChange($event)"
+                    v-highlight
                     ></quill-editor>
                 </b-container>
                 <br>
@@ -14,8 +15,9 @@
                     <quill-editor id="back-text-input" v-model="card.back_text"
                     ref="myQuillEditor"
                     :options="editorOption"
-                    @change="onBackCardEditorChange($event)"></quill-editor>
-
+                    @change="onBackCardEditorChange($event)"
+                    v-highlight
+                    ></quill-editor>
                     <b-img-lazy v-if="card.back_image" class="img" :src="card.back_image"></b-img-lazy>
                 </b-container>
                 <br>

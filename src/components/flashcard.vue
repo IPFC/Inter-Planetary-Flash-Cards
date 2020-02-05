@@ -2,11 +2,11 @@
     <div id="main">
         <div v-bind:style="{ backgroundColor: colorFront, color: colorTextFront}"
         v-show="!isToggle" class="animated flipInY flashcard">
-            <div class="card-content" v-html="front"></div>
+            <div class="card-content" v-highlight v-html="front"></div>
         </div>
         <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}"
         v-show="isToggle" class="animated flipInY flashcard">
-            <div class="card-content" v-html="back"></div>
+            <div class="card-content" v-highlight v-html="back"></div>
         </div>
     </div>
 </template>
