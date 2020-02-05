@@ -145,8 +145,8 @@ export default {
                                 }
                             ).then(function (response) {
                                 return gateway + response.data.IpfsHash
-                            }).catch(function (error) {
-                                console.log(error)    
+                            }).catch(function () {
+                                // console.log(error)    
                             })
                         }
                         
