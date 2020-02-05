@@ -73,12 +73,12 @@
                                 <font-awesome-icon size="2x" icon="step-backward"/>
                             </b-button>
                         </b-col>
-                        <b-col class= "btn-col">
+                        <!-- <b-col class= "btn-col">
                             <b-button :disabled="noDeckSelected" class="btn-circle btn-md"
                             @click="undo()">
                                 <font-awesome-icon size="2x" icon="undo"/>
                             </b-button>
-                        </b-col>
+                        </b-col> -->
                         <b-col class= "btn-col">
                             <b-button :disabled="rightNavDisabled" class="btn-circle btn-md"
                             @click="nextCard()">

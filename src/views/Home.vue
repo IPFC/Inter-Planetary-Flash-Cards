@@ -41,18 +41,18 @@
         </b-row>
         <b-row id="buttons-row" >
             <b-col>
-                <b-button v-if="cardFlipToggle === true" class="btn-circle btn-xl" @click="incorrect()">
-                    <font-awesome-icon size="2x" icon="times"/>
+                <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="incorrect()">
+                    <font-awesome-icon class="btn-icon" size="2x" icon="times"/>
                 </b-button>
             </b-col>
             <b-col>    
-                <b-button class="btn-circle btn-xl" @click="flipCard()">
-                    <font-awesome-icon size="2x" icon="sync"/>
+                <b-button class="btn-circle" @click="flipCard()">
+                    <font-awesome-icon class="btn-icon" size="2x" icon="sync"/>
                 </b-button>
             </b-col>
             <b-col>    
-                <b-button v-if="cardFlipToggle === true" class="btn-circle btn-xl" @click="correct()">
-                    <font-awesome-icon size="2x" icon="check"/>
+                <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="correct()">
+                    <font-awesome-icon class="btn-icon" size="2x" icon="check"/>
                 </b-button>
             </b-col>
         </b-row>  
@@ -234,12 +234,15 @@ export default {
     max-width: 380px;
     border-radius: 10px;
 }
-.btn-circle.btn-xl { 
-    width: 60px; 
-    height: 60px; 
-    padding: 10px 16px; 
-    margin: 10px auto;
-    border-radius: 30px; 
+.btn-icon{
+    margin: auto;
+}
+.btn-circle{ 
+    width: 46px; 
+    height: 46px; 
+    padding: 0; 
+    margin: 7px auto;
+    border-radius: 23px; 
     font-size: 12px; 
     text-align: center; 
     color:grey;

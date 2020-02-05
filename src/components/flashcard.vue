@@ -118,16 +118,16 @@ export default {
     cursor: pointer;
     border-radius: 10px;
     box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
-    height: calc(100vh - 180px);
+    height: calc(100vh - 200px);
     margin: auto;
     width: 100%;
-    padding: 0px 10px 0px 20px;
+    padding: 0px 0px 0px 20px;
 }
 .flashcard:hover {
     box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
 .card-content {
-    padding: 10px 0px 0px 0px;
+    padding: 10px 10px 0px 0px;
     margin: auto;
     height: 100%;
     overflow-y: auto;        
@@ -144,6 +144,7 @@ export default {
     animation-duration:.65s;
     animation-fill-mode: both;
 }
+/* use >>> to select nested elements inside a v-html */
 .card-content >>> img {
     width: 100%;
     margin: auto;
