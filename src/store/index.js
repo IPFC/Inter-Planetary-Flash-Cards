@@ -14,7 +14,8 @@ const vuexCookie = new VuexPersistence({
       expires: 3
     }),
   reducer: (state) => ({
-    jwt: state.jwt 
+    jwt: state.jwt,
+    pinataKeys: state.pinataKeys
   })
 })
 
@@ -36,6 +37,7 @@ const store = new Vuex.Store({
   state: {
     jwt: null,
     jwtValid: false,
+    pinataKeys: null,
     userCollection: '',
     decks: null,
     currentDeckId: null,
@@ -58,6 +60,9 @@ const store = new Vuex.Store({
     },
     toggleJwtValid(state, bool) {
       state.jwtValid = bool
+    },
+    updatePinataKeys(state, data) {
+      state.pinataKeys = data
     },
     toggleSyncing(state, bool) {
       state.syncing = bool

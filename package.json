@@ -25,6 +25,7 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.15",
     "popper.js": "^1.16.1",
+    "quill-plugin-image-upload": "0.0.6",
     "sass-loader": "^8.0.2",
     "toasts": "^1.0.0",
     "uuid": "^3.4.0",

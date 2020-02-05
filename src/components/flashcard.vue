@@ -126,28 +126,28 @@ export default {
 .flashcard:hover {
     box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
-/* this brings the scroll bar into the card so its not creating a square corner */
 .card-content {
-    padding: 10px 10px 0px 0px;
+    padding: 10px 0px 0px 0px;
     margin: auto;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: auto;        
+
 }
 .card-content::-webkit-scrollbar {
     width: .5em;
 }
 .card-content::-webkit-scrollbar-thumb {
-    background-color: lightgrey;
-    border-radius: 5px;
+    background-color: rgba(162, 162, 162, 0.5);
+    border-radius: 0px;
 }
 .animated {
     animation-duration:.65s;
     animation-fill-mode: both;
 }
-.img {
-    object-fit: fill;
+.card-content >>> img {
     width: 100%;
     margin: auto;
+    object-fit: fill;
 }
 
 @keyframes flipInY {

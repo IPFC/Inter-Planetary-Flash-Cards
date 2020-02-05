@@ -102,6 +102,12 @@
 import _ from 'lodash';
 const uuidv4 = require('uuid/v4');
 import { mapState } from 'vuex'
+import { Quill } from 'vue-quill-editor'
+import imageUpload from 'quill-plugin-image-upload';
+Quill.register('modules/imageUpload', imageUpload);
+const axios = require('axios');
+const FormData = require('form-data');
+
 export default {
     name: 'card-editor',
     data() {
@@ -111,10 +117,41 @@ export default {
             addingTag: false,            
             newDeckTitle: "",
             newTagTitle: "",
-        
             editorOption: {
-                modules: {
-                    toolbar: [
+                theme: 'snow',
+                modules: {      
+                    imageUpload: {
+                        upload: file => {
+                            const gateway = 'https://gateway.pinata.cloud/ipfs/'
+                            const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+                            let data = new FormData();
+                            data.append('file', file);
+                            const metadata = JSON.stringify({
+                                name: 'testname',
+                                keyvalues: {
+                                    exampleKey: 'exampleValue'
+                                }
+                            });
+                            data.append('pinataMetadata', metadata);
+                            return axios.post(url,
+                                data,
+                                {
+                                    maxContentLength: 'Infinity', //this is needed to prevent axios from erroring out with large files
+                                    headers: {
+                                        'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+                                        'pinata_api_key': this.pinataKeys.pinata_api,
+                                        'pinata_secret_api_key': this.pinataKeys.pinata_key
+                                    }
+                                }
+                            ).then(function (response) {
+                                return gateway + response.data.IpfsHash
+                            }).catch(function (error) {
+                                console.log(error)    
+                            })
+                        }
+                        
+                    },
+                    toolbar:[
                         'bold', 
                         'italic', 
                         'underline', 
@@ -136,19 +173,19 @@ export default {
                         maxStack: 500,
                         userOnly: true
                     }
-                },
-                theme: 'snow'
+                }
             }
         }
     },
     computed: {
         ...mapState({
-        userCollection: 'userCollection',
-        cardToEditIndex: 'cardToEditIndex',
-        decks: 'decks',
-        jwt: 'jwt',
-        navNewCardClicked: 'navNewCardClicked',
-        navToCardEditorFromReview: 'navToCardEditorFromReview'
+            userCollection: 'userCollection',
+            cardToEditIndex: 'cardToEditIndex',
+            decks: 'decks',
+            jwt: 'jwt',
+            navNewCardClicked: 'navNewCardClicked',
+            navToCardEditorFromReview: 'navToCardEditorFromReview',
+            pinataKeys: 'pinataKeys'
         }),
         decksMeta () {
             return this.$store.getters.decksMeta
