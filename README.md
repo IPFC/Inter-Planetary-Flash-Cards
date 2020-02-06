@@ -1,6 +1,6 @@
 ![Logo](./src/assets/ipfc_logo.png)
 
-For a detailed introduction, see our [powerpoint](https://www.slideshare.net/OyVey1/an-introduction-to-inter-planetary-flash-cards-226862993)
+For a detailed introduction, see our [powerpoint](https://www.slideshare.net/secret/2zumYsfCV7f69s)
 
 # Inter-Planetary-Flash-Cards
 
@@ -9,14 +9,14 @@ Universal flashcard converter, decentralized flashcard cloud storage, and flashc
 ## What is IPFC?
 
 The goal is for IPFC to be:
- * A universal flashcard format converter, 
- * A decentralized flashcard cloud storage for flashcards, leveraging [IPFS](https://ipfs.io) and finally 
+ * A decentralized flashcard cloud storage for flashcards, leveraging [IPFS](https://ipfs.io)
  * Flashcard and EdTech app ecosystem
+ * A universal flashcard format converter, 
+
 
 ## Currently IPFC is:
 
- * A minimal flashcard app for desktop computers.
- * A converter for [Quizlet](https://quizlet.com) flashcard decks exports, solving some of the inconsistencies in export format, especially dealing with images and line breaks.
+ * A minimal flashcard webapp
  * A cloud storage solution for the cards using the [Inter Planetary File System](https://ipfs.io).
 
 ## Why IPFC?
@@ -43,10 +43,6 @@ If a developer wants to create an app, for example a flash card game, and theyâ€
 
 Please stay tuned for more updates and detailed explanations for users and developers.
 
-# Build & Install Instructions
-
-As this is a very new project, if you want to run it now, you need to run it locally.  Hopefully it will be hosted in the very near future.
-
 ## Development Instructions
 
 1. Clone the entire repo
@@ -67,8 +63,7 @@ Username: hello@world.ipfc
 Password: Password123
 ```
 
-Because there are many images in the test decks, the initial sync might take some time.
-
+The initial loading and login are quite slow (often 40 seconds each) right now. We are working on solving this and would love your help.
 
 Found Bugs? Create an issue on the issue tracker, or post it in the [support group](https://t.me/joinchat/HFuUg0iRw-CrD5QbOByfSQ)
 
