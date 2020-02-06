@@ -11,7 +11,7 @@ Universal flashcard converter, decentralized flashcard cloud storage, and flashc
 The goal is for IPFC to be:
  * A decentralized flashcard cloud storage for flashcards, leveraging [IPFS](https://ipfs.io)
  * Flashcard and EdTech app ecosystem
- * A universal flashcard format converter, 
+ * A universal flashcard format converter
 
 
 ## Currently IPFC is:
