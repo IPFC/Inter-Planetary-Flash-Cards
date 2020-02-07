@@ -121,13 +121,13 @@ export default {
     height: calc(100vh - 200px);
     margin: auto;
     width: 100%;
-    padding: 0px 0px 0px 20px;
+    padding: 0px 7px 0px 20px;
 }
 .flashcard:hover {
     box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
 .card-content {
-    padding: 10px 10px 0px 0px;
+    padding: 10px 3px 0px 0px;
     margin: auto;
     height: 100%;
     overflow-y: auto;        
@@ -150,7 +150,18 @@ export default {
     margin: auto;
     object-fit: fill;
 }
-
+.card-content >>> p {
+    font-size: 1.5em;
+}
+.card-content >>> p .ql-size-small{
+    font-size: 0.75em;
+}
+.card-content >>> p .ql-size-large{
+    font-size: 2em;
+}
+.card-content >>> p .ql-size-huge{
+    font-size: 3.5em;
+}
 @keyframes flipInY {
     from {
         transform: perspective(300px) rotate3d(0, 1, 0, 90deg);

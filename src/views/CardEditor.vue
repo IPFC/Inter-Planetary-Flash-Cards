@@ -3,8 +3,8 @@
         <b-row id="main-row">
             <b-col id="main-col">
                 <b-container class="card">
-                    <quill-editor v-model="card.front_text" class="quill"
-                    ref="myQuillEditor"
+                    <quill-editor v-model="card.front_rich_text" class="quill"
+                    ref="myQuillEditorFront"
                     :options="editorOption"
                     @change="onFrontCardEditorChange($event)"
                     v-highlight
@@ -12,13 +12,12 @@
                 </b-container>
                 <br>
                 <b-container class="card">
-                    <quill-editor id="back-text-input" v-model="card.back_text"
-                    ref="myQuillEditor"
+                    <quill-editor v-model="card.back_rich_text" class="quill"
+                    ref="myQuillEditorBack"
                     :options="editorOption"
                     @change="onBackCardEditorChange($event)"
                     v-highlight
                     ></quill-editor>
-                    <b-img-lazy v-if="card.back_image" class="img" :src="card.back_image"></b-img-lazy>
                 </b-container>
                 <br>
                 <b-container class="tag-chooser">
@@ -73,12 +72,6 @@
                                 <font-awesome-icon size="2x" icon="step-backward"/>
                             </b-button>
                         </b-col>
-                        <!-- <b-col class= "btn-col">
-                            <b-button :disabled="noDeckSelected" class="btn-circle btn-md"
-                            @click="undo()">
-                                <font-awesome-icon size="2x" icon="undo"/>
-                            </b-button>
-                        </b-col> -->
                         <b-col class= "btn-col">
                             <b-button :disabled="rightNavDisabled" class="btn-circle btn-md"
                             @click="nextCard()">
@@ -270,17 +263,16 @@ export default {
     },
     methods: {
         onFrontCardEditorChange() {
-            // { quill, html, text }
+            // ( quill, html, text)
             // console.log('front editor change!', quill, html, text)
-            //this.content = html
-            return null
+            // console.log(JSON.stringify(delta))
+            // let justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
+            // console.log(justHtml)
+       
         },
         onBackCardEditorChange() {
-            // console.log('back editor change!', quill, html, text)
-            //this.content = html
-                        return null
 
-            },
+        },
         deleteCard () {
             // for each of the included decks, filter out the current card from its .cards
             let card = JSON.parse(JSON.stringify(this.card))
@@ -331,6 +323,26 @@ export default {
             }
         },
         submit () {
+            // copy image and plaintext
+            let quillFrontDelta = this.$refs.myQuillEditorFront.quill.getContents();
+            for (let line of quillFrontDelta.ops) {
+                if (line.insert.image) {
+                    this.card.front_image = line.insert.image
+                    break
+                }
+            }
+            let frontGottenText = this.$refs.myQuillEditorFront.quill.getText();
+            this.card.front_text = frontGottenText
+                        let quillBackDelta = this.$refs.myQuillEditorBack.quill.getContents();
+            for (let line of quillBackDelta.ops) {
+                if (line.insert.image) {
+                    this.card.back_image = line.insert.image
+                    break
+                }
+            }
+            let backGottenText = this.$refs.myQuillEditorFront.quill.getText();
+            this.card.back_text = backGottenText
+            // remove empty card
             if (this.card.front_text === "" && this.card.back_text === "" && !this.addingCard) {
                 this.deleteCard()
             }
@@ -601,5 +613,17 @@ margin: auto;
 .btn-col{
 padding: 0px;
 margin: 5px 2px;
+}
+.quill >>> p {
+    font-size: 1.5em;
+}
+.quill >>> p .ql-size-small{
+    font-size: 0.75em;
+}
+.quill >>> p .ql-size-large{
+    font-size: 2em;
+}
+.quill >>> p .ql-size-huge{
+    font-size: 3.5em;
 }
   </style>

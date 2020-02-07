@@ -8,10 +8,8 @@
                <vue-flashcard
                 id="main-card"
                 :isToggle= "cardFlipToggle"
-                :front="currentCard.front_text" 
-                :back="currentCard.back_text"
-                :imgFront="currentCard.front_image"
-                :imgBack="currentCard.back_image"
+                :front="currentCard.front_rich_text" 
+                :back="currentCard.back_rich_text"
                 >
             </vue-flashcard>
             <div id="next-card-padding-outer">
@@ -20,8 +18,6 @@
                         id="next-card"
                         :front="nextCard.front_text" 
                         :back="nextCard.back_text"
-                        :imgFront="nextCard.front_image"
-                        :imgBack="nextCard.back_image"
                         >
                     </vue-flashcard>
                 </div>
@@ -111,7 +107,20 @@ export default {
             this.$store.commit('updateNavToCardEditorFromReview', true)
             this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card))
             this.$router.push('/card-editor')
-        }
+        },
+        // plaintextToRichtext () {
+        //     for (let deck of this.$store.state.decks) {
+        //         console.log('checking a deck')
+        //         for (let oldCard of deck.cards) {
+        //             if (oldCard.front_rich_text !== oldCard.front_text || oldCard.back_rich_text !== oldCard.back_text){
+        //                oldCard.front_rich_text = JSON.parse(JSON.stringify(oldCard.front_text))
+        //                 oldCard.back_rich_text = JSON.parse(JSON.stringify(oldCard.back_text))
+        //                 let cardUpdateData = { deck_id: deck.deck_id, card: oldCard }
+        //                 this.$store.commit('updateCard', cardUpdateData) 
+        //             }
+        //         }
+        //     }
+        // }
         // duplicateChecker () {
         //     for (let deck of this.$store.state.decks) {
         //         for (let dupDeck of this.$store.state.decks) {
@@ -154,18 +163,17 @@ export default {
         //     for (let deck of decks) {
         //         if (!deck.icon_color) {
         //         // console.log("setting deck icons")
-
         //          deck.icon_color = this.generateRandomHslaColor()
         //             deck.edited = Math.round(new Date().getTime() / 1000);
         //     this.$store.commit('updateDeck', deck)
         //         }
-            
         //     }
         // }
     },
     created () {
         // this.setAllDeckColors()
         // this.duplicateChecker()
+        // this.plaintextToRichtext()
         this.$store.dispatch('navProgress', 0)
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
