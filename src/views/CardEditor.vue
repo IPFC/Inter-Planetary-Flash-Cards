@@ -144,20 +144,7 @@ export default {
                         }
                         
                     },
-                    toolbar:[
-                        'bold', 
-                        'italic', 
-                        'underline', 
-                        'strike', 
-                        'code-block', 
-                        { 'script': 'sub' }, 
-                        { 'script': 'super' },
-                        { 'size': ['small', false, 'large', 'huge'] },  // custom dropdown
-                        { 'header': [1, 2, 3, 4, 5, 6, false] },
-                        { 'color': [] }, { 'background': [] },          // dropdown with defaults from theme
-                        { 'align': [] },
-                        'image'
-                    ],
+                    toolbar:this.$store.state.userCollection.webapp_settings.textEditorSettings.editorOptions.toolbar,
                     syntax: {
                         highlight: text => window.hljs.highlightAuto(text).value    
                     },
@@ -340,7 +327,7 @@ export default {
                     break
                 }
             }
-            let backGottenText = this.$refs.myQuillEditorFront.quill.getText();
+            let backGottenText = this.$refs.myQuillEditorBack.quill.getText();
             this.card.back_text = backGottenText
             // remove empty card
             if (this.card.front_text === "" && this.card.back_text === "" && !this.addingCard) {
@@ -613,6 +600,13 @@ margin: auto;
 .btn-col{
 padding: 0px;
 margin: 5px 2px;
+}
+.quill >>> .ql-container.ql-snow {
+  border: 0px;
+}
+.quill >>> .ql-toolbar.ql-snow {
+  border: 0px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 .quill >>> p {
     font-size: 1.5em;

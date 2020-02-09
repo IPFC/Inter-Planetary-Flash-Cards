@@ -131,7 +131,6 @@ export default {
 
 #main-col {
     margin: auto;
-    width:auto;
     max-width: 600px;
     padding: 15;
 }
@@ -186,6 +185,9 @@ export default {
 }
 .title{
   font-size: 1.2em;
+}
+img{
+    width: 100%;
 }
 
 </style>

@@ -19,7 +19,7 @@
               </p>     
             </b-col>
             <b-col id="edit-col" cols="1">
-               <b-dropdown class="deck-options" dropleft size="lg" left variant= "link" 
+               <b-dropdown id="edit-btn" class="deck-options" dropleft size="lg" variant= "link" 
                 toggle-class="text-decoration-none" no-caret>
                 <template v-slot:button-content>
                   <font-awesome-icon class="deck-options" color="grey" 
@@ -95,7 +95,7 @@ export default {
 </script>
 <style scoped>
 #main{
-  padding: 15px 15px 0px 10px;
+  padding: 15px 0px 0px 10px;
 }
 
 #list-group-item{
@@ -106,6 +106,12 @@ export default {
   max-width: 600px;
   border: transparent;
   width: 100%;
+}
+#list-group-item-row{
+  margin-right: 0px;
+}
+#list-group-item-row >>> .btn-lg{
+  padding: 0;
 }
 #text-col{
   padding: 0px 0px 10px 20px ;
@@ -120,11 +126,13 @@ export default {
 }
 #edit-col{
   padding: 0;
-  margin: auto;
-  width: 10px;
+  width: 40px;
+}
+#edit-button {
+    padding: 0;
+
 }
 #icon-col{
-  width: 50px;
   padding: 0px; 
   height: 50px;
 }
@@ -157,6 +165,9 @@ export default {
 }
 .title{
   font-size: 1.2em;
+}
+.deck-options{
+  padding: 0;
 }
 .deck-options-button{
   padding: 0;

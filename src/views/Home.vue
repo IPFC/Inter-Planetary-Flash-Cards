@@ -16,8 +16,8 @@
                 <div id="next-card-padding">
                     <vue-flashcard 
                         id="next-card"
-                        :front="nextCard.front_text" 
-                        :back="nextCard.back_text"
+                        front="   /n /n /n   " 
+                        back="   /n /n /n   " 
                         >
                     </vue-flashcard>
                 </div>
@@ -26,10 +26,8 @@
                 <div id="third-card-padding">
                     <vue-flashcard 
                         id="third-card" class ="card"
-                        front="   stuff   " 
-                        back="     stuff   "
-                        :imgFront="nextCard.front_image"
-                        :imgBack="nextCard.back_image"> 
+                        front="   /n /n /n   " 
+                        back="   /n /n /n   " > 
                     </vue-flashcard>
                 </div>
             </div>
@@ -80,9 +78,9 @@ export default {
         currentCard () {
             return this.reviewDeck.cards[this.currentCardIndex]
         },
-        nextCard () {
-            return this.reviewDeck.cards[this.currentCardIndex + 1]
-        },
+        // nextCard () {
+        //     return this.reviewDeck.cards[this.currentCardIndex + 1]
+        // },
     },
     methods: {
         flipCard () {

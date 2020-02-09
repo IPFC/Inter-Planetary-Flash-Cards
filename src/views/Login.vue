@@ -271,7 +271,13 @@ export default {
 
 <style scoped>
 #body {
+    align-items: center;
+    margin: auto;
+    max-width: 370px;
     padding: 20px;
+}
+h1{
+    text-align: center;
 }
 #form-signin {
     max-width: 330px;

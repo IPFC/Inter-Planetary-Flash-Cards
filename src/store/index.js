@@ -38,7 +38,28 @@ const store = new Vuex.Store({
     jwt: null,
     jwtValid: false,
     pinataKeys: null,
-    userCollection: '',
+    userCollection: {
+      schedule: {},
+      deck_ids: [],
+      deleted_deck_ids: [],
+      webapp_settings: {
+        // derr, overwritten by server login
+        textEditorSettings: {
+          editorOptions: {
+            toolbar: [
+              'bold', 
+              'italic', 
+              'underline', 
+              'code-block', 
+              { 'size': ['small', false, 'large', 'huge'] },
+              { 'color': [] }, { 'background': [] },         
+              { 'align': [] },
+              'image'
+            ]
+          }
+        }
+      }
+    },
     decks: null,
     currentDeckId: null,
     cardToEditIndex: null,
@@ -69,6 +90,16 @@ const store = new Vuex.Store({
     },
     updateUserCollection(state, data) {
       state.userCollection = data
+    },
+    updateSettings(state, data) {
+      state.userCollection.webapp_settings = data
+    },
+    updateSetting(state, data) {
+      let settingSection = data.settingSection
+      let settingName = data.settingName
+      let settingData = data.setting
+      state.userCollection.webapp_settings[settingSection][settingName] = settingData
+      state.userCollection.webapp_settings.edited = new Date().getTime() / 1000
     },
     addDeck(state, newDeck) {
       state.decks.unshift(newDeck)
@@ -251,10 +282,6 @@ const store = new Vuex.Store({
       context.commit('updateLastSyncsData', lastSyncsData)
     },
     async sync(context) {
-              // rewrite API to accept lists of decks to delete, post, put, get.
-              // just use the copied 'decks' variable the whole time, commit at the end.
-              // make sure I'm combining the 'usercollection' on both  client and server.
-
       // console.log('    sync called')
       if (context.state.syncing === true) {
         // console.log('    syncing blocked')
@@ -395,9 +422,35 @@ const store = new Vuex.Store({
                   // console.log("    POSTed decks ", responseData);
                   //err
               }).catch(function() {
-                // context.commit('toggleSyncFailed', true)
+                context.commit('toggleSyncFailed', true)
                 // console.log(err);
+                return null
               });
+          }
+          // sync settings changes
+          if (serverCollection.webapp_settings !== userCollection.webapp_settings) {
+            if (serverCollection.webapp_settings.edited > userCollection.webapp_settings.edited){
+              context.commit('updateSettings', serverCollection.webapp_settings)
+            }
+            if (serverCollection.webapp_settings.edited < userCollection.webapp_settings.edited){
+              let putUserCollectionURL = context.state.serverURL + '/put_user_collection';
+              let putUserCollectionData = {'webapp_settings': userCollection.webapp_settings }
+              await fetch(putUserCollectionURL, { 
+                headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+                body: JSON.stringify(putUserCollectionData),
+                method: 'PUT',
+                })
+                .then(response => response.json())
+                //responseData
+                .then((responseData) => {
+                    console.log("    Put webapp settings ", responseData);
+                    //err
+                }).catch(function() {
+                  context.commit('toggleSyncFailed', true)
+                  // console.log(err);
+                  return null
+                });
+            }
           }
         }
         

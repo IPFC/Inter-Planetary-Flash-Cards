@@ -89,22 +89,24 @@ import _ from 'lodash';
   @import "~bootstrap/scss/bootstrap.scss";
   @import '~bootstrap-vue/dist/bootstrap-vue.css';
 
-    body {
-        background-color: #F6F6F6;
-        margin: 0;
-        margin-top: 55px;
-    }
-    h1 {
-        padding: 0;
-        margin-top: 0;
-    }
-    #navbar {
+body {
+    background-color: #F6F6F6;
+    margin: 0;
+    margin-top: 55px;
+        width: 100vw;
+
+}
+h1 {
+    padding: 0;
+    margin-top: 0;
+}
+#navbar {
     position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  z-index: 2000;
-    }
+    top: 0;
+    right: 0;
+    width: 100vw;
+    z-index: 2000;
+}
 .body::-webkit-scrollbar {
     width: .5em;
 }

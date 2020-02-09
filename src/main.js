@@ -18,12 +18,12 @@ import VueQuillEditor from 'vue-quill-editor'
 Vue.use(VueQuillEditor, /* { default global options } */)
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
+import { faToggleOn, faToggleOff, faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
   faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, 
   faSpinner, faExclamation} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon, FontAwesomeLayers} from '@fortawesome/vue-fontawesome'
 
-library.add(faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
+library.add(faToggleOn, faToggleOff, faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
   faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, 
   faSpinner, faExclamation)
 

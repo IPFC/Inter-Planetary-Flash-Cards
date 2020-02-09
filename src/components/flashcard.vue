@@ -150,6 +150,18 @@ export default {
     margin: auto;
     object-fit: fill;
 }
+.card-content >>> .ql-align-center {
+    text-align: center;
+}
+.card-content >>> .ql-align-right {
+    text-align: right;
+}
+.card-content >>> .ql-align-left {
+    text-align: left;
+}
+.card-content >>> .ql-align-justify {
+    text-align: justify;
+}
 .card-content >>> p {
     font-size: 1.5em;
 }
