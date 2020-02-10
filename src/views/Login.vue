@@ -205,7 +205,6 @@ export default {
                         this.$store.dispatch('checkJwt')
                         this.$store.commit('updatePinataKeys', data['pinata_keys'])
                         this.$store.commit('updateUserCollection', data['user_collection'])
-                        console.log('     data[user_collection]', data['user_collection'])
                         this.$store.commit('updateDecks', data['decks'])
                         this.$store.dispatch('refreshLastSyncsData')
                         this.$router.push('home');
