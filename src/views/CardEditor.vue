@@ -29,11 +29,11 @@
                             </b-form-input>
                         </b-button>
                     </p>
-                    <b-button  @click="removeCardFromDeck(deck.title)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.deck_id" >
+                    <b-button  @click="removeCardFromDeck(deck.deck_id)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.deck_id" >
                     {{ deck.title.slice(0, 24) }}
                     </b-button>
                     <br>
-                    <b-button  @click="addCardToDeck(deck.title)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.deck_id" >
+                    <b-button  @click="addCardToDeck(deck.deck_id)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.deck_id" >
                     {{ deck.title.slice(0, 24) }}
                     </b-button>
                 </b-container>
