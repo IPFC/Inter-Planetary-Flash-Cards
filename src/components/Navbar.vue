@@ -62,7 +62,7 @@ export default {
           }                                   // this will be the most recent edited deck
         this.$store.commit('updateCurrentDeckId', this.$store.getters.decksMeta[0].deck_id)
      } 
-      this.$store.commit('newCard', this.currentDeck.deck_id)      
+      this.$store.dispatch('newCard', this.currentDeck.deck_id)  
       this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1)
       if (this.$route.name !== 'card-editor' ) {
         this.$router.push('/card-editor')

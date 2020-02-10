@@ -43,7 +43,7 @@ const store = new Vuex.Store({
       deck_ids: [],
       deleted_deck_ids: [],
       webapp_settings: {
-        // derr, overwritten by server login
+        // move these to new user default settings
         textEditorSettings: {
           editorOptions: {
             toolbar: [
@@ -57,13 +57,20 @@ const store = new Vuex.Store({
               'image'
             ]
           }
+        },
+        scheduleSettings: {
+          initialReviews: [1, 5, 20], //in minutes
+          laterReviewsMultiplier: 2, // how many x
+          failMode: 'reset', // if set to a number, is how many levels to subtract
+          randomizer: .1, // percent to randomize
+          maxCards: 50,
         }
-      }
+      },
     },
     decks: null,
     currentDeckId: null,
     cardToEditIndex: null,
-    navProgressCounter: '',
+    navProgressCounter: '0 / 0',
     lastSyncsData: '',
     syncing: false,
     syncFailed: false,
@@ -138,20 +145,20 @@ const store = new Vuex.Store({
         state.decks.splice(deckIndex, 1);
       }
     },
-    newCard (state, deck_id) {
+    newCard (state, data) {
       // new blank card
-      let newCard = {
-        back_text:"",
-        card_id: uuidv4(),
-        card_tags: ["Daily Review"],
-        front_text: ""
-      }
+      let newCard = data.newCard
+      let deck_id= data.deck_id
       for (let deck of state.decks) {
         if (deck.deck_id === deck_id) {
             deck.cards.push(newCard)
             deck.edited = new Date().getTime() / 1000
           }
           break
+        }
+      // add to schedule... might need to cleanout schedule later somehow.  
+      if (!state.userCollection.schedule.hasOwnProperty('card_id')){
+          state.userCollection.schedule[newCard.card_id] = { level: 0, due: new Date().getTime() / 1000}
         }
     },
     addCard (state, data) {
@@ -246,11 +253,87 @@ const store = new Vuex.Store({
           break
         }
       }
+    },
+    // cleanSchedule(state) {
+    //   let schedule = state.userCollection.schedule
+    //   for (let scheduleItem of schedule) {
+    //     let counter = 0
+    //     for (let scheduleItemInner of schedule){
+    //       if (scheduleItem.card_id === scheduleItemInner.card_id ) {
+    //         counter ++
+    //         if (counter > 1) {
+    //           schedule.splice(schedule.indexOf(scheduleItem), 1)
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
+    addCardToSchedule(state, card_id) {
+      let dupCount = 0
+      for (let scheduleItem of state.userCollection.schedule) {
+        if (scheduleItem.card_id === card_id) {
+              dupCount ++
+          break
+        }
+      }
+      if (dupCount === 0){
+        state.userCollection.schedule.push({ 
+          card_id: card_id, 
+          level: 0, 
+          due: new Date().getTime() / 1000,
+          lastInterval: null
+        })
+      }
+    },
+    updateCardSchedule(state, data) {
+      let card_id = data.card_id
+      let newLevel = data.level 
+      let newDue = data.due
+      let newLastInterval = data.lastInterval
+      for (let scheduleItem of state.userCollection.schedule) {
+        if (scheduleItem.card_id === card_id) {
+          scheduleItem.level = newLevel 
+          scheduleItem.due = newDue
+          scheduleItem.lastInterval = newLastInterval
+          break
+        }
+      }
+    },
+    resetCardSchedule(state, card_id) {
+      let newLevel = 0
+      let newDue = new Date().getTime() / 1000
+      for (let scheduleItem of state.userCollection.schedule) {
+        if (scheduleItem.card_id === card_id) {
+          scheduleItem.level = newLevel 
+          scheduleItem.due = newDue
+          scheduleItem.lastInterval = null
+          break
+        }
+      }
+    },
+    deleteCardFromSchedule(state, card_id) {
+      let schedule = state.userCollection.schedule
+      for (let scheduleItem of schedule) {
+        if (scheduleItem.card_id === card_id)
+        schedule.splice(schedule.indexOf(scheduleItem), 1)
+        break
+      }
     }
   },
   actions: {
-    navProgress (context, completedCards) {                 //.cards
-        let outputString = completedCards + " / "  + context.getters.reviewDeck.cards.length
+    newCard(context, deck_id) {
+      let newCard = {
+        back_text:"",
+        card_id: uuidv4(),
+        card_tags: ["Daily Review"],
+        front_text: ""
+      }
+      let data = { newCard: newCard, deck_id: deck_id }
+      context.commit('newCard', data)
+      context.commit('addCardToSchedule', newCard.card_id)
+    },
+    navProgress (context, data) {   
+        let outputString = data.completed + " / "  + data.totalCards
         context.commit('updateProgressCounter', outputString)
     },
     logout(context) {
@@ -271,6 +354,78 @@ const store = new Vuex.Store({
         const now = new Date()
         context.commit('toggleJwtValid', now < exp)
       }
+    },
+    levelUpCard(context, card_id) {
+      let cardData = null
+      for (let scheduleItem of context.state.userCollection.schedule) {
+        if (scheduleItem.card_id === card_id) {
+          cardData = JSON.parse(JSON.stringify(scheduleItem))
+          break
+        }
+      }
+      let newLevel = cardData.level + 1
+      let newDue = cardData.due
+      let newLastInterval = cardData.lastInterval
+      let settings = context.state.userCollection.webapp_settings.scheduleSettings
+      if (newLevel <= settings.initialReviews.length) {
+        let max = settings.initialReviews[newLevel-1] * 60 * (1 + settings.randomizer)
+        let min = settings.initialReviews[newLevel-1] * 60 * (1 - settings.randomizer)
+        newDue += Math.random() * (max - min + 1) + min
+      } else { 
+        let max = 0
+        let min = 0
+        if (newLastInterval === null) {
+          newLastInterval = 86400 // 1 day in seconds
+          max = newLastInterval * (1 + settings.randomizer)
+          min = newLastInterval * (1 - settings.randomizer)
+        }
+        else {
+          newLastInterval *= settings.laterReviewsMultiplier
+          max = newLastInterval * (1 + settings.randomizer)
+          min = newLastInterval * (1 - settings.randomizer)
+        }
+        newDue += Math.random() * (max - min + 1) + min
+      }
+      // console.log('    newLevel',newLevel)        
+      // console.log('    newDue', newDue -1581330417)        
+      let updateData = { 
+        card_id: card_id,
+        level: newLevel,
+        due: newDue, 
+        lastInterval: newLastInterval 
+      }
+      context.commit('updateCardSchedule', updateData)
+    },
+    levelDownCard(context, card_id) {
+      let cardData = null
+      for (let scheduleItem of context.state.userCollection.schedule) {
+        if (scheduleItem.card_id === card_id) {
+          cardData = JSON.parse(JSON.stringify(scheduleItem))
+          break
+        }
+      }      
+      let newLevel = cardData.level
+      let newDue = cardData.due
+      let lastInterval = cardData.lastInterval
+      let settings = context.state.userCollection.webapp_settings.scheduleSettings
+
+      if (settings.failMode === 'reset') {
+        newLevel = 0
+        newDue = new Date().getTime() / 1000
+        lastInterval = null
+      } else {
+        newLevel -= settings.failMode
+        // this could be more perfected
+        for (let i = 0; i < settings.failMode; i++) {
+          lastInterval /= settings.laterReviewsMultiplier
+          newDue -= lastInterval
+        }
+      }
+      let updateData = { card_id: card_id,
+                         level: newLevel,
+                         due: newDue, 
+                         lastInterval: lastInterval}
+      context.commit('updateCardSchedule', updateData)
     },
     refreshLastSyncsData(context) {
       let lastDecks = JSON.parse(JSON.stringify(context.state.decks))
@@ -442,8 +597,8 @@ const store = new Vuex.Store({
                 })
                 .then(response => response.json())
                 //responseData
-                .then((responseData) => {
-                    console.log("    Put webapp settings ", responseData);
+                .then(() => {
+                    // console.log("    Put webapp settings ", responseData);
                     //err
                 }).catch(function() {
                   context.commit('toggleSyncFailed', true)
@@ -555,7 +710,6 @@ const store = new Vuex.Store({
   },
   getters: {
     // decksMeta should ge a getter, it should always be sorted. who needs sorted decks, the deck selecter, and create card.
-  
     decksMeta(state) {
       let decks = state.decks
       let newDecksMeta = []
@@ -601,6 +755,37 @@ const store = new Vuex.Store({
         }
       }
       return reviewDeck
+    },
+    todaysDeck(state, getters) {
+      let schedule = state.userCollection.schedule
+      // console.log('schedule', schedule)
+      let reviewDeck = getters.reviewDeck
+      let todaysDeck = { cards: []}
+      let now = new Date().getTime() / 1000
+      let cutOff = now + (3600 * 23) // cards due within 23 hours
+      // console.log('cutoff', cutOff-1581318652)
+      let todaysScheduleItems = []
+      for (let scheduleItem of schedule) {
+        // console.log('scheduleItem.due', scheduleItem.due-1581318652)
+
+        if (scheduleItem.due <= cutOff) {
+          todaysScheduleItems.push(scheduleItem)
+        }
+      }
+      let todaysScheduleItemsSorted = _.sortBy(todaysScheduleItems, 'due')
+      // console.log('todaysScheduleItemsSorted', todaysScheduleItemsSorted)
+
+      // need to figure out how to limit the list to 50 cards, but if its a getter, it will auto reset...
+      for (let scheduleItem of todaysScheduleItemsSorted) {
+        // this could get expensive later
+        for (let card of reviewDeck.cards) {
+          if (card.card_id === scheduleItem.card_id ) {
+            todaysDeck.cards.push(card)
+            break
+          }
+        }
+      }
+      return todaysDeck
     },
     dataChanged (state) {
       if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {

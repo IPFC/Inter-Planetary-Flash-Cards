@@ -255,10 +255,10 @@ export default {
             // console.log(JSON.stringify(delta))
             // let justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
             // console.log(justHtml)
-       
+            return null
         },
         onBackCardEditorChange() {
-
+            return null
         },
         deleteCard () {
             // for each of the included decks, filter out the current card from its .cards
@@ -280,6 +280,7 @@ export default {
             else if (wasLastCard) {
                 this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
             }
+            this.$store.commit('deleteCardFromSchedule', card.card_id)
         },
         previousCard() {
             this.submit()
@@ -370,6 +371,9 @@ export default {
             this.submit()
         },
         addTagToCard(tag){
+            if (tag === "Daily Review") {
+                this.$store.commit('addCardToSchedule', this.card.card_id)
+            }
             this.card.card_tags.unshift(tag)
             this.submit()
         },
@@ -390,9 +394,7 @@ export default {
                     deck_tags: [],
                     description: null,
                     editable_by: "only_me",
-                    edited: Math.round(new Date().getTime() / 1000),
-                    has_html:false,
-                    has_media: false,
+                    edited: Math.round(new Date().getTime() / 1000),  
                     lang_back:"en",
                     lang_front:"en",
                     term_count: 1,

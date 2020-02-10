@@ -1,56 +1,65 @@
 <template>
-    <b-container id="review-body">
-        <b-row id="top-buttons-row" class="justify-content-end">
-            <a class="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck)" size="1x" icon="edit"/></a>
-        </b-row>
-        <b-row id="card-row" class="" @click="flipCard()">
-            <b-col class="card-col">
-               <vue-flashcard
-                id="main-card"
-                :isToggle= "cardFlipToggle"
-                :front="currentCard.front_rich_text" 
-                :back="currentCard.back_rich_text"
-                >
-            </vue-flashcard>
-            <div id="next-card-padding-outer">
-                <div id="next-card-padding">
-                    <vue-flashcard 
-                        id="next-card"
-                        front="   /n /n /n   " 
-                        back="   /n /n /n   " 
-                        >
-                    </vue-flashcard>
+    <div>
+        <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
+            <b-row id="top-buttons-row" class="justify-content-end">
+                <a class="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck)" size="1x" icon="edit"/></a>
+            </b-row>
+            <b-row id="card-row" class="" @click="flipCard()">
+                <b-col class="card-col">
+                <vue-flashcard
+                    id="main-card"
+                    :isToggle= "cardFlipToggle"
+                    :front="currentCard.front_rich_text" 
+                    :back="currentCard.back_rich_text"
+                    >
+                </vue-flashcard>
+                <div id="next-card-padding-outer">
+                    <div id="next-card-padding">
+                        <vue-flashcard  v-if="todaysDeck.cards.length > 1"
+                            id="next-card"
+                            :front="nextCard.front_rich_text" 
+                            :back="nextCard.back_rich_text"
+                            >
+                        </vue-flashcard>
+                    </div>
                 </div>
-            </div>
-            <div id="third-card-padding-outer">
-                <div id="third-card-padding">
-                    <vue-flashcard 
-                        id="third-card" class ="card"
-                        front="   /n /n /n   " 
-                        back="   /n /n /n   " > 
-                    </vue-flashcard>
+                <div id="third-card-padding-outer">
+                    <div id="third-card-padding">
+                        <vue-flashcard  v-if="todaysDeck.cards.length > 2"
+                            id="third-card" class ="card"
+                            front="   /n /n /n   " 
+                            back="   /n /n /n   " > 
+                        </vue-flashcard>
+                    </div>
                 </div>
-            </div>
-            </b-col>
-        </b-row>
-        <b-row id="buttons-row" >
-            <b-col>
-                <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="incorrect()">
-                    <font-awesome-icon class="btn-icon" size="2x" icon="times"/>
-                </b-button>
-            </b-col>
-            <b-col>    
-                <b-button class="btn-circle" @click="flipCard()">
-                    <font-awesome-icon class="btn-icon" size="2x" icon="sync"/>
-                </b-button>
-            </b-col>
-            <b-col>    
-                <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="correct()">
-                    <font-awesome-icon class="btn-icon" size="2x" icon="check"/>
-                </b-button>
-            </b-col>
-        </b-row>  
-    </b-container>  
+                </b-col>
+            </b-row>
+            <b-row id="buttons-row" >
+                <b-col>
+                    <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="incorrect()">
+                        <font-awesome-icon class="btn-icon" size="2x" icon="times"/>
+                    </b-button>
+                </b-col>
+                <b-col>    
+                    <b-button class="btn-circle" @click="flipCard()">
+                        <font-awesome-icon class="btn-icon" size="2x" icon="sync"/>
+                    </b-button>
+                </b-col>
+                <b-col>    
+                    <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="correct()">
+                        <font-awesome-icon class="btn-icon" size="2x" icon="check"/>
+                    </b-button>
+                </b-col>
+            </b-row>  
+        </b-container> 
+        <b-container v-else style="text-align: center;">
+            <br>
+            <h1>
+                Good work!
+            </h1>
+            <p>You've finished all your cards for today.</p>
+        </b-container>         
+    </div>
 </template>
 
 <script>
@@ -62,50 +71,82 @@ export default {
     name: "home",
     data() {
         return {
-            currentCardIndex: 0,
+            // currentCardIndex: 0,
             cardFlipToggle: false,
             cardsCompleted: 0,
-            cardsTotal: 0
+            cardsTotal: 0,
+            todaysDeckCardIds: [],
         }
     },
     computed: {
         ...mapGetters([
             'reviewDeck'
         ]),
-        reviewDeck() { 
-            return this.$store.getters.reviewDeck
+        todaysDeckFull () {  //before max card limit is applied
+            return this.$store.getters.todaysDeck
+        },
+        todaysDeck() {
+            let cards = []
+            for (let card of this.todaysDeckFull.cards) {
+                if (this.todaysDeckCardIds.includes(card.card_id)){
+                    cards.push(card)
+                }
+            }
+            return { cards: cards }
         },
         currentCard () {
-            return this.reviewDeck.cards[this.currentCardIndex]
+            return this.todaysDeck.cards[0]
         },
-        // nextCard () {
-        //     return this.reviewDeck.cards[this.currentCardIndex + 1]
-        // },
+        nextCard () {
+            if (this.todaysDeck.cards.length > 1){
+                return this.todaysDeck.cards[this.todaysDeck.cards.indexOf(this.currentCard) + 1]
+            } else {
+                return {front_rich_text: "    /n /n /n    ", back_rich_text: "    /n /n /n    "} 
+            }
+        },
     },
     methods: {
         flipCard () {
             this.cardFlipToggle=!this.cardFlipToggle
         },
         incorrect () {
-            this.currentCardIndex ++
+            this.$store.dispatch('levelDownCard', this.currentCard.card_id)
+            // this.currentCardIndex ++
             this.cardFlipToggle = false
             this.NavbarProgess()
-
+           
         },
         correct () {
-            this.currentCardIndex ++
+            this.$store.dispatch('levelUpCard', this.currentCard.card_id)
+            // this.currentCardIndex ++
             this.cardFlipToggle = false
-            this.cardsCompleted ++
             this.NavbarProgess()
         },
         NavbarProgess() {
-            this.$store.dispatch('navProgress', this.cardsCompleted)
+            let totalCards = this.todaysDeckCardIds.length
+            let completed = this.todaysDeckCardIds.length - this.todaysDeck.cards.length
+            let updateData= {totalCards: totalCards, completed: completed}
+            this.$store.dispatch('navProgress', updateData)
         },
         editCard(card, reviewDeck) {
             this.$store.commit('updateNavToCardEditorFromReview', true)
             this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card))
             this.$router.push('/card-editor')
         },
+        // populateSchedule(){
+        //     // initial schedule when its empty for testing
+        //     for (let card of this.reviewDeck.cards) {
+        //         this.$store.commit('addCardToSchedule', card.card_id)
+        //         // console.log('   addCardToSchedule',card.card_id)
+        //     }
+        // },
+        // resetSchedule(){
+        //     // reset schedule for testing
+        //     for (let card of this.reviewDeck.cards) {
+        //         this.$store.commit('resetCardSchedule', card.card_id)
+        //         // console.log('   resetCardSchedule',card.card_id)
+        //     }
+        // }
         // plaintextToRichtext () {
         //     for (let deck of this.$store.state.decks) {
         //         console.log('checking a deck')
@@ -172,14 +213,26 @@ export default {
         // this.setAllDeckColors()
         // this.duplicateChecker()
         // this.plaintextToRichtext()
-        this.$store.dispatch('navProgress', 0)
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
         }
         this.$store.commit('updateCurrentDeckId', 'reviewDeck')
         this.$store.commit('updateNavToCardEditorFromReview', false)
-        this.currentCardIndex = 0
+        // this.currentCardIndex = 0
         this.$store.commit('toggleNavNewCardDisabled', false)
+        // this.populateSchedule()
+        // this.resetSchedule()
+        for (let card of this.todaysDeckFull.cards) {
+            let maxReviewLength = this.$store.state.userCollection.webapp_settings.scheduleSettings.maxCards
+            if (this.todaysDeckFull.cards.length >= maxReviewLength) {
+                break
+            } else {
+                if (!this.todaysDeckCardIds.includes(card)){
+                    this.todaysDeckCardIds.push(card.card_id)
+                }
+            }
+        }
+        this.$store.dispatch('navProgress', {totalCards: this.todaysDeckCardIds.length, completed: 0})
 
     },
     components: { vueFlashcard }

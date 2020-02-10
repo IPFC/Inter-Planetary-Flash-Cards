@@ -121,13 +121,13 @@ export default {
     height: calc(100vh - 200px);
     margin: auto;
     width: 100%;
-    padding: 0px 7px 0px 20px;
+    padding: 0px 7px 0px 15px;
 }
 .flashcard:hover {
     box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
 .card-content {
-    padding: 10px 3px 0px 0px;
+    padding: 10px 8px 0px 0px;
     margin: auto;
     height: 100%;
     overflow-y: auto;        
@@ -181,15 +181,15 @@ export default {
         opacity: .97;
     }
     40% {
-        transform: perspective(300px) rotate3d(0, 1, 0, -10deg);
+        transform: perspective(300px) rotate3d(0, 1, 0, -5deg);
         animation-timing-function: ease-in;
     }
     60% {
-        transform: perspective(300px) rotate3d(0, 1, 0, 5deg);
+        transform: perspective(300px) rotate3d(0, 1, 0, 3deg);
         opacity: 1;
     }
     80% {
-        transform: perspective(300px) rotate3d(0, 1, 0, -2deg);
+        transform: perspective(300px) rotate3d(0, 1, 0, -1deg);
     }
     to {
         transform: perspective(300px);
