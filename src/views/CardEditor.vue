@@ -451,7 +451,6 @@ export default {
     background-color: C7C7C7;
     overflow-y: auto;
     margin: auto;   
-    max-width: 100vw;
 }
 .body::-webkit-scrollbar {
     width: .5em;
