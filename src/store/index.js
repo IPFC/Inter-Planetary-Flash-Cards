@@ -39,7 +39,10 @@ const store = new Vuex.Store({
     jwtValid: false,
     pinataKeys: null,
     userCollection: {
-      schedule: {},
+      schedule: {
+        edited: 0,
+        list: []
+      },
       deck_ids: [],
       deleted_deck_ids: [],
       webapp_settings: {
@@ -151,15 +154,11 @@ const store = new Vuex.Store({
       let deck_id= data.deck_id
       for (let deck of state.decks) {
         if (deck.deck_id === deck_id) {
-            deck.cards.push(newCard)
-            deck.edited = new Date().getTime() / 1000
-          }
+          deck.cards.push(newCard)
+          deck.edited = new Date().getTime() / 1000
           break
         }
-      // add to schedule... might need to cleanout schedule later somehow.  
-      if (!state.userCollection.schedule.hasOwnProperty('card_id')){
-          state.userCollection.schedule[newCard.card_id] = { level: 0, due: new Date().getTime() / 1000}
-        }
+      }
     },
     addCard (state, data) {
       // insert card with data
@@ -255,7 +254,7 @@ const store = new Vuex.Store({
       }
     },
     // cleanSchedule(state) {
-    //   let schedule = state.userCollection.schedule
+    //   let schedule = state.userCollection.schedule.list
     //   for (let scheduleItem of schedule) {
     //     let counter = 0
     //     for (let scheduleItemInner of schedule){
@@ -268,21 +267,25 @@ const store = new Vuex.Store({
     //     }
     //   }
     // },
+    updateSchedule(state, data) {
+      state.userCollection.schedule = data
+    },
     addCardToSchedule(state, card_id) {
       let dupCount = 0
-      for (let scheduleItem of state.userCollection.schedule) {
+      for (let scheduleItem of state.userCollection.schedule.list) {
         if (scheduleItem.card_id === card_id) {
               dupCount ++
           break
         }
       }
       if (dupCount === 0){
-        state.userCollection.schedule.push({ 
+        state.userCollection.schedule.list.push({ 
           card_id: card_id, 
           level: 0, 
           due: new Date().getTime() / 1000,
           lastInterval: null
         })
+        state.userCollection.schedule.edited = new Date().getTime() / 1000
       }
     },
     updateCardSchedule(state, data) {
@@ -290,11 +293,12 @@ const store = new Vuex.Store({
       let newLevel = data.level 
       let newDue = data.due
       let newLastInterval = data.lastInterval
-      for (let scheduleItem of state.userCollection.schedule) {
+      for (let scheduleItem of state.userCollection.schedule.list) {
         if (scheduleItem.card_id === card_id) {
           scheduleItem.level = newLevel 
           scheduleItem.due = newDue
           scheduleItem.lastInterval = newLastInterval
+          state.userCollection.schedule.edited = new Date().getTime() / 1000
           break
         }
       }
@@ -302,20 +306,22 @@ const store = new Vuex.Store({
     resetCardSchedule(state, card_id) {
       let newLevel = 0
       let newDue = new Date().getTime() / 1000
-      for (let scheduleItem of state.userCollection.schedule) {
+      for (let scheduleItem of state.userCollection.schedule.list) {
         if (scheduleItem.card_id === card_id) {
           scheduleItem.level = newLevel 
           scheduleItem.due = newDue
           scheduleItem.lastInterval = null
+          state.userCollection.schedule.edited = new Date().getTime() / 1000
           break
         }
       }
     },
     deleteCardFromSchedule(state, card_id) {
-      let schedule = state.userCollection.schedule
+      let schedule = state.userCollection.schedule.list
       for (let scheduleItem of schedule) {
         if (scheduleItem.card_id === card_id)
         schedule.splice(schedule.indexOf(scheduleItem), 1)
+        schedule.edited = new Date().getTime() / 1000
         break
       }
     }
@@ -357,7 +363,7 @@ const store = new Vuex.Store({
     },
     levelUpCard(context, card_id) {
       let cardData = null
-      for (let scheduleItem of context.state.userCollection.schedule) {
+      for (let scheduleItem of context.state.userCollection.schedule.list) {
         if (scheduleItem.card_id === card_id) {
           cardData = JSON.parse(JSON.stringify(scheduleItem))
           break
@@ -398,7 +404,7 @@ const store = new Vuex.Store({
     },
     levelDownCard(context, card_id) {
       let cardData = null
-      for (let scheduleItem of context.state.userCollection.schedule) {
+      for (let scheduleItem of context.state.userCollection.schedule.list) {
         if (scheduleItem.card_id === card_id) {
           cardData = JSON.parse(JSON.stringify(scheduleItem))
           break
@@ -607,6 +613,31 @@ const store = new Vuex.Store({
                 });
             }
           }
+          // sync schedule changes
+          if (serverCollection.schedule !== userCollection.schedule) {
+            if (serverCollection.schedule.edited > userCollection.schedule.edited){
+              context.commit('updateSchedule', serverCollection.schedule)
+            }
+            if (serverCollection.schedule.edited < userCollection.schedule.edited){
+              let putUserCollectionURL = context.state.serverURL + '/put_user_collection';
+              let putUserCollectionData = {'schedule': userCollection.schedule }
+              await fetch(putUserCollectionURL, { 
+                headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
+                body: JSON.stringify(putUserCollectionData),
+                method: 'PUT',
+                })
+                .then(response => response.json())
+                //responseData
+                .then(() => {
+                    // console.log("    Put webapp settings ", responseData);
+                    //err
+                }).catch(function() {
+                  context.commit('toggleSyncFailed', true)
+                  // console.log(err);
+                  return null
+                });
+            }
+          }
         }
         
         // get serverDecksMeta
@@ -757,7 +788,7 @@ const store = new Vuex.Store({
       return reviewDeck
     },
     todaysDeck(state, getters) {
-      let schedule = state.userCollection.schedule
+      let schedule = state.userCollection.schedule.list
       // console.log('schedule', schedule)
       let reviewDeck = getters.reviewDeck
       let todaysDeck = { cards: []}
