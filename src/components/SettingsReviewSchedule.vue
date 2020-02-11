@@ -158,14 +158,11 @@ export default {
           this.scheduleSettings.initialReviews.splice(-1,1)
         },      
         failModeSelect(value) {
-                    console.log(value)
-
           if (value === 'reset') {
           this.scheduleSettings.failMode = value
           } else{
             this.scheduleSettings.failMode = parseInt(value)
           }
-          console.log(this.scheduleSettings.failMode)
         }                             
     },     
     computed: {
