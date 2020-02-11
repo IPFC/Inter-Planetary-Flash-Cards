@@ -4,18 +4,20 @@
       <b-list-group-item id="logout" button @click="logout()">
         Logout
       </b-list-group-item>
-      <text-editor-settings id="text-editor-settings"/>
+      <text-editor-settings class="settings-component"/>
+      <review-schedule-settings  class="settings-component"/>
     </b-list-group>
   </b-container>
 </template>
 
 <script>
 import textEditorSettings from '../components/SettingsTextEditor.vue'
-        
+import reviewScheduleSettings from '../components/SettingsReviewSchedule.vue'
+
 
 export default {
   name: 'Settings',
-  components: {textEditorSettings},
+  components: {textEditorSettings, reviewScheduleSettings},
   data() {
     return {
     }
@@ -36,8 +38,9 @@ export default {
 #logout{
   margin-top: 15px
 }
-#text-editor-settings{
+.settings-component{
   padding: 0
 }
+
 
 </style>

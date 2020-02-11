@@ -111,6 +111,12 @@ const store = new Vuex.Store({
       state.userCollection.webapp_settings[settingSection][settingName] = settingData
       state.userCollection.webapp_settings.edited = new Date().getTime() / 1000
     },
+    updateSettingSection(state, data) {
+      let settingSection = data.settingSection
+      let settingsData = data.settings
+      state.userCollection.webapp_settings[settingSection]= settingsData
+      state.userCollection.webapp_settings.edited = new Date().getTime() / 1000
+    },
     addDeck(state, newDeck) {
       state.decks.unshift(newDeck)
       state.userCollection.deck_ids.push(newDeck.deck_id)
