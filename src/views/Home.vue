@@ -147,6 +147,7 @@ export default {
         //         // console.log('   resetCardSchedule',card.card_id)
         //     }
         // }
+     
         // plaintextToRichtext () {
         //     for (let deck of this.$store.state.decks) {
         //         console.log('checking a deck')
@@ -203,7 +204,7 @@ export default {
         //         if (!deck.icon_color) {
         //         // console.log("setting deck icons")
         //          deck.icon_color = this.generateRandomHslaColor()
-        //             deck.edited = Math.round(new Date().getTime() / 1000);
+        //             deck.edited = Math.round(new Date().getTime());
         //     this.$store.commit('updateDeck', deck)
         //         }
         //     }
@@ -213,10 +214,10 @@ export default {
         // this.setAllDeckColors()
         // this.duplicateChecker()
         // this.plaintextToRichtext()
+        this.$store.commit('updateCurrentDeckId', 'reviewDeck')
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
         }
-        this.$store.commit('updateCurrentDeckId', 'reviewDeck')
         this.$store.commit('updateNavToCardEditorFromReview', false)
         // this.currentCardIndex = 0
         this.$store.commit('toggleNavNewCardDisabled', false)
@@ -233,7 +234,6 @@ export default {
             }
         }
         this.$store.dispatch('navProgress', {totalCards: this.todaysDeckCardIds.length, completed: 0})
-
     },
     components: { vueFlashcard }
 }

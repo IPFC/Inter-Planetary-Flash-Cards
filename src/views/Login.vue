@@ -197,8 +197,8 @@ export default {
                 .then((data) => {
                     // console.log(data);
                     if (!data['token']) {
-                        // this.failedLogin = true
-                        // this.apiErrorMsg = data['error']
+                        this.failedLogin = true
+                        this.apiErrorMsg = data['error']
                     }
                     else {
                         this.$store.commit('updateJwt', data['token']);
@@ -238,7 +238,7 @@ export default {
                     // console.log(data);
                     if (!data['message']) {
                         this.failedLogin = true
-                        // this.apiErrorMsg = data['error']
+                        this.apiErrorMsg = data['error']
                     }
                     else {
                         this.login ();

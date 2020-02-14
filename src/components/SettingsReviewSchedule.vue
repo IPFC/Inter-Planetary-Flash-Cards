@@ -186,11 +186,11 @@ export default {
   padding: 20px;
 }
 .initial-schedule{
-  max-width: 3.3em;
+  max-width: 3.8em;
   margin-right: 5px;
 }
 .btn-circle{
-  background-color: lightblue;
+  background-color: rgb(216, 216, 216);
   border: none;
 }
 </style>

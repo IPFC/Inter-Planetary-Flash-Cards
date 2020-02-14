@@ -66,7 +66,7 @@ import _ from 'lodash';
             sync: _.debounce(function(){
                 //  console.log('debounced sync')
                 this.$store.dispatch('sync')
-            }, 6000),
+            }, 600000),
 
             async redirectIfAuth () {
                 await this.$store.dispatch('checkJwt')

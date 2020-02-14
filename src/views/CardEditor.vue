@@ -6,43 +6,26 @@
                     <quill-editor v-model="card.front_rich_text" class="quill"
                     ref="myQuillEditorFront"
                     :options="editorOption"
-                    @change="onFrontCardEditorChange($event)"
                     v-highlight
                     ></quill-editor>
                 </b-container>
                 <br>
                 <b-container class="card">
+                    <!-- @change="onBackCardEditorChange($event)" -->
                     <quill-editor v-model="card.back_rich_text" class="quill"
                     ref="myQuillEditorBack"
                     :options="editorOption"
-                    @change="onBackCardEditorChange($event)"
                     v-highlight
                     ></quill-editor>
                 </b-container>
+                <p id="counter" >{{ cardNumberOutOfDeck }}</p>                        
                 <br>
-                <b-container class="tag-chooser">
-                    <p class="d-inline-block tags-label">Deck:
-                        <b-button class="add-btn" >
-                            <font-awesome-icon v-if="!addingDeck" class="d-inline add-icon" @click="toggleAddingDeck()" color="white" size="1x" icon="plus-circle"/>
-                            <font-awesome-icon v-if="addingDeck" class="d-inline add-icon" @click="addNewDeck()" color="white" size="1x" icon="plus-circle"/>
-                            <b-form-input class="d-inline tag-input" v-if="addingDeck" v-model="newDeckTitle" >
-                            </b-form-input>
-                        </b-button>
-                    </p>
-                    <b-button  @click="removeCardFromDeck(deck.deck_id)" class="tag-style-button green-btn d-inline-block"  v-for="deck in includedDecks" :key="deck.deck_id" >
-                    {{ deck.title.slice(0, 24) }}
-                    </b-button>
-                    <br>
-                    <b-button  @click="addCardToDeck(deck.deck_id)" class="tag-style-button white-btn d-inline-block"  v-for="deck in unincludedDecks" :key="deck.deck_id" >
-                    {{ deck.title.slice(0, 24) }}
-                    </b-button>
-                </b-container>
                 <b-container  class="tag-chooser" id="tags-bottom">
                     <p class="d-inline tags-label">Tags: 
                         <b-button class="add-btn" >
                             <font-awesome-icon v-if="!addingTag" class="d-inline add-icon" @click="toggleAddingTag()" color="white" size="1x" icon="plus-circle"/>
-                            <font-awesome-icon v-if="addingTag" class="d-inline add-icon" @click="addNewTag()" color="white" size="1x" icon="plus-circle"/>
-                            <b-form-input class="d-inline tag-input" v-if="addingTag" v-model="newTagTitle" >
+                            <font-awesome-icon v-if="addingTag" class="d-inline add-icon"  @click="addNewTag()" color="white" size="1x" icon="plus-circle"/>
+                            <b-form-input class="d-inline tag-input" @keyup.enter="addNewTag()" v-if="addingTag" v-model="newTagTitle" >
                             </b-form-input>
                         </b-button>
                     </p>
@@ -61,7 +44,7 @@
                 <b-container id="buttons-inner">
                     <b-row>
                         <b-col class= "btn-col">
-                            <b-button :disabled="noDeckSelected" class="btn-circle btn-md"
+                            <b-button class="btn-circle btn-md"
                             @click="deleteCard()">
                                 <font-awesome-icon size="2x" icon="trash-alt"/>
                             </b-button>
@@ -79,7 +62,7 @@
                             </b-button>
                         </b-col>
                         <b-col class= "btn-col">
-                            <b-button :disabled="noDeckSelected" class="btn-circle btn-md"
+                            <b-button class="btn-circle btn-md"
                             @click="doneCheck()">
                                 <font-awesome-icon size="2x" icon="check"/>
                         </b-button>
@@ -105,11 +88,10 @@ export default {
     name: 'card-editor',
     data() {
         return {
+            card: '',
             initialDeckState : null,
-            addingDeck: false,
             addingTag: false,            
-            newDeckTitle: "",
-            newTagTitle: "",
+            newTagTitle: '',
             editorOption: {
                 theme: 'snow',
                 modules: {      
@@ -154,7 +136,7 @@ export default {
                         userOnly: true
                     }
                 }
-            }
+            },
         }
     },
     computed: {
@@ -165,42 +147,14 @@ export default {
             jwt: 'jwt',
             navNewCardClicked: 'navNewCardClicked',
             navToCardEditorFromReview: 'navToCardEditorFromReview',
-            pinataKeys: 'pinataKeys'
+            pinataKeys: 'pinataKeys',
         }),
-        decksMeta () {
-            return this.$store.getters.decksMeta
-        },
         currentDeck() {
             return this.$store.getters.currentDeck
         },
-        card() {
-        return this.currentDeck.cards[this.cardToEditIndex]
-        },
-        includedDecks () {
-        var card = this.card
-        return this.decks.filter(function (deck) {
-            if (deck != undefined){
-            return deck.cards.indexOf(card)>-1
-            }
-        })
-        },
-        unincludedDecks () {
-        var card = this.card
-        return this.decks.filter(function (deck) {
-            return !deck.cards.includes(card)
-        })
-        },
         unincludedTags () {
-            let allTagsList = []
-            for (let deck of this.decks) {
-                for (let card of deck.cards) {
-                   for (let tag of card.card_tags) {
-                        if (!allTagsList.includes(tag)){
-                            allTagsList.push(tag)
-                        }
-                   }
-                }
-            }
+            // this now rides on review deck in getters
+            let allTagsList = this.$store.getters.reviewDeck.allTags
             let unincludedTagsList = []
             for (let tag of allTagsList) {
                 if (!this.card.card_tags.includes(tag)) {
@@ -210,7 +164,7 @@ export default {
             return unincludedTagsList
         },
         leftNavDisabled () {
-            if (this.cardToEditIndex === 0 || this.noDeckSelected === true){ 
+            if (this.cardToEditIndex === 0){ 
             return true                        
             }
             else {
@@ -218,88 +172,102 @@ export default {
             }
         },
         rightNavDisabled () {
-            if (this.cardToEditIndex === this.currentDeck.cards.length -1 || this.noDeckSelected === true) {
+            if (this.cardToEditIndex === this.currentDeck.cards.length -1 ) {
             return true } 
             else {
                 return false
             }
         },
-        noDeckSelected () {
-            if (this.includedDecks.length < 1) {
-                return true
-            } else {
-                return false
-            }
-        },
         unChanged () {
-        let card = this.card
-        let result = true
-        if (card !== null && this.initialDeckState !== null) {
-            for (let initialDeckCard of this.initialDeckState.cards) {
-                if (card.card_id === initialDeckCard.card_id) {
-                    if ( !_.isEqual(initialDeckCard, card)) {
-                    result = false
-                    } else {
-                    result = true
+            let card = this.card
+            let result = true
+            if (card !== null && this.initialDeckState !== null) {
+                for (let initialDeckCard of this.initialDeckState.cards) {
+                    if (card.card_id === initialDeckCard.card_id) {
+                        if ( !_.isEqual(initialDeckCard, card)) {
+                        result = false
+                        } else {
+                        result = true
+                        }
                     }
                 }
             }
-        }
             return result
-        }
+        },
+        cardNumberOutOfDeck() {
+            let totalCards = this.currentDeck.cards.length
+            let currentCardNumber = this.cardToEditIndex + 1
+            let title = this.currentDeck.title
+            if (this.currentDeck.title === undefined) {
+                title = "Review Deck"
+            }
+            return `Card ${currentCardNumber}/${totalCards} in: ${title}`  
+        }        
     },
     methods: {
-        onFrontCardEditorChange() {
-            // ( quill, html, text)
-            // console.log('front editor change!', quill, html, text)
-            // console.log(JSON.stringify(delta))
-            // let justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
-            // console.log(justHtml)
-            return null
+        // onFrontCardEditorChange() {
+        //     // ( quill, html, text)
+        //     // console.log('front editor change!', quill, html, text)
+        //     // console.log(JSON.stringify(delta))
+        //     // let justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
+        //     // console.log(justHtml)
+        //     return null
+        // },
+        // onBackCardEditorChange() {
+        //     return null
+        // },
+        setCard() {
+            this.card = JSON.parse(JSON.stringify(this.currentDeck.cards[this.cardToEditIndex]))
+            
         },
-        onBackCardEditorChange() {
-            return null
-        },
-        deleteCard () {
-            // for each of the included decks, filter out the current card from its .cards
+        deleteCard: function () {
             let card = JSON.parse(JSON.stringify(this.card))
-            let currentDeckLength = JSON.parse(JSON.stringify(this.currentDeck.cards.length))
-            let includedDecks = JSON.parse(JSON.stringify(this.includedDecks))
+            let deck = JSON.parse(JSON.stringify(this.currentDeck))
+            let currentDeckLength = deck.length
             let wasLastCard
             if (this.rightNavDisabled) {
                 wasLastCard = true
             }
-            let card_id = card.card_id
-            for (let deck of includedDecks) {
-                let deleteData = {deck_id: deck.deck_id, card_id: card_id}
-                this.$store.commit('deleteCard', deleteData)
+            let deck_id = null 
+            if (deck.title === 'Review Deck') {
+                deck_id = this.findCardsDeck(card.card_id)
+            } else {
+                deck_id = deck.deck_id
             }
+            let deleteData = {deck_id: deck_id, card_id: card.card_id}
+            this.$store.commit('deleteCard', deleteData)
+            this.$store.commit('deleteCardFromSchedule', card.card_id)
             if (currentDeckLength === 1 || this.navToCardEditorFromReview) {
                 this.$router.go(-1)
             }
             else if (wasLastCard) {
                 this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
+                this.setCard()
             }
-            this.$store.commit('deleteCardFromSchedule', card.card_id)
         },
-        previousCard() {
-            this.submit()
-            this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
+        findCardsDeck: function (card_id){
+            for (let deck of this.decks) {
+                for (let card of deck.cards){
+                    if (card.card_id === card_id){
+                        return deck.deck_id
+                    }
+                }
+            }
         },
-        undo () {
-            return null
+        previousCard: function() {
+            this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1) 
+            this.submit(this.card)
         },
-        nextCard() {
-            this.submit()
+        nextCard: function() {
             this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
+            this.submit(this.card)
         },
-        doneCheck () {
-            this.submit()
+        doneCheck: function () {
             let wasLastCard
             if (this.rightNavDisabled) {
                 wasLastCard = true
             }
-            let currentDeckLength = JSON.parse(JSON.stringify(this.currentDeck.cards.length))
+            let currentDeckLength = this.currentDeck.cards.length
             if (currentDeckLength === 1 || this.navToCardEditorFromReview) {
                 this.$router.go(-1)
             }
@@ -309,81 +277,77 @@ export default {
             else {
                 this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
             }
+            this.submit(this.card)
         },
-        submit () {
+        getQuillData: function (cardInput) {
             // copy image and plaintext
+            let card = JSON.parse(JSON.stringify(cardInput))
             let quillFrontDelta = this.$refs.myQuillEditorFront.quill.getContents();
             for (let line of quillFrontDelta.ops) {
                 if (line.insert.image) {
-                    this.card.front_image = line.insert.image
+                    card.front_image = line.insert.image
                     break
                 }
             }
             let frontGottenText = this.$refs.myQuillEditorFront.quill.getText();
-            this.card.front_text = frontGottenText
-                        let quillBackDelta = this.$refs.myQuillEditorBack.quill.getContents();
+            card.front_text = frontGottenText
+            let quillBackDelta = this.$refs.myQuillEditorBack.quill.getContents();
             for (let line of quillBackDelta.ops) {
                 if (line.insert.image) {
-                    this.card.back_image = line.insert.image
+                    card.back_image = line.insert.image
                     break
                 }
             }
             let backGottenText = this.$refs.myQuillEditorBack.quill.getText();
-            this.card.back_text = backGottenText
+            card.back_text = backGottenText
+            return card
+        },
+        submit: function (cardInput) {
+            let card = this.getQuillData(cardInput)
             // remove empty card
-            if (this.card.front_text === "" && this.card.back_text === "" && !this.addingCard) {
+            if (card.front_text === "" && card.back_text === "") {
                 this.deleteCard()
             }
             else {
-                if (!this.unChanged) {
-                    let includedDecks = JSON.parse(JSON.stringify(this.includedDecks))
-                    for (let deck of includedDecks) {
-                        let updateData = {deck_id: deck.deck_id, card: this.card}
-                        this.$store.commit('updateCard', updateData)
-                    }
+                let deck_id = null 
+                if (this.currentDeck.title === 'Review Deck') {
+                    deck_id = this.findCardsDeck(card.card_id)
+                } else {
+                    deck_id = this.currentDeck.deck_id
                 }
+                let updateData = {deck_id: deck_id, card: card}
+                this.$store.commit('updateCard', updateData)
             }
-            this.addingCard = false
+            this.setCard()
         },
-        removeCardFromDeck (passedInDeck_id) {
-            let deck_id = JSON.parse(JSON.stringify(passedInDeck_id))
-            // if deck is current deck, switch current deck
-            if (deck_id === this.currentDeck.deck_id) {
-                for (let deck of this.includedDecks) {
-                    if (deck.deck_id !== this.currentDeck.deck_id) {
-                        this.$store.commit('updateCurrentDeckId', deck.deck_id)
-                        break
-                    }
-                }
-            }
-            let card= JSON.parse(JSON.stringify(this.card))
-            if (this.includedDecks.length !== 1) {
-                let deleteData = {deck_id: deck_id, card_id: card.card_id}
-                this.$store.commit('deleteCard', deleteData)
-            }
-        },
-        addCardToDeck (deck_id) {
-            let addData = {deck_id: deck_id, card: this.card}
+        // use later for dropdown menu, copy to other deck
+        addCardToDeck: function (deck_id) {
+            let card = JSON.parse(JSON.stringify(this.card))
+            let addData = {deck_id: deck_id, card: card}
             this.$store.commit('addCard', addData)
         },
-        removeTagFromCard(tag){
-            this.card.card_tags.splice(this.card.card_tags.indexOf(tag),1)
-            this.submit()
+        removeTagFromCard: function(tag){
+            let card = JSON.parse(JSON.stringify(this.card))
+            card.card_tags.splice(card.card_tags.indexOf(tag),1)
+            this.submit(card)
         },
-        addTagToCard(tag){
+        addTagToCard: function(tag){
+            let card = JSON.parse(JSON.stringify(this.card))
             if (tag === "Daily Review") {
-                this.$store.commit('addCardToSchedule', this.card.card_id)
+                this.$store.commit('addCardToSchedule', card.card_id)
             }
-            this.card.card_tags.unshift(tag)
-            this.submit()
+            card.card_tags.unshift(tag)
+            this.submit(card)
         },
-        toggleAddingDeck () {
-            this.addingDeck = !this.addingDeck
-        },
-        toggleAddingTag () {
+        toggleAddingTag: function () {
             this.addingTag = !this.addingTag
         },
-        addNewDeck () {
+        // new 
+        moveCard: function(){},
+        copyCardToNewDeck: function(){},
+        duplicateCArd: function(){},
+        // move this to deck selection page. keep here for option 'creat new deck', when selecting move/add to another deck
+        addNewDeck: function () {
             if (this.newDeckTitle === "" || this.newDeckTitle === " ") {
                 this.toggleAddingDeck()
             } else{
@@ -394,7 +358,7 @@ export default {
                     deck_tags: [],
                     description: null,
                     editable_by: "only_me",
-                    edited: Math.round(new Date().getTime() / 1000),  
+                    edited: Math.round(new Date().getTime()),  
                     lang_back:"en",
                     lang_front:"en",
                     term_count: 1,
@@ -404,44 +368,42 @@ export default {
                     }
                 this.$store.commit('addDeck', emptyDeck)
                 this.newDeckTitle= ""
-                this.toggleAddingDeck()
             }
         },
-        generateRandomHslaColor (){
+        generateRandomHslaColor: function (){
             // round to an interval of 20, 0-360
             let hue = Math.round(Math.random() * 360 / 20) * 20
             let color = `hsla(${hue}, 100%, 50%, 1)`
             return color
         },
-        addNewTag () {
-            let allTags = this.unincludedTags.concat(this.card.card_tags)
-            if (allTags.includes(this.newTagTitle) || this.newTagTitle === "" || this.newTagTitle === " ") {
+        addNewTag: function () {
+            let card = JSON.parse(JSON.stringify(this.card)) 
+            let allTags = this.unincludedTags.concat(card.card_tags)
+            if (allTags.includes(this.newTagTitle) || this.newTagTitle === '' || this.newTagTitle === ' ') {
+                this.newTagTitle = ''
                 this.toggleAddingTag()
             } else {
-                this.card.card_tags.unshift(this.newTagTitle)
-                this.submit()
-                this.newtagTitle= ""
+                card.card_tags.unshift(this.newTagTitle)
+                this.submit(card)
+                this.newTagTitle = ''
                 this.toggleAddingTag()
             }
-        }
+        },
     },
     created () {
         // deep copy so it doesnt change
+        this.setCard()
         this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck))
     },
     watch: {
         navNewCardClicked: function() {
             this.$store.commit('toggleNavNewCardDisabled', false)
             // avoid deleting a new card just cause its blank
-            this.addingCard = true
-            this.submit()
+            this.submit(this.card)
         },
-        unChanged: function () {
-            this.$store.commit('toggleNavNewCardDisabled', this.unChanged || this.noDeckSelected)
-        },
-        noDeckSelected: function() {
-            this.$store.commit('toggleNavNewCardDisabled', this.unChanged || this.noDeckSelected)
-        }
+        // unChanged: function () {
+        //     this.$store.commit('toggleNavNewCardDisabled', this.unChanged)
+        // },
     },
   }
 </script>
@@ -461,8 +423,8 @@ export default {
 }
 
 #main-col {
- width: 100%;
- padding: 0px 10px;
+    width: 100%;
+    padding: 0px 10px;
  }
  #card-container {
      padding: 0;
@@ -513,10 +475,14 @@ width: 90%;
 .flashcard:hover {
 box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
-
+#counter{
+    color: grey; 
+    margin:  40px auto 0px;
+    max-width: 600px;
+}
 
 .tag-chooser {
-margin: 1em auto;
+margin: auto;
 height: 7em;
 overflow-x: auto;
 white-space: nowrap;

@@ -74,7 +74,6 @@ export default {
         commitDeckTitle() {
             // check to make sure it was changed
             this.deck.title = this.newDeckTitle
-            this.deck.edited = Math.round(new Date().getTime() / 1000);
             this.$store.commit('updateDeck', this.deck)
             this.toggleEditDeckTitle()
         },
