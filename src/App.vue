@@ -1,7 +1,7 @@
 <template>
     <div class="body" id="app">
-            <Navbar id="navbar"/>
-            <router-view/>
+            <Navbar id="navbar" @new-card="newCard(); cardEditorFromReview()"/>
+            <router-view @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
 
@@ -15,6 +15,8 @@ import _ from 'lodash';
         name: 'App',
         data() {
             return {
+                newCardClicked: false,
+                toCardEditorFromReview: false,
             }
         },
         mounted() {
@@ -63,6 +65,21 @@ import _ from 'lodash';
             }
         },
         methods: {
+            editClicked(){
+                console.log('edit-clicked')
+                this.cardEditorFromReview()
+            },
+            newCard: function() {
+                this.newCardClicked != this.newCardClicked 
+            },
+            cardEditorFromReview: function(){
+                console.log('card-editore-from-review')
+                if (this.$store.state.currentDeckId === 'reviewDeck') {
+                    this.toCardEditorFromReview = true
+                } else {
+                    this.toCardEditorFromReview = false
+                }
+            },
             sync: _.debounce(function(){
                 //  console.log('debounced sync')
                 this.$store.dispatch('sync')

@@ -139,14 +139,13 @@ export default {
             },
         }
     },
+    props: [ 'newCardClicked', 'comingToCardEditorFromReview' ],
     computed: {
         ...mapState({
             userCollection: 'userCollection',
             cardToEditIndex: 'cardToEditIndex',
             decks: 'decks',
             jwt: 'jwt',
-            navNewCardClicked: 'navNewCardClicked',
-            navToCardEditorFromReview: 'navToCardEditorFromReview',
             pinataKeys: 'pinataKeys',
         }),
         currentDeck() {
@@ -165,7 +164,7 @@ export default {
         },
         leftNavDisabled () {
             if (this.cardToEditIndex === 0){ 
-            return true                        
+                return true                        
             }
             else {
                 return false
@@ -173,7 +172,8 @@ export default {
         },
         rightNavDisabled () {
             if (this.cardToEditIndex === this.currentDeck.cards.length -1 ) {
-            return true } 
+                return true 
+            } 
             else {
                 return false
             }
@@ -186,8 +186,10 @@ export default {
                     if (card.card_id === initialDeckCard.card_id) {
                         if ( !_.isEqual(initialDeckCard, card)) {
                         result = false
+                        break
                         } else {
                         result = true
+                        break
                         }
                     }
                 }
@@ -237,7 +239,7 @@ export default {
             let deleteData = {deck_id: deck_id, card_id: card.card_id}
             this.$store.commit('deleteCard', deleteData)
             this.$store.commit('deleteCardFromSchedule', card.card_id)
-            if (currentDeckLength === 1 || this.navToCardEditorFromReview) {
+            if (currentDeckLength === 1 || this.comingToCardEditorFromReview) {
                 this.$router.go(-1)
             }
             else if (wasLastCard) {
@@ -255,20 +257,27 @@ export default {
             }
         },
         previousCard: function() {
+            if (!this.unChanged) {
+                this.submit(this.card)
+            }
             this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1) 
-            this.submit(this.card)
         },
         nextCard: function() {
+            if (!this.unChanged) {
+                this.submit(this.card)
+            }
             this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
-            this.submit(this.card)
         },
         doneCheck: function () {
+            if (!this.unChanged) {
+                this.submit(this.card)
+            }
             let wasLastCard
             if (this.rightNavDisabled) {
                 wasLastCard = true
             }
             let currentDeckLength = this.currentDeck.cards.length
-            if (currentDeckLength === 1 || this.navToCardEditorFromReview) {
+            if (currentDeckLength === 1 || this.comingToCardEditorFromReview) {
                 this.$router.go(-1)
             }
             else if (wasLastCard) {
@@ -277,7 +286,7 @@ export default {
             else {
                 this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
             }
-            this.submit(this.card)
+            
         },
         getQuillData: function (cardInput) {
             // copy image and plaintext
@@ -316,7 +325,7 @@ export default {
                     deck_id = this.currentDeck.deck_id
                 }
                 let updateData = {deck_id: deck_id, card: card}
-                this.$store.commit('updateCard', updateData)
+                this.$store.dispatch('updateCard', updateData)
             }
             this.setCard()
         },
@@ -396,14 +405,11 @@ export default {
         this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck))
     },
     watch: {
-        navNewCardClicked: function() {
-            this.$store.commit('toggleNavNewCardDisabled', false)
-            // avoid deleting a new card just cause its blank
-            this.submit(this.card)
-        },
-        // unChanged: function () {
-        //     this.$store.commit('toggleNavNewCardDisabled', this.unChanged)
-        // },
+        newCardClicked: function () {
+            if (!this.unChanged) {
+                this.submit(this.card)
+            }
+        }
     },
   }
 </script>

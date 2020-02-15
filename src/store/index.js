@@ -78,9 +78,6 @@ const store = new Vuex.Store({
     syncing: false,
     syncFailed: false,
     serverURL: 'https://ipfc-midware.herokuapp.com',
-    navNewCardDisabled: false,
-    navNewCardClicked: false,
-    navToCardEditorFromReview: false,
   },
   mutations: {
     updateJwt(state, newJwt) {
@@ -246,15 +243,6 @@ const store = new Vuex.Store({
     toggleSyncFailed (state, bool) {
       state.syncFailed = bool
     },
-    toggleNavNewCardDisabled (state, bool) {
-      state.navNewCardDisabled = bool
-    },
-    updateNavToCardEditorFromReview (state, bool) {
-      state.navToCardEditorFromReview = bool
-    },
-    toggleNewCardClicked (state) {
-      state.navNewCardClicked = !state.navNewCardClicked
-    },
     // updateDeckEdited(state, deck_id) {
     //   for (let deck of state.decks) {
     //     if (deck.deck_id === deck_id) {
@@ -349,6 +337,9 @@ const store = new Vuex.Store({
       let data = { newCard: newCard, deck_id: deck_id }
       context.commit('newCard', data)
       context.commit('addCardToSchedule', newCard.card_id)
+    },
+    updateCard(context, data) {
+      this.context.commit('updateCard', data)
     },
     navProgress (context, data) {   
         let outputString = data.completed + " / "  + data.totalCards

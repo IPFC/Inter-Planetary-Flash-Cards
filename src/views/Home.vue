@@ -2,7 +2,7 @@
     <div>
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
             <b-row id="top-buttons-row" class="justify-content-end">
-                <a class="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck)" size="1x" icon="edit"/></a>
+                <a class="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
                 <b-col class="card-col">
@@ -218,7 +218,6 @@ export default {
         if (this.$store.state.lastSyncsData === '') {
             this.$store.dispatch('refreshLastSyncsData')
         }
-        this.$store.commit('updateNavToCardEditorFromReview', false)
         // this.currentCardIndex = 0
         this.$store.commit('toggleNavNewCardDisabled', false)
         // this.populateSchedule()

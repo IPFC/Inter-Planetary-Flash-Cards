@@ -30,7 +30,7 @@ export default new Router({
         {
             path: '/',
             redirect: {
-                name: "login",
+            name: "login",
             }
         },
         {
@@ -72,7 +72,8 @@ export default new Router({
             path: "/card-editor",
             name: "card-editor",
             component: CardEditor,
-            beforeEnter: redirectIfNotAuth
+            beforeEnter: redirectIfNotAuth,
+            props: true 
         }
     ]
 })

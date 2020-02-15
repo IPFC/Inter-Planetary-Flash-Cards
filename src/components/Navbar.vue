@@ -4,7 +4,7 @@
   <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
   <b-link to="#" class="icon" ><font-awesome-icon style="color: white;" class="fa-lg"  icon="search"/></b-link>     
   <b-nav-text style="color: white;" id="session-counter" >{{ navProgressCounter }}</b-nav-text>    
-  <b-link @click="newCard()" :disabled="navNewCardDisabled" class="icon"><img src="../assets/add card logo.svg" alt="add"></b-link>
+  <b-link @click="newCard(); $emit('new-card');" class="icon"><img src="../assets/add card logo.svg" alt="add"></b-link>
   <b-link @click="callSync()" id="sync-link">
     <font-awesome-layers  class="fa-lg" id="sync-layers">
       <font-awesome-icon style="color: white;" class="fa-lg" id="cloud" icon="cloud"></font-awesome-icon>
@@ -45,7 +45,6 @@ export default {
 				return this.$store.getters.navProgressCounter
 				},
     ...mapState({
-            navNewCardDisabled: 'navNewCardDisabled',
             syncing: 'syncing',
             syncFailed: 'syncFailed',
     }),
@@ -55,11 +54,7 @@ export default {
   },
   methods: {
     newCard() {
-      this.$store.commit('toggleNewCardClicked')
       if (this.$store.state.currentDeckId === 'reviewDeck' || this.$store.state.currentDeckId === 'defaultDeck') {
-        if (this.$store.state.currentDeckId === 'reviewDeck') {
-              this.$store.commit('updateNavToCardEditorFromReview', true)
-          }                                   // this will be the most recent edited deck
         this.$store.commit('updateCurrentDeckId', this.$store.getters.decksMeta[0].deck_id)
      } 
       this.$store.dispatch('newCard', this.currentDeck.deck_id)  
@@ -96,7 +91,7 @@ export default {
 }
 @-webkit-keyframes pulsate {
   0% {-webkit-transform: scale(1, 1); opacity: 1;}
-  50% {-webkit-transform: scale(1.1, 1.1); opacity: 1;}
+  50% {-webkit-transform: scale(1.2, 1.2); opacity: 1;}
   100% {-webkit-transform: scale(1, 1); opacity: 1;}
 }
 </style>
