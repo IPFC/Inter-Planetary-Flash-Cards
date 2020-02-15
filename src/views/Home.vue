@@ -242,7 +242,7 @@ export default {
 <style scoped>
 .edit {
     color: gray;
-    margin: 5px;
+    margin: 7px;
     right: 3px;
     z-index: 1;
     position: absolute;
@@ -253,7 +253,7 @@ export default {
 
 #main-card {
     margin: auto;
-    margin-top: 30px;
+    margin-top: 35px;
     max-width: 600px;
 }
 #next-card-padding-outer{
@@ -271,13 +271,16 @@ export default {
 #next-card {
     z-index: -1;
     margin: auto;
-    margin-top: 20px;
+    margin-top: 25px;
     max-width: 480px;
+}
+#next-card >>> .card-content::-webkit-scrollbar-thumb {
+    background-color: rgba(162, 162, 162, 0);
 }
 #third-card-padding-outer{
     z-index: -2;
     position: absolute;
-    top: 0px;
+    top: 5px;
     left: 0px;
     width: 100%;
 }

@@ -242,8 +242,8 @@ export default {
             }
             else if (wasLastCard) {
                 this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
-                this.setCard()
             }
+            this.setCard()
         },
         findCardsDeck: function (card_id){
             for (let deck of this.decks) {
