@@ -11,7 +11,6 @@
                 </b-container>
                 <br>
                 <b-container class="card">
-                    <!-- @change="onBackCardEditorChange($event)" -->
                     <quill-editor v-model="card.back_rich_text" class="quill"
                     ref="myQuillEditorBack"
                     :options="editorOption"
@@ -207,17 +206,6 @@ export default {
         }        
     },
     methods: {
-        // onFrontCardEditorChange() {
-        //     // ( quill, html, text)
-        //     // console.log('front editor change!', quill, html, text)
-        //     // console.log(JSON.stringify(delta))
-        //     // let justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
-        //     // console.log(justHtml)
-        //     return null
-        // },
-        // onBackCardEditorChange() {
-        //     return null
-        // },
         setCard() {
             this.card = JSON.parse(JSON.stringify(this.currentDeck.cards[this.cardToEditIndex]))
             

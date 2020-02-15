@@ -5,33 +5,37 @@
                 <a class="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
-                <b-col class="card-col">
-                <vue-flashcard
-                    id="main-card"
-                    :isToggle= "cardFlipToggle"
-                    :front="currentCard.front_rich_text" 
-                    :back="currentCard.back_rich_text"
-                    >
-                </vue-flashcard>
-                <div id="next-card-padding-outer">
-                    <div id="next-card-padding">
-                        <vue-flashcard  v-if="todaysDeck.cards.length > 1"
-                            id="next-card"
-                            :front="nextCard.front_rich_text" 
-                            :back="nextCard.back_rich_text"
-                            >
-                        </vue-flashcard>
+                <b-col v-if="!spinner" class="card-col">
+                    <vue-flashcard
+                        id="main-card"
+                        :isToggle= "cardFlipToggle"
+                        :front="currentCard.front_rich_text" 
+                        :back="currentCard.back_rich_text"
+                        >
+                    </vue-flashcard>
+                    <div id="next-card-padding-outer">
+                        <div id="next-card-padding">
+                            <vue-flashcard  v-if="todaysDeck.cards.length > 1"
+                                id="next-card"
+                                :front="nextCard.front_rich_text" 
+                                :back="nextCard.back_rich_text"
+                                >
+                            </vue-flashcard>
+                        </div>
                     </div>
-                </div>
-                <div id="third-card-padding-outer">
-                    <div id="third-card-padding">
-                        <vue-flashcard  v-if="todaysDeck.cards.length > 2"
-                            id="third-card" class ="card"
-                            front="   /n /n /n   " 
-                            back="   /n /n /n   " > 
-                        </vue-flashcard>
+                    <div id="third-card-padding-outer">
+                        <div id="third-card-padding">
+                            <vue-flashcard  v-if="todaysDeck.cards.length > 2"
+                                id="third-card" class ="card"
+                                front="   /n /n /n   " 
+                                back="   /n /n /n   " > 
+                            </vue-flashcard>
+                        </div>
                     </div>
-                </div>
+                </b-col>
+                <b-col v-else>
+                    <font-awesome-icon style="margin: auto" icon="spinner" spin size="3x" />
+                    <p style="margin: auto" >syncing</p>
                 </b-col>
             </b-row>
             <b-row id="buttons-row" >
@@ -64,27 +68,39 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import vueFlashcard from '../components/flashcard.vue';
+import { mapState } from 'vuex'
 
+import vueFlashcard from '../components/flashcard.vue';
+import defaultCollection from '../assets/defaultCollection.json'
 export default {
 
     name: "home",
     data() {
         return {
             // currentCardIndex: 0,
+            authStatus: false,
+            spinner: false,
             cardFlipToggle: false,
             cardsCompleted: 0,
             cardsTotal: 0,
-            todaysDeckCardIds: [],
+            todaysDeckCardIds: [], 
+            loggingIn: false,
         }
     },
     computed: {
-        ...mapGetters([
-            'reviewDeck'
+        ...mapGetters({
+            reviewDeck: 'reviewDeck',
+            todaysDeckFull: 'todaysDeck',
+            isAuthenticated: 'isAuthenticated',
+        }),
+        ...mapState([
+            'userCollection',
+            'decks',
+            'jwt',
+            'lastSyncsData',
+            'syncing',
+            'syncFailed',
         ]),
-        todaysDeckFull () {  //before max card limit is applied
-            return this.$store.getters.todaysDeck
-        },
         todaysDeck() {
             let cards = []
             for (let card of this.todaysDeckFull.cards) {
@@ -129,101 +145,86 @@ export default {
             this.$store.dispatch('navProgress', updateData)
         },
         editCard(card, reviewDeck) {
-            this.$store.commit('updateNavToCardEditorFromReview', true)
             this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card))
             this.$router.push('/card-editor')
         },
-        // populateSchedule(){
-        //     // initial schedule when its empty for testing
-        //     for (let card of this.reviewDeck.cards) {
-        //         this.$store.commit('addCardToSchedule', card.card_id)
-        //         // console.log('   addCardToSchedule',card.card_id)
-        //     }
-        // },
-        // resetSchedule(){
-        //     // reset schedule for testing
-        //     for (let card of this.reviewDeck.cards) {
-        //         this.$store.commit('resetCardSchedule', card.card_id)
-        //         // console.log('   resetCardSchedule',card.card_id)
-        //     }
-        // }
-     
-        // plaintextToRichtext () {
-        //     for (let deck of this.$store.state.decks) {
-        //         console.log('checking a deck')
-        //         for (let oldCard of deck.cards) {
-        //             if (oldCard.front_rich_text !== oldCard.front_text || oldCard.back_rich_text !== oldCard.back_text){
-        //                oldCard.front_rich_text = JSON.parse(JSON.stringify(oldCard.front_text))
-        //                 oldCard.back_rich_text = JSON.parse(JSON.stringify(oldCard.back_text))
-        //                 let cardUpdateData = { deck_id: deck.deck_id, card: oldCard }
-        //                 this.$store.commit('updateCard', cardUpdateData) 
-        //             }
-        //         }
-        //     }
-        // }
-        // duplicateChecker () {
-        //     for (let deck of this.$store.state.decks) {
-        //         for (let dupDeck of this.$store.state.decks) {
-        //             let dupCount = 0
-        //             if (deck.deck_id === dupDeck.deck_id) {
-        //                 dupCount ++
-        //                 console.log("    dupCount", dupCount)    
-        //                 if (dupCount > 1) {
-        //                     console.log("    duplicate deck  detected", dupDeck)
-        //                     this.$store.commit('deleteDeck', dupDeck.deck_id)
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     for (let deck of this.$store.state.decks) {
-        //         for (let card of deck.cards) {
-        //             let dupCount = 0
-        //             for (let cardDup of deck.cards) {
-        //                 if (card.card_id === cardDup.card_id) {
-        //                     dupCount ++
-        //                     console.log("    dupCount", dupCount)    
-        //                     if (dupCount > 1) {
-        //                         console.log("    duplicate card  detected", cardDup)
-        //                         let deleteData = { deck_id: deck.deck_id, card_id:  cardDup.card_id,}
-        //                         this.$store.commit('deleteCard', deleteData)
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        // generateRandomHslaColor (){
-        //     // round to an interval of 20, 0-360
-        //     let hue = Math.round(Math.random() * 360 / 20) * 20
-        //     let color = `hsla(${hue}, 100%, 50%, 1)`
-        //     return color
-        // },
-        // setAllDeckColors () {
-        //     let decks = this.$store.state.decks
-        //     for (let deck of decks) {
-        //         if (!deck.icon_color) {
-        //         // console.log("setting deck icons")
-        //          deck.icon_color = this.generateRandomHslaColor()
-        //             deck.edited = Math.round(new Date().getTime());
-        //     this.$store.commit('updateDeck', deck)
-        //         }
-        //     }
-        // }
+        async checkAuth () {
+            await this.$store.dispatch('checkJwt')
+            if (this.isAuthenticated) {
+                // but upon entry we'll need to query decks metadata and make sure we aren't missing updates
+                // if there's no internet, post the unsynced data warning AND a special login without sync warning.
+                this.authStatus = true
+            } else {
+                this.authStatus = false
+            }
+        },
+    },
+    mounted() {
+        this.checkAuth()
     },
     created () {
-        // this.setAllDeckColors()
-        // this.duplicateChecker()
-        // this.plaintextToRichtext()
         this.$store.commit('updateCurrentDeckId', 'reviewDeck')
-        if (this.$store.state.lastSyncsData === '') {
+        let localStorageEmpty = false
+        let newUser = null
+        if (this.userCollection === null | this.decks === null){
+            localStorageEmpty = true
+        }
+        else if(this.userCollection.user_id === "tutorial") {
+            newUser = true
+        }
+        // define the users as true false variables, then later be like if(newUserfirst page refresh)
+        // new user returning
+        // old user cache but jwt off
+
+
+        console.log('   newUser',newUser)
+        console.log('   localStorageEmpty',localStorageEmpty)
+        console.log('   auth status',this.authStatus)
+        console.log('   this.jwt',this.jwt)
+
+        // returning user, expired jwt
+        if (this.authStatus === false && this.jwt !== null && !newUser){
+                    console.log('returning user, expired jwt')
+
+            this.$router.push('login');
+        }
+        // returning user, valid jwt, no cache
+        else if (this.authStatus === true && localStorageEmpty){
+                            console.log('returning user, valid jwt, no cache')
+
+            this.$store.commit('updateUserCollection', defaultCollection['user_collection'])
+            this.$store.commit('updateDecks', defaultCollection['decks']) // might be overlap
+            this.$store.commit('toggleSyncFailed', false) // we'll watch this, then set collection and cancel spinner when done syncing
+            this.loggingIn = true
+            this.spinner = true            
+            this.$store.dispatch('sync')
+        }
+
+        // returning user, valid jwt, has cache
+        else if (this.authStatus === true && !localStorageEmpty){
+                            console.log('returning user, valid jwt, has cache')
+
+            this.$store.commit('toggleSyncFailed', false)
+            this.loggingIn = true
+            this.spinner = true
+            this.$store.dispatch('sync')
+        }
+
+        // new user or no JWT
+        else if(this.authStatus === false && this.jwt ===null || newUser ) {
+            console.log('new user or no JWT')
+            this.$store.commit('updateUserCollection', defaultCollection['userCollection'])
+            this.$store.commit('updateDecks', defaultCollection['decks'])
+        }
+
+        if (this.lastSyncsData === null) {
             this.$store.dispatch('refreshLastSyncsData')
         }
         // this.currentCardIndex = 0
-        this.$store.commit('toggleNavNewCardDisabled', false)
-        // this.populateSchedule()
-        // this.resetSchedule()
+
+        // set todaysDeck to maximum length as per settings
         for (let card of this.todaysDeckFull.cards) {
-            let maxReviewLength = this.$store.state.userCollection.webapp_settings.scheduleSettings.maxCards
+            let maxReviewLength = this.userCollection.webapp_settings.scheduleSettings.maxCards
             if (this.todaysDeckFull.cards.length >= maxReviewLength) {
                 break
             } else {
@@ -233,6 +234,15 @@ export default {
             }
         }
         this.$store.dispatch('navProgress', {totalCards: this.todaysDeckCardIds.length, completed: 0})
+    },
+    watch: {
+        syncing: function () {
+            if (this.loggingIn === true && this.syncing ===true && this.syncFailed === true) {
+                this.spinner = true
+            } else {
+                this.spinner = false
+            }
+        }
     },
     components: { vueFlashcard }
 }

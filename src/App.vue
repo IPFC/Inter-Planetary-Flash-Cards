@@ -19,9 +19,6 @@ import _ from 'lodash';
                 toCardEditorFromReview: false,
             }
         },
-        mounted() {
-           this.redirectIfAuth()
-        },
         computed: {
             ...mapState({
                 decks: 'decks',
@@ -85,14 +82,7 @@ import _ from 'lodash';
                 this.$store.dispatch('sync')
             }, 600000),
 
-            async redirectIfAuth () {
-                await this.$store.dispatch('checkJwt')
-                if (this.$store.getters.isAuthenticated) {
-                    // but upon entry we'll need to query decks metadata and make sure we aren't missing updates
-                    // if there's no internet, post the unsynced data warning AND a special login without sync warning.
-                    this.$router.push('/home')
-                }
-            }
+
         },
         components: {
             Navbar

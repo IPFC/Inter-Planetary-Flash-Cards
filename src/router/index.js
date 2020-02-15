@@ -4,7 +4,6 @@ import Router from 'vue-router'
 import Login from "../views/Login.vue"
 import Home from "../views/Home.vue"
 import DeckSelection from "../views/DeckSelection.vue"
-import QuizOptions from "../views/QuizOptions.vue"
 import DeckEditor from "../views/DeckEditor.vue"
 import Settings from "../views/Settings.vue"
 import CardEditor from "../views/CardEditor.vue"
@@ -25,12 +24,12 @@ async function redirectIfNotAuth (to, from, next) {
 
 
 export default new Router({
-    mode: 'history',
+    // mode: 'history',
     routes: [
         {
             path: '/',
             redirect: {
-            name: "login",
+            name: "home",
             }
         },
         {
@@ -42,18 +41,11 @@ export default new Router({
             path: "/home",
             name: "home",
             component: Home,
-            beforeEnter: redirectIfNotAuth
         },
         {
             path: "/deck-selection",
             name: "deck-selection",
             component: DeckSelection,
-            beforeEnter: redirectIfNotAuth
-        },
-        {
-            path: "/quiz-options",
-            name: "quiz-options",
-            component: QuizOptions,
             beforeEnter: redirectIfNotAuth
         },
         {
@@ -72,7 +64,6 @@ export default new Router({
             path: "/card-editor",
             name: "card-editor",
             component: CardEditor,
-            beforeEnter: redirectIfNotAuth,
             props: true 
         }
     ]

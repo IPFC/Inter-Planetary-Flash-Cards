@@ -204,9 +204,6 @@ export default {
                         this.$store.commit('updateJwt', data['token']);
                         this.$store.dispatch('checkJwt')
                         this.$store.commit('updatePinataKeys', data['pinata_keys'])
-                        this.$store.commit('updateUserCollection', data['user_collection'])
-                        this.$store.commit('updateDecks', data['decks'])
-                        this.$store.dispatch('refreshLastSyncsData')
                         this.$router.push('home');
                     }
                     this.loggingIn = false

@@ -38,43 +38,12 @@ const store = new Vuex.Store({
     jwt: null,
     jwtValid: false,
     pinataKeys: null,
-    userCollection: {
-      schedule: {
-        edited: 0,
-        list: []
-      },
-      deck_ids: [],
-      deleted_deck_ids: [],
-      webapp_settings: {
-        // move these to new user default settings
-        textEditorSettings: {
-          editorOptions: {
-            toolbar: [
-              'bold', 
-              'italic', 
-              'underline', 
-              'code-block', 
-              { 'size': ['small', false, 'large', 'huge'] },
-              { 'color': [] }, { 'background': [] },         
-              { 'align': [] },
-              'image'
-            ]
-          }
-        },
-        scheduleSettings: {
-          initialReviews: [1, 5, 20], //in minutes
-          laterReviewsMultiplier: 2, // how many x
-          failMode: 'reset', // if set to a number, is how many levels to subtract
-          randomizer: .1, // percent to randomize
-          maxCards: 50,
-        }
-      },
-    },
+    userCollection: null,
     decks: null,
     currentDeckId: null,
     cardToEditIndex: null,
     navProgressCounter: '0 / 0',
-    lastSyncsData: '',
+    lastSyncsData: null,
     syncing: false,
     syncFailed: false,
     serverURL: 'https://ipfc-midware.herokuapp.com',
@@ -243,28 +212,6 @@ const store = new Vuex.Store({
     toggleSyncFailed (state, bool) {
       state.syncFailed = bool
     },
-    // updateDeckEdited(state, deck_id) {
-    //   for (let deck of state.decks) {
-    //     if (deck.deck_id === deck_id) {
-    //       deck.edited = new Date().getTime() 
-    //       break
-    //     }
-    //   }
-    // },
-    // cleanSchedule(state) {
-    //   let schedule = state.userCollection.schedule.list
-    //   for (let scheduleItem of schedule) {
-    //     let counter = 0
-    //     for (let scheduleItemInner of schedule){
-    //       if (scheduleItem.card_id === scheduleItemInner.card_id ) {
-    //         counter ++
-    //         if (counter > 1) {
-    //           schedule.splice(schedule.indexOf(scheduleItem), 1)
-    //         }
-    //       }
-    //     }
-    //   }
-    // },
     updateSchedule(state, data) {
       state.userCollection.schedule = data
     },
@@ -654,7 +601,6 @@ const store = new Vuex.Store({
                    // if the local version is newer, upload it
                   //  console.log('    localDeckMeta.edited',localDeckMeta.edited)
                   //  console.log('    serverDeckMeta.edited',serverDeckMeta.edited)
-
                   if (localDeckMeta.edited > serverDeckMeta.edited) {
                     for(let deckToPut of decks ) {
                       if (deckToPut.deck_id === localDeckMeta.deck_id){
@@ -775,54 +721,78 @@ const store = new Vuex.Store({
     getDecks: state => state.decks,
     navProgressCounter: state => state.navProgressCounter,
     reviewDeck(state) {
-      let decks = state.decks
-      let reviewDeck = {cards: [], allTags: [], title: 'Review Deck',  } 
-      //since we are running through the whole collection anyway, let all tags come for the ride
-      for (let deck of decks) {
-        for (let card of deck.cards) {
-          for (let tag of card.card_tags){
-            if(!reviewDeck.allTags.includes(tag)){
-              reviewDeck.allTags.push(tag)
+      if (state.userCollection === null || state.decks === null || state.userCollection === undefined || state.decks === undefined) {
+        return {cards: [], allTags: [], title: 'Review Deck',  } 
+      }
+      else {
+        let decks = state.decks
+        let reviewDeck = {cards: [], allTags: [], title: 'Review Deck',  } 
+        //since we are running through the whole collection anyway, let all tags come for the ride
+        for (let deck of decks) {
+          for (let card of deck.cards) {
+            for (let tag of card.card_tags){
+              if(!reviewDeck.allTags.includes(tag)){
+                reviewDeck.allTags.push(tag)
+              }
+            }
+            if (card.card_tags.includes('Daily Review') && !reviewDeck.cards.includes(card)){
+              reviewDeck.cards.push(card)
             }
           }
-          if (card.card_tags.includes('Daily Review') && !reviewDeck.cards.includes(card)){
-            reviewDeck.cards.push(card)
-          }
         }
+        return reviewDeck        
       }
-      return reviewDeck
+     
     },
     todaysDeck(state, getters) {
-      let schedule = state.userCollection.schedule.list
-      // console.log('schedule', schedule)
-      let reviewDeck = getters.reviewDeck
-      let todaysDeck = { cards: [], title: `Today's Review`}
-      let now = new Date().getTime() 
-      let cutOff = now + (3600 * 23) // cards due within 23 hours
-      // console.log('cutoff', cutOff-1581318652)
-      let todaysScheduleItems = []
-      for (let scheduleItem of schedule) {
-        // console.log('scheduleItem.due', scheduleItem.due-1581318652)
+      if (state.userCollection === null || state.decks === null || state.userCollection === undefined || state.decks === undefined) {
+        return {cards: [], allTags: [], title: 'Review Deck',  } 
+      } 
+      else {
+        let schedule = state.userCollection.schedule.list
+        let reviewDeck = getters.reviewDeck
+        let todaysDeck = { cards: [], title: `Today's Review`}
+        let now = new Date().getTime() 
+        let cutOff = now + (3600 * 23) // cards due within 23 hours
+        // console.log('cutoff', cutOff-1581318652)
+        let todaysScheduleItems = []
+        for (let scheduleItem of schedule) {
+          // console.log('scheduleItem.due', scheduleItem.due-1581318652)
 
-        if (scheduleItem.due <= cutOff) {
-          todaysScheduleItems.push(scheduleItem)
-        }
-      }
-      let todaysScheduleItemsSorted = _.sortBy(todaysScheduleItems, 'due')
-      // console.log('todaysScheduleItemsSorted', todaysScheduleItemsSorted)
-
-      // need to figure out how to limit the list to 50 cards, but if its a getter, it will auto reset...
-      for (let scheduleItem of todaysScheduleItemsSorted) {
-        // this could get expensive later
-        for (let card of reviewDeck.cards) {
-          if (card.card_id === scheduleItem.card_id ) {
-            todaysDeck.cards.push(card)
-            break
+          if (scheduleItem.due <= cutOff) {
+            todaysScheduleItems.push(scheduleItem)
           }
         }
+        let todaysScheduleItemsSorted = _.sortBy(todaysScheduleItems, 'due')
+        // console.log('todaysScheduleItemsSorted', todaysScheduleItemsSorted)
+
+        // need to figure out how to limit the list to 50 cards, but if its a getter, it will auto reset...
+        for (let scheduleItem of todaysScheduleItemsSorted) {
+          // this could get expensive later
+          for (let card of reviewDeck.cards) {
+            if (card.card_id === scheduleItem.card_id ) {
+              todaysDeck.cards.push(card)
+              break
+            }
+          }
+        }
+        return todaysDeck        
       }
-      return todaysDeck
+
     },
+  //   dataChanged (state) {
+  //     if(state.userCollection !== null &&  state.lastSyncsData !== null ) {
+  //       if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
+  //         if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
+  //         return true
+  //       } else {
+  //         return false
+  //         }
+  //       }
+  //     }
+  //     return false
+  //   }
+  // },
     dataChanged (state) {
       if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
         if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
@@ -853,7 +823,7 @@ const store = new Vuex.Store({
         //       }
         //     }
         //   }
-        //   console.log('       decks unequal')
+          // console.log('       decks unequal')
         }
         return true
       } else {

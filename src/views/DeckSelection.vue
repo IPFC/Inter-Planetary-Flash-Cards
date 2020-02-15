@@ -87,9 +87,7 @@ export default {
     }
   },
   created () {
-    this.$store.commit('toggleNavNewCardDisabled', false)
     this.$store.commit('updateCurrentDeckId', 'defaultDeck')
-
   }
 }
 </script>

@@ -64,7 +64,12 @@ export default {
       }
     },
     callSync() {
-      this.$store.dispatch('sync')
+      if (this.$store.getters.isAuthenticated) {
+        this.$store.dispatch('sync')
+      } 
+      else {
+        this.$router.push('/login')
+      }
     }
   }  
     }

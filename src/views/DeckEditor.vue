@@ -104,9 +104,6 @@ export default {
             }
         }
     },
-    created () {
-        this.$store.commit('toggleNavNewCardDisabled', false)
-    }
 }
 </script>
 
