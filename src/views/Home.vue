@@ -177,20 +177,20 @@ export default {
         // old user cache but jwt off
 
 
-        console.log('   newUser',newUser)
-        console.log('   localStorageEmpty',localStorageEmpty)
-        console.log('   auth status',this.authStatus)
-        console.log('   this.jwt',this.jwt)
+        // console.log('   newUser',newUser)
+        // console.log('   localStorageEmpty',localStorageEmpty)
+        // console.log('   auth status',this.authStatus)
+        // console.log('   this.jwt',this.jwt)
 
         // returning user, expired jwt
         if (this.authStatus === false && this.jwt !== null && !newUser){
-                    console.log('returning user, expired jwt')
+                    // console.log('returning user, expired jwt')
 
             this.$router.push('login');
         }
         // returning user, valid jwt, no cache
         else if (this.authStatus === true && localStorageEmpty){
-                            console.log('returning user, valid jwt, no cache')
+                            // console.log('returning user, valid jwt, no cache')
 
             this.$store.commit('updateUserCollection', defaultCollection['user_collection'])
             this.$store.commit('updateDecks', defaultCollection['decks']) // might be overlap
@@ -202,7 +202,7 @@ export default {
 
         // returning user, valid jwt, has cache
         else if (this.authStatus === true && !localStorageEmpty){
-                            console.log('returning user, valid jwt, has cache')
+                            // console.log('returning user, valid jwt, has cache')
 
             this.$store.commit('toggleSyncFailed', false)
             this.loggingIn = true
@@ -212,7 +212,7 @@ export default {
 
         // new user or no JWT
         else if(this.authStatus === false && this.jwt ===null || newUser ) {
-            console.log('new user or no JWT')
+            // console.log('new user or no JWT')
             this.$store.commit('updateUserCollection', defaultCollection['userCollection'])
             this.$store.commit('updateDecks', defaultCollection['decks'])
         }
