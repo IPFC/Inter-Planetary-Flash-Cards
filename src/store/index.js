@@ -780,56 +780,55 @@ const store = new Vuex.Store({
       }
 
     },
-  //   dataChanged (state) {
-  //     if(state.userCollection !== null &&  state.lastSyncsData !== null ) {
-  //       if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
-  //         if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
-  //         return true
-  //       } else {
-  //         return false
-  //         }
-  //       }
-  //     }
-  //     return false
-  //   }
-  // },
     dataChanged (state) {
-      if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
-        if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
-          // console.log('       collection unequal')
-        //   for (let item in state.userCollection) {
-        //     for (let key of Object.keys(state.userCollection)){
-        //       for (let otherItem in state.lastSyncsData.userCollection){
-        //         for (let otherKey of Object.keys(state.lastSyncsData.userCollection)){
-        //               // console.log('   key', key)
-        //               // console.log('   otherKey', otherKey)
-        //             if (key == otherKey &&  !_.isEqual(item, otherItem))
-        //             console.log('   unequal items')
-        //             console.log('        state', item)
-        //             console.log(state.userCollection[item])
-        //             console.log('       last sync,', otherItem)
-        //             console.log(state.lastSyncsData.userCollection[otherItem])
-
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-        // if(!_.isEqual(state.decks, state.lastSyncsData.decks)) {
-        //   for(let deck of state.decks){
-        //     for (let syncdeck of state.lastSyncsData.decks){
-        //       if (deck.deck_id === syncdeck.deck_id && deck.edited !== syncdeck.edited){
-        //         console.log(deck.title)
-        //       }
-        //     }
-        //   }
-          // console.log('       decks unequal')
+      if(state.userCollection !== null &&  state.lastSyncsData !== null ) {
+        if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
+          if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
+          return true
+        } else {
+          return false
+          }
         }
-        return true
-      } else {
-        return false
       }
+      return false
     }
+    // dataChanged (state) {
+    //   if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
+    //     if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
+    //       // console.log('       collection unequal')
+    //     //   for (let item in state.userCollection) {
+    //     //     for (let key of Object.keys(state.userCollection)){
+    //     //       for (let otherItem in state.lastSyncsData.userCollection){
+    //     //         for (let otherKey of Object.keys(state.lastSyncsData.userCollection)){
+    //     //               // console.log('   key', key)
+    //     //               // console.log('   otherKey', otherKey)
+    //     //             if (key == otherKey &&  !_.isEqual(item, otherItem))
+    //     //             console.log('   unequal items')
+    //     //             console.log('        state', item)
+    //     //             console.log(state.userCollection[item])
+    //     //             console.log('       last sync,', otherItem)
+    //     //             console.log(state.lastSyncsData.userCollection[otherItem])
+
+    //     //         }
+    //     //       }
+    //     //     }
+    //     //   }
+    //     // }
+    //     // if(!_.isEqual(state.decks, state.lastSyncsData.decks)) {
+    //     //   for(let deck of state.decks){
+    //     //     for (let syncdeck of state.lastSyncsData.decks){
+    //     //       if (deck.deck_id === syncdeck.deck_id && deck.edited !== syncdeck.edited){
+    //     //         console.log(deck.title)
+    //     //       }
+    //     //     }
+    //     //   }
+    //       // console.log('       decks unequal')
+    //     }
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+    // }
   },
   plugins: [vuexCookie.plugin, vuexLocal.plugin]
 })
