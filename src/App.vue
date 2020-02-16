@@ -8,8 +8,8 @@
 <script>
 import Navbar from './components/Navbar'
 
-import { mapState } from 'vuex'
-import _ from 'lodash';
+// import { mapState } from 'vuex'
+// import _ from 'lodash';
 
     export default {
         name: 'App',
@@ -19,48 +19,48 @@ import _ from 'lodash';
                 toCardEditorFromReview: false,
             }
         },
-        computed: {
-            ...mapState({
-                decks: 'decks',
-                syncing: 'syncing',
-                userCollection: 'userCollection',
-                lastSyncsData: 'lastSyncsData'
-            }),
-        },
-        watch: {
-            userCollection: {
-                handler: function() {
-                    if (this.syncing === false) {
-                        if (this.$store.getters.dataChanged) {                            
-                            // console.log('    watched user collection for syncing')
-                            this.sync()
-                        }
-                    } 
-                },
-                deep: true
-            },
-            decks: {
-                handler: function() {
-                    if (this.syncing === false) {
-                        if (this.$store.getters.dataChanged) {                            
-                            // console.log('    watched decks for syncing')
-                            this.sync()
-                        }
-                    }
-                },
-                deep: true
-            },
-            syncing: function() {
-                if (this.syncing === false) {
-                    if (this.$store.getters.dataChanged) {
-                        // console.log('    this.decks', this.decks)
-                        // console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
-                        // console.log('    watched syncing for syncing')
-                        this.sync()
-                     }
-                }
-            }
-        },
+        // computed: {
+        //     ...mapState({
+        //         decks: 'decks',
+        //         syncing: 'syncing',
+        //         userCollection: 'userCollection',
+        //         lastSyncsData: 'lastSyncsData'
+        //     }),
+        // },
+        // watch: {
+        //     userCollection: {
+        //         handler: function() {
+        //             if (this.syncing === false) {
+        //                 if (this.$store.getters.dataChanged) {                            
+        //                     // console.log('    watched user collection for syncing')
+        //                     this.sync()
+        //                 }
+        //             } 
+        //         },
+        //         deep: true
+        //     },
+        //     decks: {
+        //         handler: function() {
+        //             if (this.syncing === false) {
+        //                 if (this.$store.getters.dataChanged) {                            
+        //                     // console.log('    watched decks for syncing')
+        //                     this.sync()
+        //                 }
+        //             }
+        //         },
+        //         deep: true
+        //     },
+        //     syncing: function() {
+        //         if (this.syncing === false) {
+        //             if (this.$store.getters.dataChanged) {
+        //                 // console.log('    this.decks', this.decks)
+        //                 // console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
+        //                 // console.log('    watched syncing for syncing')
+        //                 this.sync()
+        //              }
+        //         }
+        //     }
+        // },
         methods: {
             editClicked(){
                 // console.log('edit-clicked')
@@ -77,12 +77,10 @@ import _ from 'lodash';
                     this.toCardEditorFromReview = false
                 }
             },
-            sync: _.debounce(function(){
-                //  console.log('debounced sync')
-                this.$store.dispatch('sync')
-            }, 600000),
-
-
+            // sync: _.debounce(function(){
+            //     //  console.log('debounced sync')
+            //     this.$store.dispatch('sync')
+            // }, 600000),
         },
         components: {
             Navbar

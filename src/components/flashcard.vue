@@ -12,11 +12,6 @@
 </template>
 <script>
 export default {
-    data() {
-        return {
-
-        }
-    },
     computed: {
         textSizeFront () {
             if (this.front.length < 20) {

@@ -780,18 +780,18 @@ const store = new Vuex.Store({
       }
 
     },
-    dataChanged (state) {
-      if(state.userCollection !== null &&  state.lastSyncsData !== null ) {
-        if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
-          if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
-          return true
-        } else {
-          return false
-          }
-        }
-      }
-      return false
-    }
+    // dataChanged (state) {
+    //   if(state.userCollection !== null &&  state.lastSyncsData !== null ) {
+    //     if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
+    //       if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
+    //       return true
+    //     } else {
+    //       return false
+    //       }
+    //     }
+    //   }
+    //   return false
+    // }
     // dataChanged (state) {
     //   if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
     //     if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
