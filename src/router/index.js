@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Login from "../views/Login.vue"
-import Home from "../views/Home.vue"
-import DeckSelection from "../views/DeckSelection.vue"
-import DeckEditor from "../views/DeckEditor.vue"
-import Settings from "../views/Settings.vue"
-import CardEditor from "../views/CardEditor.vue"
+const Login = () => import('../views/Login.vue')
+const Home = () => import('../views/Home.vue')
+const DeckSelection = () => import('../views/DeckSelection.vue')
+const DeckEditor = () => import('../views/DeckEditor.vue')
+const Settings = () => import('../views/Settings.vue')
+const CardEditor = () => import('../views/CardEditor.vue')
 
 import store from "../store"
 
