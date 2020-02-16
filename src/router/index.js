@@ -14,7 +14,6 @@ Vue.use(Router)
 
 async function redirectIfNotAuth (to, from, next) {
     await store.dispatch('checkJwt')
-    console.log('auth', this.$router.path)
     if (store.getters.isAuthenticated) {
       next()
     } else if (this.$router.path !== '/login') {
