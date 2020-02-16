@@ -31,6 +31,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('font-awesome-layers', FontAwesomeLayers)
 
 import App from './App.vue'
+import './registerServiceWorker'
 Vue.config.productionTip = false
 new Vue({
   router,
