@@ -63,14 +63,14 @@ import _ from 'lodash';
         },
         methods: {
             editClicked(){
-                console.log('edit-clicked')
+                // console.log('edit-clicked')
                 this.cardEditorFromReview()
             },
             newCard: function() {
                 this.newCardClicked != this.newCardClicked 
             },
             cardEditorFromReview: function(){
-                console.log('card-editore-from-review')
+                // console.log('card-editore-from-review')
                 if (this.$store.state.currentDeckId === 'reviewDeck') {
                     this.toCardEditorFromReview = true
                 } else {
