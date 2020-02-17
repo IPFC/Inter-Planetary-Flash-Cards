@@ -138,7 +138,7 @@ export default {
             },
         }
     },
-    props: [ 'newCardClicked', 'comingToCardEditorFromReview' ],
+    props: [ 'newCardClicked', 'comingToCardEditorFromReview', 'newCardCommit' ],
     computed: {
         ...mapState({
             userCollection: 'userCollection',
@@ -213,7 +213,6 @@ export default {
         deleteCard: function () {
             let card = JSON.parse(JSON.stringify(this.card))
             let deck = JSON.parse(JSON.stringify(this.currentDeck))
-            let currentDeckLength = deck.length
             let wasLastCard
             if (this.rightNavDisabled) {
                 wasLastCard = true
@@ -225,15 +224,18 @@ export default {
                 deck_id = deck.deck_id
             }
             let deleteData = {deck_id: deck_id, card_id: card.card_id}
-            this.$store.commit('deleteCard', deleteData)
-            this.$store.commit('deleteCardFromSchedule', card.card_id)
-            if (currentDeckLength === 1 || this.comingToCardEditorFromReview) {
+            if (deck.cards.length === 1 || this.comingToCardEditorFromReview) {
                 this.$router.go(-1)
+                this.$store.commit('deleteCard', deleteData)
+                this.$store.commit('deleteCardFromSchedule', card.card_id)
+            } else {
+                if (wasLastCard) {
+                    this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
+                }
+                this.$store.commit('deleteCard', deleteData)
+                this.$store.commit('deleteCardFromSchedule', card.card_id)
+                this.setCard()
             }
-            else if (wasLastCard) {
-                this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1)
-            }
-            this.setCard()
         },
         findCardsDeck: function (card_id){
             for (let deck of this.decks) {
@@ -247,14 +249,20 @@ export default {
         previousCard: function() {
             if (!this.unChanged) {
                 this.submit(this.card)
+                this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1) 
+            } else {
+                this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1) 
+                this.setCard()
             }
-            this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1) 
         },
         nextCard: function() {
-            if (!this.unChanged) {
+          if (!this.unChanged) {
                 this.submit(this.card)
+                this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1) 
+            } else {
+                this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1) 
+                this.setCard()
             }
-            this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + 1)
         },
         doneCheck: function () {
             if (!this.unChanged) {
@@ -386,17 +394,26 @@ export default {
                 this.toggleAddingTag()
             }
         },
+        newCardFirst() {
+            if (!this.unChanged) {
+                this.submit(this.card)
+            }
+        },
+        newCardThen() {
+            this.setCard()
+            this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck))
+        },
     },
     created () {
-        // deep copy so it doesnt change
         this.setCard()
         this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck))
     },
     watch: {
         newCardClicked: function () {
-            if (!this.unChanged) {
-                this.submit(this.card)
-            }
+            this.newCardFirst()
+        },
+        newCardCommit: function (){
+            this.newCardThen()
         }
     },
   }

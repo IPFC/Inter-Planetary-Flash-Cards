@@ -1,7 +1,7 @@
 <template>
     <div class="body" id="app">
             <Navbar id="navbar" @new-card="newCard(); cardEditorFromReview()"/>
-            <router-view @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :comingToCardEditorFromReview="toCardEditorFromReview" />
+            <router-view @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
 
@@ -15,7 +15,8 @@ import Navbar from './components/Navbar'
         name: 'App',
         data() {
             return {
-                newCardClicked: false,
+                newCardClicked: 0,
+                newCardCommit: 0,
                 toCardEditorFromReview: false,
             }
         },
@@ -67,10 +68,19 @@ import Navbar from './components/Navbar'
                 this.cardEditorFromReview()
             },
             newCard: function() {
-                this.newCardClicked != this.newCardClicked 
+                this.newCardClicked ++
+                if (this.$store.state.currentDeckId === 'reviewDeck' || this.$store.state.currentDeckId === 'defaultDeck') {
+                    this.$store.commit('updateCurrentDeckId', this.$store.getters.decksMeta[0].deck_id)
+                } 
+                this.$store.dispatch('newCard', this.$store.state.currentDeckId)
+                this.$store.commit('updateCardToEditIndex', this.$store.getters.currentDeck.cards.length -1) 
+                if (this.$route.name !== 'card-editor' ) {
+                    this.$router.push('/card-editor')
+                }
+                this.newCardCommit ++
             },
             cardEditorFromReview: function(){
-                // console.log('card-editore-from-review')
+                // console.log('card-editor-from-review')
                 if (this.$store.state.currentDeckId === 'reviewDeck') {
                     this.toCardEditorFromReview = true
                 } else {

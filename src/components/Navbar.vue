@@ -4,7 +4,7 @@
   <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
   <b-link to="#" class="icon" ><font-awesome-icon style="color: white;" class="fa-lg"  icon="search"/></b-link>     
   <b-nav-text style="color: white;" id="session-counter" >{{ navProgressCounter }}</b-nav-text>    
-  <b-link @click="newCard(); $emit('new-card');" class="icon"><img src="../assets/add card logo.svg" alt="add"></b-link>
+  <b-link @click="$emit('new-card');" class="icon"><img src="../assets/add card logo.svg" alt="add"></b-link>
   <b-link @click="callSync()" id="sync-link">
     <font-awesome-layers  class="fa-lg" id="sync-layers">
       <font-awesome-icon style="color: white;" class="fa-lg" id="cloud" icon="cloud"></font-awesome-icon>
@@ -48,21 +48,9 @@ export default {
             syncing: 'syncing',
             syncFailed: 'syncFailed',
     }),
-    currentDeck() {
-      return this.$store.getters.currentDeck
-    }
   },
   methods: {
-    newCard() {
-      if (this.$store.state.currentDeckId === 'reviewDeck' || this.$store.state.currentDeckId === 'defaultDeck') {
-        this.$store.commit('updateCurrentDeckId', this.$store.getters.decksMeta[0].deck_id)
-     } 
-      this.$store.dispatch('newCard', this.currentDeck.deck_id)  
-      this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1)
-      if (this.$route.name !== 'card-editor' ) {
-        this.$router.push('/card-editor')
-      }
-    },
+
     callSync() {
       if (this.$store.getters.isAuthenticated) {
         this.$store.dispatch('sync')

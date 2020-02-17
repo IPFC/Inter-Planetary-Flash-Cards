@@ -286,7 +286,7 @@ const store = new Vuex.Store({
       context.commit('addCardToSchedule', newCard.card_id)
     },
     updateCard(context, data) {
-      this.context.commit('updateCard', data)
+      context.commit('updateCard', data)
     },
     navProgress (context, data) {   
         let outputString = data.completed + " / "  + data.totalCards
