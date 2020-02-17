@@ -9,7 +9,7 @@
 import Navbar from './components/Navbar'
 
 // import { mapState } from 'vuex'
-import { debounce } from 'lodash/core';
+// import { debounce } from 'lodash/core';
 
     export default {
         name: 'App',
@@ -77,10 +77,10 @@ import { debounce } from 'lodash/core';
                     this.toCardEditorFromReview = false
                 }
             },
-            sync: debounce(function(){
-                //  console.log('debounced sync')
-                this.$store.dispatch('sync')
-            }, 600000),
+            // sync: debounce(function(){
+            //     //  console.log('debounced sync')
+            //     this.$store.dispatch('sync')
+            // }, 600000),
         },
         components: {
             Navbar
