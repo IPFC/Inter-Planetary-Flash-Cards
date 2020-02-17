@@ -1,13 +1,15 @@
 // in {root folder}/vue.config.js
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin;
+
+// configureWebpack: {
+//   devtool: 'source-map',
+//   plugins: [new BundleAnalyzerPlugin()]
+// },
 
 module.exports = {
   publicPath: './',
-  configureWebpack: {
-    devtool: 'source-map',
-    plugins: [new BundleAnalyzerPlugin()]
-  },
+
   pwa: {
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
