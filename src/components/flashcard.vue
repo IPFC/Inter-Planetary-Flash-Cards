@@ -102,11 +102,6 @@ export default {
 
 
 <style scoped>
-/* #main {
-    background-color: rgba(0, 0, 0, 0);
-        border-radius: 10px;
-
-} */
 .flashcard {
     align-content: center;
     justify-content: center;
