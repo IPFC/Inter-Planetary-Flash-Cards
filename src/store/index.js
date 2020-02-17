@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist';
 import Cookies from 'js-cookie'
-import _ from 'lodash';   
+import { isEqual, sortBy} from 'lodash/core';
 const uuidv4 = require('uuid/v4');
 
 Vue.use(Vuex)
@@ -427,7 +427,7 @@ const store = new Vuex.Store({
                 return null
               });
             // user collections comparisons
-            if (!_.isEqual(serverCollection, userCollection)){
+            if (!isEqual(serverCollection, userCollection)){
               for (let server_deleted_deck_id of serverCollection.deleted_deck_ids) {        
                 // if server deleted, but local deleted isn't, delete locally
                 if (!userCollection.deleted_deck_ids.includes(server_deleted_deck_id)) {
@@ -763,7 +763,7 @@ const store = new Vuex.Store({
             todaysScheduleItems.push(scheduleItem)
           }
         }
-        let todaysScheduleItemsSorted = _.sortBy(todaysScheduleItems, 'due')
+        let todaysScheduleItemsSorted = sortBy(todaysScheduleItems, 'due')
         // console.log('todaysScheduleItemsSorted', todaysScheduleItemsSorted)
 
         // need to figure out how to limit the list to 50 cards, but if its a getter, it will auto reset...
@@ -782,8 +782,8 @@ const store = new Vuex.Store({
     },
     // dataChanged (state) {
     //   if(state.userCollection !== null &&  state.lastSyncsData !== null ) {
-    //     if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
-    //       if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
+    //     if(!isEqual(state.userCollection, state.lastSyncsData.userCollection) || !isEqual(state.decks, state.lastSyncsData.decks)) {
+    //       if(!isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
     //       return true
     //     } else {
     //       return false
@@ -793,8 +793,8 @@ const store = new Vuex.Store({
     //   return false
     // }
     // dataChanged (state) {
-    //   if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection) || !_.isEqual(state.decks, state.lastSyncsData.decks)) {
-    //     if(!_.isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
+    //   if(!isEqual(state.userCollection, state.lastSyncsData.userCollection) || !isEqual(state.decks, state.lastSyncsData.decks)) {
+    //     if(!isEqual(state.userCollection, state.lastSyncsData.userCollection)) {
     //       // console.log('       collection unequal')
     //     //   for (let item in state.userCollection) {
     //     //     for (let key of Object.keys(state.userCollection)){
@@ -802,7 +802,7 @@ const store = new Vuex.Store({
     //     //         for (let otherKey of Object.keys(state.lastSyncsData.userCollection)){
     //     //               // console.log('   key', key)
     //     //               // console.log('   otherKey', otherKey)
-    //     //             if (key == otherKey &&  !_.isEqual(item, otherItem))
+    //     //             if (key == otherKey &&  !isEqual(item, otherItem))
     //     //             console.log('   unequal items')
     //     //             console.log('        state', item)
     //     //             console.log(state.userCollection[item])
@@ -814,7 +814,7 @@ const store = new Vuex.Store({
     //     //     }
     //     //   }
     //     // }
-    //     // if(!_.isEqual(state.decks, state.lastSyncsData.decks)) {
+    //     // if(!isEqual(state.decks, state.lastSyncsData.decks)) {
     //     //   for(let deck of state.decks){
     //     //     for (let syncdeck of state.lastSyncsData.decks){
     //     //       if (deck.deck_id === syncdeck.deck_id && deck.edited !== syncdeck.edited){

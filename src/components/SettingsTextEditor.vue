@@ -256,7 +256,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { isEqual } from 'lodash/core';
 import { Quill } from 'vue-quill-editor'
 import imageUpload from 'quill-plugin-image-upload';
 Quill.register('modules/imageUpload', imageUpload);
@@ -336,7 +336,7 @@ export default {
                 this.toolbarContent.codeBlock = false
             }
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.subScriptObj)){
+                if (isEqual(i, this.toolbarContent.subScriptObj)){
                 if (i.script === this.toolbarContent.subScriptObj.script) {
                     this.toolbarContent.subScript = true
                     break
@@ -346,7 +346,7 @@ export default {
                 }
             }
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.superScriptObj)){
+                if (isEqual(i, this.toolbarContent.superScriptObj)){
                 if (i.script === this.toolbarContent.superScriptObj.script) {
                     this.toolbarContent.superScript = true
                     break
@@ -356,7 +356,7 @@ export default {
                 }
             }
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.sizeObj)){
+                if (isEqual(i, this.toolbarContent.sizeObj)){
                 this.toolbarContent.size = true
                 break
                 }else {
@@ -364,7 +364,7 @@ export default {
                 }
             }
                for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.headingsObj)){
+                if (isEqual(i, this.toolbarContent.headingsObj)){
                 this.toolbarContent.headings = true
                 break
                 }else {
@@ -372,7 +372,7 @@ export default {
                 }
             }
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.colorObj)){
+                if (isEqual(i, this.toolbarContent.colorObj)){
                 this.toolbarContent.color = true
                 break
                 }else {
@@ -380,7 +380,7 @@ export default {
                 }
             }
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.backgroundObj)){
+                if (isEqual(i, this.toolbarContent.backgroundObj)){
                 this.toolbarContent.background = true
                 break
                 }else {
@@ -388,7 +388,7 @@ export default {
                 }
             }
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.alignObj)){
+                if (isEqual(i, this.toolbarContent.alignObj)){
                     this.toolbarContent.align = true
                     break
                 }else {
@@ -396,7 +396,7 @@ export default {
                 }
             }
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.fontObj)){
+                if (isEqual(i, this.toolbarContent.fontObj)){
                     this.toolbarContent.font = true
                     break
                 }else {
@@ -429,7 +429,7 @@ export default {
                 this.toolbarContent.formula = false
             }   
             for (let i of this.toolbar) {
-                if (_.isEqual(i, this.toolbarContent.listObj)){
+                if (isEqual(i, this.toolbarContent.listObj)){
                     this.toolbarContent.list = true
                     break
                 }else {
@@ -462,7 +462,7 @@ export default {
             }
             else {
                 for (let i of newToolbar) {
-                    if (_.isEqual(i, value)) {
+                    if (isEqual(i, value)) {
                         existsCount ++
                         if (!bool) {
                             let toDeleteIndex = newToolbar.indexOf(i)

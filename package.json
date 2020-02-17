@@ -33,7 +33,6 @@
     "sass-loader": "^8.0.2",
     "toasts": "^1.0.0",
     "uuid": "^3.4.0",
-    "vee-validate": "^3.2.2",
     "vue": "^2.6.11",
     "vue-flashcard": "^1.1.6",
     "vue-quill-editor": "^3.0.6",

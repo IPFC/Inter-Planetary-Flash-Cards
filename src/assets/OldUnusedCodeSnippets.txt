@@ -162,3 +162,13 @@ export default {
         return false
       }
     }
+    // to turn off bundle analyzer
+    //config.js
+    pluginOptions: {
+    webpackBundleAnalyzer: {
+        analyzerMode: "disabled"
+    }
+  configureWebpack: {
+    devtool: 'source-map',
+    plugins: [new BundleAnalyzerPlugin()] // delete this
+  },

@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { isEqual } from 'lodash/core';
 const uuidv4 = require('uuid/v4');
 import { mapState } from 'vuex'
 import { Quill } from 'vue-quill-editor'
@@ -183,7 +183,7 @@ export default {
             if (card !== null && this.initialDeckState !== null) {
                 for (let initialDeckCard of this.initialDeckState.cards) {
                     if (card.card_id === initialDeckCard.card_id) {
-                        if ( !_.isEqual(initialDeckCard, card)) {
+                        if ( !isEqual(initialDeckCard, card)) {
                         result = false
                         break
                         } else {
