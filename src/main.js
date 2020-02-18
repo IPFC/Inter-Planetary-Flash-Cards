@@ -17,12 +17,6 @@ import 'highlight.js/styles/monokai-sublime.css'
 import Highlight from './components/highlight.js'
 Vue.use(Highlight)
 
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
-import VueQuillEditor from 'vue-quill-editor'
-Vue.use(VueQuillEditor, /* { default global options } */)
-
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMinusCircle, faToggleOn, faToggleOff, faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
   faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, 
