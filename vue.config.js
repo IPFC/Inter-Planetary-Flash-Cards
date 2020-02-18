@@ -10,11 +10,12 @@
 //     devtool: 'source-map',
 //     plugins: [new BundleAnalyzerPlugin()]
 //   },
-  
+var compression = require('compression')
+
 module.exports = {
   publicPath: './',
   chainWebpack(config) {
-    config.plugin('CompressionPlugin').use(CompressionPlugin);
+    config.plugin('CompressionPlugin').use(compression);
 
   },
   pwa: {
