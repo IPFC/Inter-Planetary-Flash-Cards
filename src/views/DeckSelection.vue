@@ -44,11 +44,13 @@
 
 
 <script>
-import { BListGroup } from 'bootstrap-vue'
+import { BListGroup, BListGroupItem, BDropdown, 
+BDropdownItemButton } from 'bootstrap-vue'
 
 export default {
   name: 'deck-selection',
-  components: { BListGroup },
+  components: { BListGroup, BListGroupItem, BDropdown, 
+  BDropdownItemButton },
   data () {
     return {
     }

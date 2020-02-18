@@ -258,10 +258,10 @@
 <script>
 import { BListGroup, BListGroupItem } from 'bootstrap-vue'
 import { isEqual } from 'lodash/core';
-import { quillEditor } from 'vue-quill-editor'
+import { Quill, quillEditor } from 'vue-quill-editor'
 import 'quill/dist/quill.snow.css'
 import imageUpload from 'quill-plugin-image-upload';
-quillEditor.register('modules/imageUpload', imageUpload);
+Quill.register('modules/imageUpload', imageUpload);
 const axios = require('axios');
 const FormData = require('form-data');
 export default {
