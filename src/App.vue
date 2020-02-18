@@ -100,7 +100,6 @@ import { mapState } from 'vuex'
             Navbar
         },
         created () {
-            console.log('fsw')
             this.bodyClass = 'landing-page'
         },
     }
