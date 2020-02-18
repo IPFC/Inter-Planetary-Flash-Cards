@@ -6,13 +6,24 @@
 // To cancel a specific (pending) build:
 // heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
 
-//   configureWebpack: {
-//     devtool: 'source-map',
-//     plugins: [new BundleAnalyzerPlugin()]
-//   },
+  // configureWebpack: {
+  //   devtool: 'source-map',
+  //   plugins: [new BundleAnalyzerPlugin()]
+  // },
+  
+  const CompressionPlugin = require('compression-webpack-plugin');
+
 
 module.exports = {
   publicPath: './',
+  configureWebpack: {
+    devtool: 'source-map',
+    plugins: [new CompressionPlugin({        filename: "[path].gz[query]",
+      algorithm: "gzip",
+      test: /\.(js|css)$/,
+      compressionOptions: { level: 11 },
+    })]
+  },
   pwa: {
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
