@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin;
 // This will crash heroku build. to cancel:
@@ -13,17 +14,27 @@
   
   const CompressionPlugin = require('compression-webpack-plugin');
 
+=======
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
+>>>>>>> parent of 7ffc6ba3... Update vue.config.js
 
 module.exports = {
   publicPath: './',
   configureWebpack: {
     devtool: 'source-map',
+<<<<<<< HEAD
     plugins: [new CompressionPlugin({        filename: "[path].gz[query]",
       algorithm: "gzip",
       test: /\.(js|css)$/,
       compressionOptions: { level: 9 },
     })]
   },
+=======
+    plugins: [new BundleAnalyzerPlugin()]
+  },
+  
+>>>>>>> parent of 7ffc6ba3... Update vue.config.js
   pwa: {
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
