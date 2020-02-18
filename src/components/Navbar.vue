@@ -11,7 +11,6 @@
       <font-awesome-icon style="color: primary;" v-if="syncing" class="fa-xs" id="sync-spinner" spin icon="sync"></font-awesome-icon>
       <font-awesome-icon style="color: primary;" v-else-if="syncFailed || $store.getters.dataChanged" class="fa-xs" id="exclamation" icon="exclamation"></font-awesome-icon>
       <font-awesome-icon style="color: primary;" v-else class="fa-xs" id="checkmark" icon="check"></font-awesome-icon>
-
     </font-awesome-layers>
   </b-link>     
   <b-collapse id="nav-collapse" is-nav>
@@ -32,10 +31,11 @@
 </template>
 
 <script>
-
+import { BLink, BNavbar, BNavbarNav, BNavForm, BFormInput, BNavbarToggle, BNavText, BNavItem, BCollapse } from 'bootstrap-vue'
 import { mapState } from 'vuex'
 export default {
   name: 'navbar',
+  components: { BLink, BNavbar, BNavbarNav, BNavForm, BFormInput, BNavbarToggle, BNavText, BNavItem, BCollapse},
   data () {
     return {
     }
@@ -73,7 +73,9 @@ export default {
 #exclamation{
   margin: 4px 0px 0px 14px;
   -webkit-animation: pulsate 1s ease-out;
+  animation: pulsate 1s ease-out;
   -webkit-animation-iteration-count: infinite; 
+  animation-iteration-count:infinite;
   opacity: 0.0
 }
 #sync-spinner {
@@ -83,6 +85,11 @@ export default {
     margin: 5px 0px 0px 9px;
 }
 @-webkit-keyframes pulsate {
+  0% {-webkit-transform: scale(1, 1); opacity: 1;}
+  50% {-webkit-transform: scale(1.2, 1.2); opacity: 1;}
+  100% {-webkit-transform: scale(1, 1); opacity: 1;}
+}
+@keyframes pulsate {
   0% {-webkit-transform: scale(1, 1); opacity: 1;}
   50% {-webkit-transform: scale(1.2, 1.2); opacity: 1;}
   100% {-webkit-transform: scale(1, 1); opacity: 1;}

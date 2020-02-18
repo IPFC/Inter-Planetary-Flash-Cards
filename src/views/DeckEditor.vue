@@ -10,7 +10,7 @@
                     </b-col>
                     <b-col id="text-col">
                         <p v-if="!editingDeckTitle" class="text title" @click="toggleEditDeckTitle()" >{{ deck.title }}</p> 
-                        <b-input v-if="editingDeckTitle"  @keyup.enter="commitDeckTitle()" v-model="newDeckTitle"></b-input> 
+                        <b-form-input v-if="editingDeckTitle"  @keyup.enter="commitDeckTitle()" v-model="newDeckTitle"></b-form-input> 
                         <p class="text card-count">
                         {{ deck.cards.length }} card{{cardOrCards(deck.cards.length)}}
                         </p>   
@@ -53,8 +53,10 @@
 </template>
 
 <script>
+import { BCard, BImgLazy, BFormInput } from 'bootstrap-vue'
 export default {
     name: 'deck-editor',
+    components: { BCard, BImgLazy, BFormInput},
     data() {
         return {
             editingDeckTitle: false,

@@ -13,12 +13,12 @@
     <h1>IPFC Login</h1>
     <b-form @submit.stop.prevent id="form-signin">
         <label for="feedback-email">Email</label>
-        <b-input v-model="input.email" :state="emailValidation" id="feedback-email"></b-input>
+        <b-form-input v-model="input.email" :state="emailValidation" id="feedback-email"></b-form-input>
         <b-form-invalid-feedback v-if="input.email" :state="emailValidation">{{ emailValidationErrorMsg }}</b-form-invalid-feedback>
         <!-- <b-form-valid-feedback :state="emailValidation">Looks Good.</b-form-valid-feedback> -->
         
         <label for="feedback-password">Password</label>
-        <b-input v-model="input.password" :state="passwordValidation" type="password" id="feedback-password"></b-input>
+        <b-form-input v-model="input.password" :state="passwordValidation" type="password" id="feedback-password"></b-form-input>
         <b-form-invalid-feedback v-if="input.password" :state="passwordValidation">{{ passwordValidationErrorMsg }}</b-form-invalid-feedback>
         <!-- <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback> -->
         
@@ -26,12 +26,12 @@
         <br>
         
         <label v-if="signingUp" for="feedback-pinata-api">Pinata API key</label>
-        <b-input v-if="signingUp" v-model="input.pinataApi" :state="pinataApiValidation" id="feedback-pinata-api"></b-input>
+        <b-form-input v-if="signingUp" v-model="input.pinataApi" :state="pinataApiValidation" id="feedback-pinata-api"></b-form-input>
         <b-form-invalid-feedback v-if="signingUp" :state="pinataApiValidation">{{ pinataApiValidationErrorMsg }}</b-form-invalid-feedback>
         <!-- <b-form-valid-feedback v-if="signingUp" :state="pinataApiValidation">Looks Good.</b-form-valid-feedback> -->
        
         <label v-if="signingUp" for="feedback-pinata-secret">Pinata secret API key</label>
-        <b-input v-if="signingUp" v-model="input.pinataSecret" :state="pinataSecretValidation" type="password" id="feedback-pinata-secret"></b-input>
+        <b-form-input v-if="signingUp" v-model="input.pinataSecret" :state="pinataSecretValidation" type="password" id="feedback-pinata-secret"></b-form-input>
         <b-form-invalid-feedback v-if="signingUp" :state="pinataSecretValidation">{{ pinataSecretValidationErrorMsg }}</b-form-invalid-feedback>
         <!-- <b-form-valid-feedback v-if="signingUp" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
         
@@ -51,9 +51,10 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-
+import { BForm, BFormInvalidFeedback, BFormInput, BAlert} from 'bootstrap-vue'
 export default {
     name: 'Login',
+    components: {BForm, BFormInvalidFeedback, BFormInput, BAlert},
     data() {
         return {
             input: {

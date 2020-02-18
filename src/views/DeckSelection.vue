@@ -44,8 +44,11 @@
 
 
 <script>
+import { BListGroup } from 'bootstrap-vue'
+
 export default {
   name: 'deck-selection',
+  components: { BListGroup },
   data () {
     return {
     }

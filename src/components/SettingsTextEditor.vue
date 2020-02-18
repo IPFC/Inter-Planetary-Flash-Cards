@@ -256,6 +256,7 @@
 </template>
 
 <script>
+import { BListGroup, BListGroupItem } from 'bootstrap-vue'
 import { isEqual } from 'lodash/core';
 import { Quill } from 'vue-quill-editor'
 import imageUpload from 'quill-plugin-image-upload';
@@ -264,6 +265,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 export default {
     name: 'TextEditorSettings',
+    components: { BListGroup, BListGroupItem },
     data() {
         return {
             textEditorSettingsOpen: false,

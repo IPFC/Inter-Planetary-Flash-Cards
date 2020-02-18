@@ -13,11 +13,11 @@
 <script>
 import textEditorSettings from '../components/SettingsTextEditor.vue'
 import reviewScheduleSettings from '../components/SettingsReviewSchedule.vue'
-
+import { BListGroup, BListGroupItem } from 'bootstrap-vue'
 
 export default {
   name: 'Settings',
-  components: {textEditorSettings, reviewScheduleSettings},
+  components: {textEditorSettings, reviewScheduleSettings, BListGroup, BListGroupItem},
   data() {
     return {
     }

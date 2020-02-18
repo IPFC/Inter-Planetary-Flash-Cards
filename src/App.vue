@@ -1,14 +1,14 @@
 <template>
     <div class="body" id="app">
-            <Navbar id="navbar" @new-card="newCard(); cardEditorFromReview()"/>
+            <Navbar id="navbar" @new-card="newCard()"/>
             <router-view @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
 
 <script>
 import Navbar from './components/Navbar'
-
-// import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 // import { debounce } from 'lodash/core';
 
     export default {
@@ -20,14 +20,18 @@ import Navbar from './components/Navbar'
                 toCardEditorFromReview: false,
             }
         },
-        // computed: {
-        //     ...mapState({
-        //         decks: 'decks',
-        //         syncing: 'syncing',
-        //         userCollection: 'userCollection',
-        //         lastSyncsData: 'lastSyncsData'
-        //     }),
-        // },
+        computed: {
+            ...mapGetters([
+                'decksMeta',
+                'currentDeck',
+            ]),
+            ...mapState([
+                 'currentDeckId',
+                // 'decks',
+                // 'syncing',
+                // 'userCollection',
+                // 'lastSyncsData'
+            ]),
         // watch: {
         //     userCollection: {
         //         handler: function() {
@@ -61,31 +65,27 @@ import Navbar from './components/Navbar'
         //              }
         //         }
         //     }
-        // },
+        },
         methods: {
             editClicked(){
-                // console.log('edit-clicked')
-                this.cardEditorFromReview()
-            },
-            newCard: function() {
-                this.newCardClicked ++
-                if (this.$store.state.currentDeckId === 'reviewDeck' || this.$store.state.currentDeckId === 'defaultDeck') {
-                    this.$store.commit('updateCurrentDeckId', this.$store.getters.decksMeta[0].deck_id)
-                } 
-                this.$store.dispatch('newCard', this.$store.state.currentDeckId)
-                this.$store.commit('updateCardToEditIndex', this.$store.getters.currentDeck.cards.length -1) 
-                if (this.$route.name !== 'card-editor' ) {
-                    this.$router.push('/card-editor')
-                }
-                this.newCardCommit ++
-            },
-            cardEditorFromReview: function(){
-                // console.log('card-editor-from-review')
-                if (this.$store.state.currentDeckId === 'reviewDeck') {
+                if (this.currentDeckId === 'reviewDeck') {
                     this.toCardEditorFromReview = true
                 } else {
                     this.toCardEditorFromReview = false
                 }
+            },
+            newCard: function() {
+                this.newCardClicked ++
+                if (this.currentDeckId === 'reviewDeck' || this.currentDeckId === 'defaultDeck') {
+                    this.toCardEditorFromReview = true
+                    this.$store.commit('updateCurrentDeckId', this.decksMeta[0].deck_id)
+                } 
+                this.$store.dispatch('newCard', this.currentDeckId)
+                this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1) 
+                if (this.$route.name !== 'card-editor' ) {
+                    this.$router.push('/card-editor')
+                }
+                this.newCardCommit ++
             },
             // sync: debounce(function(){
             //     //  console.log('debounced sync')

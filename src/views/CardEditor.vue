@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import { BFormInput } from 'bootstrap-vue'
+
 import { isEqual } from 'lodash/core';
 const uuidv4 = require('uuid/v4');
 import { mapState } from 'vuex'
@@ -85,6 +87,7 @@ const FormData = require('form-data');
 
 export default {
     name: 'card-editor',
+    components: {BFormInput},
     data() {
         return {
             card: '',

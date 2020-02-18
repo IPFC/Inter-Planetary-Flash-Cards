@@ -118,8 +118,11 @@
 </template>
 
 <script>
+import { BListGroup, BListGroupItem, BFormInput } from 'bootstrap-vue'
+
 export default {
-      name: 'ReviewScheduleSettings',
+    name: 'ReviewScheduleSettings',
+    components: { BListGroup, BListGroupItem, BFormInput },
     data() {
       return {
         selected: this.$store.state.userCollection.webapp_settings.scheduleSettings.failMode,
