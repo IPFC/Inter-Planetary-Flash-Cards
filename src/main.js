@@ -9,6 +9,10 @@ Vue.use(LayoutPlugin)
 import { BButton } from 'bootstrap-vue'
 Vue.component('b-button', BButton)
 
+// import BootstrapVue from 'bootstrap-vue'
+
+// Vue.use(BootstrapVue)
+
 import 'highlight.js/styles/monokai-sublime.css'
 import Highlight from './components/highlight.js'
 Vue.use(Highlight)

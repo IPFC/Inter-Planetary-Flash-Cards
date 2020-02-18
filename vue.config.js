@@ -5,31 +5,13 @@
 // heroku builds -a YOUR_APP_NAME
 // To cancel a specific (pending) build:
 // heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
+
 // configureWebpack: {
 //   devtool: 'source-map',
 //   plugins: [new BundleAnalyzerPlugin()]
 // },
-
-// new CompressionWebpackPlugin(),
-
-const PurgecssPlugin = require('purgecss-webpack-plugin')
-const glob = require('glob-all')
-var path = require('path');
-
+  
 module.exports = {
-  configureWebpack: {
-    devtool: 'source-map',
-    plugins: [
-      // new BundleAnalyzerPlugin(),
-      new PurgecssPlugin({
-        paths: glob.sync([
-          path.join(__dirname, './../src/index.html'),
-          path.join(__dirname, './../**/*.vue'),
-          path.join(__dirname, './../src/**/*.js')
-        ])
-      }),
-    ]
-  },
   publicPath: './',
   pwa: {
     name: 'Inter Planetary Flash Cards',
