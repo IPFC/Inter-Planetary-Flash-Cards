@@ -79,15 +79,16 @@ import { BFormInput } from 'bootstrap-vue'
 import { isEqual } from 'lodash/core';
 const uuidv4 = require('uuid/v4');
 import { mapState } from 'vuex'
-import { Quill } from 'vue-quill-editor'
+import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.snow.css'
 import imageUpload from 'quill-plugin-image-upload';
-Quill.register('modules/imageUpload', imageUpload);
+quillEditor.register('modules/imageUpload', imageUpload);
 const axios = require('axios');
 const FormData = require('form-data');
 
 export default {
     name: 'card-editor',
-    components: {BFormInput},
+    components: {BFormInput, quillEditor},
     data() {
         return {
             card: '',

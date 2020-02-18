@@ -258,14 +258,15 @@
 <script>
 import { BListGroup, BListGroupItem } from 'bootstrap-vue'
 import { isEqual } from 'lodash/core';
-import { Quill } from 'vue-quill-editor'
+import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.snow.css'
 import imageUpload from 'quill-plugin-image-upload';
-Quill.register('modules/imageUpload', imageUpload);
+quillEditor.register('modules/imageUpload', imageUpload);
 const axios = require('axios');
 const FormData = require('form-data');
 export default {
     name: 'TextEditorSettings',
-    components: { BListGroup, BListGroupItem },
+    components: { BListGroup, BListGroupItem, quillEditor },
     data() {
         return {
             textEditorSettingsOpen: false,
