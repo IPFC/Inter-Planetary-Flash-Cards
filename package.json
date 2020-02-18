@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "start": "node server.js",
-    "build-report": "vue-cli-service build --report"
+    "build-report": "vue-cli-service build --report",
+    "heroku-start": "superstatic dist --host 0.0.0.0 --port $PORT --debug --compression"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
