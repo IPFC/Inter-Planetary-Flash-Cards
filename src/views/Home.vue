@@ -159,10 +159,10 @@ export default {
             }
         },
     },
-    mounted() {
+    created () {
         this.checkAuth()
     },
-    created () {
+    mounted () {
         this.$store.commit('updateCurrentDeckId', 'reviewDeck')
         let localStorageEmpty = false
         let newUser = null
@@ -234,6 +234,7 @@ export default {
             }
         }
         this.$store.dispatch('navProgress', {totalCards: this.todaysDeckCardIds.length, completed: 0})
+        this.$emit('homeLoad')
     },
     watch: {
         syncing: function () {

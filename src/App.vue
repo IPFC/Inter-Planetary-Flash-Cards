@@ -1,7 +1,7 @@
 <template>
-    <div class="body" id="app">
-            <Navbar id="navbar" @new-card="newCard()"/>
-            <router-view @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
+    <div :class="bodyClass">
+        <Navbar v-if="bodyClass ==='body'" id="navbar" @new-card="newCard()"/>
+        <router-view @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
 
@@ -18,6 +18,7 @@ import { mapState } from 'vuex'
                 newCardClicked: 0,
                 newCardCommit: 0,
                 toCardEditorFromReview: false,
+                bodyClass: 'landing-page'
             }
         },
         computed: {
@@ -67,6 +68,9 @@ import { mapState } from 'vuex'
         //     }
         },
         methods: {
+            homeLoaded() {
+                this.bodyClass = 'body'
+            },
             editClicked(){
                 if (this.currentDeckId === 'reviewDeck') {
                     this.toCardEditorFromReview = true
@@ -94,21 +98,43 @@ import { mapState } from 'vuex'
         },
         components: {
             Navbar
-        }
+        },
+        created () {
+            console.log('fsw')
+            this.bodyClass = 'landing-page'
+        },
     }
 </script>
 
 <style lang="scss">
-
   @import "assets/_custom.scss";
   @import "~bootstrap/scss/bootstrap.scss";
   @import '~bootstrap-vue/dist/bootstrap-vue.css';
-
-body {
+.landing-page {
+    background-image: url('/img/logo-full-h.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #F8690D;
+    position: absolute;
+    height: 100%; width: 100%;
+    margin: 0;
+    padding: 0;
+    animation: fadeOutAnimation ease .5s; 
+    animation-iteration-count: 1; 
+    animation-fill-mode: forwards; 
+}
+@keyframes fadeOutAnimation { 
+    0% { 
+        opacity: 1; 
+    } 
+    100% { 
+        opacity: 0; 
+    } 
+}
+.body {
     background-color: #F6F6F6;
     margin: 0;
     margin-top: 55px;
-
 }
 h1 {
     padding: 0;

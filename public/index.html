@@ -7,12 +7,45 @@
     <link rel="shortcut icon" type="image/png" href="img/icons/icon-32x32.png"/>
     <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script> -->
     <title>Inter Planetary Flash Cards</title>
+    <style> 
+      #landing-page {
+        background-image: url('/img/logo-full-h.png');
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-color: #F8690D;
+        position: absolute;
+        height: 100%; width: 100%;
+        animation: fadeInAnimation ease 1s; 
+        animation-iteration-count: 1; 
+        animation-fill-mode: forwards; 
+        margin: 0;
+        padding: 0
+      }
+      body { 
+        padding: 0;
+        margin: 0
+      } 
+      #app { 
+        padding: 0;
+        margin: 0
+      } 
+      @keyframes fadeInAnimation { 
+          0% { 
+              opacity: 0; 
+          } 
+          100% { 
+              opacity: 1; 
+          } 
+      } 
+  </style> 
   </head>
   <body>
     <noscript>
       <strong>We're sorry but IPFC doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app"></div>
+    <div id="app">
+      <div id="landing-page"></div>
+    </div>
     <!-- built files will be auto injected -->
   </body>
 </html>

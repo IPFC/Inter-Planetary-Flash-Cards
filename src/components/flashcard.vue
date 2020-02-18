@@ -1,7 +1,7 @@
 <template>
     <div id="main">
         <div v-bind:style="{ backgroundColor: colorFront, color: colorTextFront}"
-        v-show="!isToggle" class="animated flipInY flashcard">
+        v-show="!isToggle" :class="frontToggle">
             <div class="card-content" v-highlight v-html="front"></div>
         </div>
         <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}"
@@ -12,7 +12,24 @@
 </template>
 <script>
 export default {
+    data () {
+        return {
+            toggleCount: 0
+        }
+    },
+    watch: {
+        isToggle:  function () {
+            this.toggleCount ++
+        }
+    },
     computed: {
+        frontToggle (){
+            if (this.toggleCount > 0) {
+                return 'animated flipInY flashcard'
+            } else {
+                return 'flashcard'
+            }
+        },
         textSizeFront () {
             if (this.front.length < 20) {
                 return '4em'
@@ -121,7 +138,6 @@ export default {
     margin: auto;
     height: 100%;
     overflow-y: auto;        
-
 }
 .card-content::-webkit-scrollbar {
     width: .5em;
