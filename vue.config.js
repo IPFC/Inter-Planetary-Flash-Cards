@@ -1,13 +1,18 @@
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin;
-//   configureWebpack: {
-//     devtool: 'source-map',
-//     plugins: [new BundleAnalyzerPlugin()]
-//   },
+// This will crash heroku build. to cancel:
+// To view all builds:
+// heroku builds -a YOUR_APP_NAME
+// To cancel a specific (pending) build:
+// heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
+
+// configureWebpack: {
+//   devtool: 'source-map',
+//   plugins: [new BundleAnalyzerPlugin()]
+// },
   
 module.exports = {
   publicPath: './',
-
   pwa: {
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
@@ -64,7 +69,7 @@ module.exports = {
           "type": "image/png",
           "purpose": "maskable"
         }
-      ]
+      ],
     },
     iconPaths: {
       favicon32: 'img/icons/icon-32x32.png',
@@ -74,4 +79,4 @@ module.exports = {
       msTileImage: 'img/icons/maskable_icon.png'
     }
   }
-};
+}

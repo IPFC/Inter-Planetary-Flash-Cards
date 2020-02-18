@@ -75,11 +75,12 @@
 
 <script>
 import { BFormInput } from 'bootstrap-vue'
+
 import { isEqual } from 'lodash/core';
 const uuidv4 = require('uuid/v4');
 import { mapState } from 'vuex'
-import 'quill/dist/quill.snow.css'
 import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.snow.css'
 import imageUpload from 'quill-plugin-image-upload';
 quillEditor.register('modules/imageUpload', imageUpload);
 const axios = require('axios');
