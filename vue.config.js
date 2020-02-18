@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin;
 // This will crash heroku build. to cancel:
@@ -8,44 +6,13 @@
 // To cancel a specific (pending) build:
 // heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
 
-  // configureWebpack: {
-  //   devtool: 'source-map',
-  //   plugins: [new BundleAnalyzerPlugin()]
-  // },
+// configureWebpack: {
+//   devtool: 'source-map',
+//   plugins: [new BundleAnalyzerPlugin()]
+// },
   
-  const CompressionPlugin = require('compression-webpack-plugin');
-
-=======
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
->>>>>>> parent of 7ffc6ba3... Update vue.config.js
-=======
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
->>>>>>> parent of 7ffc6ba3... Update vue.config.js
-
 module.exports = {
   publicPath: './',
-  configureWebpack: {
-    devtool: 'source-map',
-<<<<<<< HEAD
-<<<<<<< HEAD
-    plugins: [new CompressionPlugin({        filename: "[path].gz[query]",
-      algorithm: "gzip",
-      test: /\.(js|css)$/,
-      compressionOptions: { level: 9 },
-    })]
-  },
-=======
-    plugins: [new BundleAnalyzerPlugin()]
-  },
-  
->>>>>>> parent of 7ffc6ba3... Update vue.config.js
-=======
-    plugins: [new BundleAnalyzerPlugin()]
-  },
-  
->>>>>>> parent of 7ffc6ba3... Update vue.config.js
   pwa: {
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
@@ -102,7 +69,7 @@ module.exports = {
           "type": "image/png",
           "purpose": "maskable"
         }
-      ]
+      ],
     },
     iconPaths: {
       favicon32: 'img/icons/icon-32x32.png',
@@ -112,4 +79,4 @@ module.exports = {
       msTileImage: 'img/icons/maskable_icon.png'
     }
   }
-};
+}
