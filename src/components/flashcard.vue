@@ -103,7 +103,8 @@ export default {
             default: 'white'
         },
         isToggle: {
-            type: Boolean,
+            type: Number,
+            default: 0,
         },
         // height: {
         //       type: String,

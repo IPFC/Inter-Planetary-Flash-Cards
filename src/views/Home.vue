@@ -6,13 +6,17 @@
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
                 <b-col v-if="!spinner" class="card-col">
-                    <vue-flashcard
-                        id="main-card"
-                        :isToggle= "cardFlipToggle"
-                        :front="currentCard.front_rich_text" 
-                        :back="currentCard.back_rich_text"
-                        >
-                    </vue-flashcard>
+                    <div id="main-card-padding-outer">
+                        <div id="main-card-padding">
+                            <vue-flashcard
+                                id="main-card"
+                                :isToggle= "cardFlipToggle"
+                                :front="currentCard.front_rich_text" 
+                                :back="currentCard.back_rich_text"
+                                >
+                            </vue-flashcard>  
+                    </div>
+                    </div>
                     <div id="next-card-padding-outer">
                         <div id="next-card-padding">
                             <vue-flashcard  v-if="todaysDeck.cards.length > 1"
@@ -27,7 +31,7 @@
                         <div id="third-card-padding">
                             <vue-flashcard  v-if="todaysDeck.cards.length > 2"
                                 id="third-card" class ="card"
-                                front="   /n /n /n   " 
+                                front="   /n /n a /n   " 
                                 back="   /n /n /n   " > 
                             </vue-flashcard>
                         </div>
@@ -69,18 +73,17 @@
 <script>
 import { mapGetters } from 'vuex'
 import { mapState } from 'vuex'
+const vueFlashcard = () => import('../components/flashcard')
 
-import vueFlashcard from '../components/flashcard.vue';
 import defaultCollection from '../assets/defaultCollection.json'
 export default {
-
     name: "home",
     data() {
         return {
             // currentCardIndex: 0,
             authStatus: false,
             spinner: false,
-            cardFlipToggle: false,
+            cardFlipToggle: 0,
             cardsCompleted: 0,
             cardsTotal: 0,
             todaysDeckCardIds: [], 
@@ -123,7 +126,7 @@ export default {
     },
     methods: {
         flipCard () {
-            this.cardFlipToggle=!this.cardFlipToggle
+            this.cardFlipToggle ++
         },
         incorrect () {
             this.$store.dispatch('levelDownCard', this.currentCard.card_id)
@@ -254,20 +257,32 @@ export default {
     color: gray;
     margin: 7px;
     right: 3px;
-    z-index: 1;
+    z-index: 5;
     position: absolute;
 }
 .edit:hover{
     cursor: pointer;
 }
-
+#main-card-padding-outer{
+    z-index: 5;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+#main-card-padding {
+    width: 100%;
+    margin: auto;
+    z-index: 5;
+}
 #main-card {
+    z-index: 5;
     margin: auto;
     margin-top: 35px;
     max-width: 600px;
 }
 #next-card-padding-outer{
-    z-index: -1;
+    z-index: 3;
     position: absolute;
     top: 0px;
     left: 0px;
@@ -276,10 +291,10 @@ export default {
 #next-card-padding {
     width: 82%;
     margin: auto;
-    z-index: -1;
+    z-index: 3;
 }
 #next-card {
-    z-index: -1;
+    z-index: 3;
     margin: auto;
     margin-top: 25px;
     max-width: 480px;
@@ -288,7 +303,7 @@ export default {
     background-color: rgba(162, 162, 162, 0);
 }
 #third-card-padding-outer{
-    z-index: -2;
+    z-index: 2;
     position: absolute;
     top: 5px;
     left: 0px;
@@ -297,10 +312,10 @@ export default {
 #third-card-padding {
     width: 70%;
     margin: auto ;
-    z-index: -2;
+    z-index: 2;
 }
 #third-card {
-    z-index: -2;
+    z-index: 2;
     margin: auto;
     margin-top: 10px;
     max-width: 380px;
