@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin;
 // This will crash heroku build. to cancel:
@@ -18,11 +19,16 @@
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
 >>>>>>> parent of 7ffc6ba3... Update vue.config.js
+=======
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
+>>>>>>> parent of 7ffc6ba3... Update vue.config.js
 
 module.exports = {
   publicPath: './',
   configureWebpack: {
     devtool: 'source-map',
+<<<<<<< HEAD
 <<<<<<< HEAD
     plugins: [new CompressionPlugin({        filename: "[path].gz[query]",
       algorithm: "gzip",
@@ -30,6 +36,11 @@ module.exports = {
       compressionOptions: { level: 9 },
     })]
   },
+=======
+    plugins: [new BundleAnalyzerPlugin()]
+  },
+  
+>>>>>>> parent of 7ffc6ba3... Update vue.config.js
 =======
     plugins: [new BundleAnalyzerPlugin()]
   },
