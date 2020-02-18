@@ -10,14 +10,9 @@
 //     devtool: 'source-map',
 //     plugins: [new BundleAnalyzerPlugin()]
 //   },
-var compression = require('compression')
 
 module.exports = {
   publicPath: './',
-  chainWebpack(config) {
-    config.plugin('CompressionPlugin').use(compression);
-
-  },
   pwa: {
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
