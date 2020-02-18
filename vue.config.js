@@ -14,7 +14,8 @@
 module.exports = {
   publicPath: './',
   chainWebpack(config) {
-    config.plugins.delete('prefetch');
+    config.plugin('CompressionPlugin').use(CompressionPlugin);
+
   },
   pwa: {
     name: 'Inter Planetary Flash Cards',
