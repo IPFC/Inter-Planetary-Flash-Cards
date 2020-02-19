@@ -10,7 +10,7 @@
                         <div id="main-card-padding">
                             <vue-flashcard
                                 id="main-card"
-                                :isToggle= "cardFlipToggle"
+                                :flipped= "cardFlipToggle"
                                 :front="currentCard.front_rich_text" 
                                 :back="currentCard.back_rich_text"
                                 >
@@ -21,8 +21,8 @@
                         <div id="next-card-padding">
                             <vue-flashcard  v-if="todaysDeck.cards.length > 1"
                                 id="next-card"
-                                :front="nextCard.front_rich_text" 
-                                :back="nextCard.back_rich_text"
+                                :front="nextCard.front_text" 
+                                :back="nextCard.back_text"
                                 >
                             </vue-flashcard>
                         </div>
@@ -31,7 +31,7 @@
                         <div id="third-card-padding">
                             <vue-flashcard  v-if="todaysDeck.cards.length > 2"
                                 id="third-card" class ="card"
-                                front="   /n /n a /n   " 
+                                front="   /n hahaha! you'll never see me /n   " 
                                 back="   /n /n /n   " > 
                             </vue-flashcard>
                         </div>
@@ -44,7 +44,7 @@
             </b-row>
             <b-row id="buttons-row" >
                 <b-col>
-                    <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="incorrect()">
+                    <b-button v-if="cardFlipToggle" class="btn-circle" @click="incorrect()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="times"/>
                     </b-button>
                 </b-col>
@@ -54,7 +54,7 @@
                     </b-button>
                 </b-col>
                 <b-col>    
-                    <b-button v-if="cardFlipToggle === true" class="btn-circle" @click="correct()">
+                    <b-button v-if="cardFlipToggle" class="btn-circle" @click="correct()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="check"/>
                     </b-button>
                 </b-col>
@@ -83,7 +83,7 @@ export default {
             // currentCardIndex: 0,
             authStatus: false,
             spinner: false,
-            cardFlipToggle: 0,
+            cardFlipToggle: false,
             cardsCompleted: 0,
             cardsTotal: 0,
             todaysDeckCardIds: [], 
@@ -126,7 +126,7 @@ export default {
     },
     methods: {
         flipCard () {
-            this.cardFlipToggle ++
+            this.cardFlipToggle = !this.cardFlipToggle
         },
         incorrect () {
             this.$store.dispatch('levelDownCard', this.currentCard.card_id)

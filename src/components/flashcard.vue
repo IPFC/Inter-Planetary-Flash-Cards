@@ -1,64 +1,22 @@
 <template>
-    <div id="main">
-        <div v-bind:style="{ backgroundColor: colorFront, color: colorTextFront}"
-        v-show="!isToggle" :class="frontToggle">
-            <div class="card-content" v-highlight v-html="front"></div>
-        </div>
-        <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}"
-        v-show="isToggle" class="animated flipInY flashcard">
-            <div class="card-content" v-highlight v-html="back"></div>
-        </div>
+    <div v-bind:class="flipped ? 'flip-container flipped': 'flip-container'">
+    <div class="flipper">
+
+    <div v-bind:style="{ backgroundColor: colorFront, color: colorTextFront}"
+    class="flashcard front">
+        <div class="card-content" v-highlight v-html="front"></div>
+    </div>
+    <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}"
+    class="flashcard back">
+        <div class="card-content" v-highlight v-html="back"></div>
+    </div>
+    </div>
     </div>
 </template>
 <script>
 export default {
     data () {
         return {
-            toggleCount: 0
-        }
-    },
-    watch: {
-        isToggle:  function () {
-            this.toggleCount ++
-        }
-    },
-    computed: {
-        frontToggle (){
-            if (this.toggleCount > 0) {
-                return 'animated flipInY flashcard'
-            } else {
-                return 'flashcard'
-            }
-        },
-        textSizeFront () {
-            if (this.front.length < 20) {
-                return '4em'
-            }
-            else if (this.front.length < 50) {
-                return '3em'
-            }
-            else if (this.front.length < 250) {
-                return '2em'
-            }
-            else if (this.front.length < 350) {
-                return '1.5em'
-            }
-            else return '1em'
-        },
-        textSizeBack () {
-            if (this.back.length < 20) {
-                return '4em'
-            }
-            else if (this.back.length < 50) {
-                return '3em'
-            }
-            else if (this.back.length < 250) {
-                return '2em'
-            }
-            else if (this.back.length < 350) {
-                return '1.5em'
-            }
-            else return '1em'
         }
     },
     props: {
@@ -102,9 +60,9 @@ export default {
             type: String,
             default: 'white'
         },
-        isToggle: {
-            type: Number,
-            default: 0,
+        flipped: {
+            type: Boolean,
+            default: false,
         },
         // height: {
         //       type: String,
@@ -147,10 +105,6 @@ export default {
     background-color: rgba(162, 162, 162, 0.5);
     border-radius: 0px;
 }
-.animated {
-    animation-duration:.65s;
-    animation-fill-mode: both;
-}
 /* use >>> to select nested elements inside a v-html */
 .card-content >>> img {
     width: 100%;
@@ -181,30 +135,60 @@ export default {
 .card-content >>> p .ql-size-huge{
     font-size: 3.5em;
 }
-@keyframes flipInY {
-    from {
-        transform: perspective(300px) rotate3d(0, 1, 0, 90deg);
-        animation-timing-function: ease-in;
-        opacity: .97;
-    }
-    40% {
-        transform: perspective(300px) rotate3d(0, 1, 0, -5deg);
-        animation-timing-function: ease-in;
-    }
-    60% {
-        transform: perspective(300px) rotate3d(0, 1, 0, 3deg);
-        opacity: 1;
-    }
-    80% {
-        transform: perspective(300px) rotate3d(0, 1, 0, -1deg);
-    }
-    to {
-        transform: perspective(300px);
-    }
+.flip-container {
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -o-perspective: 1000;
+  perspective: 1000;
 }
-
-.flipInY {
-    backface-visibility: visible !important;
-    animation-name: flipInY;
+.flipper {
+  -moz-transform: perspective(1000px);
+  -moz-transform-style: preserve-3d;
+  position: relative;
+}
+.front,
+.back {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transition: 0.6s;
+  -webkit-transform-style: preserve-3d;
+  -moz-transition: 0.6s;
+  -moz-transform-style: preserve-3d;
+  -o-transition: 0.6s;
+  -o-transform-style: preserve-3d;
+  -ms-transition: 0.6s;
+  -ms-transform-style: preserve-3d;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.back {
+  -webkit-transform: rotateY(-180deg);
+  -moz-transform: rotateY(-180deg);
+  -o-transform: rotateY(-180deg);
+  -ms-transform: rotateY(-180deg);
+  transform: rotateY(-180deg);
+  position: absolute;
+}
+.flip-container.flipped .back {
+  -webkit-transform: rotateY(0deg);
+  -moz-transform: rotateY(0deg);
+  -o-transform: rotateY(0deg);
+  -ms-transform: rotateY(0deg);
+  transform: rotateY(0deg);
+}
+.flip-container.flipped .front {
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}
+.back {
+  z-index: 4;
 }
 </style>
