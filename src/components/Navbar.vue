@@ -4,7 +4,7 @@
   <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
   <b-link to="#" class="icon" ><font-awesome-icon style="color: white;" class="fa-lg"  icon="search"/></b-link>     
   <b-nav-text style="color: white;" id="session-counter" >{{ navProgressCounter }}</b-nav-text>    
-  <b-link @click="$emit('new-card');" class="icon"><img src="/img/add card logo.svg" alt="add"></b-link>
+  <b-link @click="$emit('new-card');" class="icon"><img src="/img/icons/add card logo.svg" alt="add"></b-link>
   <b-link @click="callSync()" id="sync-link">
     <font-awesome-layers  class="fa-lg" id="sync-layers">
       <font-awesome-icon style="color: white;" class="fa-lg" id="cloud" icon="cloud"></font-awesome-icon>
