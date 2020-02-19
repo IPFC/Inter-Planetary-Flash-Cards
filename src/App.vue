@@ -123,9 +123,7 @@ import { mapState } from 'vuex'
     z-index: 4000;
 }
 .loaded {
-      background-image: url('/img/icons/icon-192x192.png');
-    background-position: center center;
-    background-repeat: no-repeat;
+
     background-color: #F8690D;
     position: absolute;
     height: 100%; 
@@ -134,7 +132,7 @@ import { mapState } from 'vuex'
     padding: 0;
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s .5s, opacity .5s linear;
+  transition: visibility 0s .25s, opacity .25s linear;
 }
 
 #app-main {
