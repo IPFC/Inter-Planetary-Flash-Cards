@@ -30,7 +30,6 @@
     "popper.js": "^1.16.1",
     "quill-plugin-image-upload": "0.0.6",
     "register-service-worker": "^1.6.2",
-    "sass-loader": "^8.0.2",
     "toasts": "^1.0.0",
     "uuid": "^3.4.0",
     "vue": "^2.6.11",
@@ -56,6 +55,7 @@
     "glob-all": "^3.1.0",
     "node-sass": "^4.13.1",
     "purgecss-webpack-plugin": "^2.0.6",
+    "sass-loader": "^8.0.2",
     "vue-loader": "^15.8.3",
     "vue-template-compiler": "^2.6.11"
   }
