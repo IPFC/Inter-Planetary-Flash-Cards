@@ -12,9 +12,9 @@
       <font-awesome-icon style="color: primary;" v-else-if="syncFailed || $store.getters.dataChanged" class="fa-xs" id="exclamation" icon="exclamation"></font-awesome-icon>
       <font-awesome-icon style="color: primary;" v-else class="fa-xs" id="checkmark" icon="check"></font-awesome-icon>
     </font-awesome-layers>
-  </b-link>     
+  </b-link> 
   <b-collapse id="nav-collapse" is-nav>
-    <b-navbar-nav  >
+    <b-navbar-nav>
     <b-nav-item class="dropdown-item" to="/home">Review</b-nav-item>
     <b-nav-item class="dropdown-item" to="/Settings">Settings</b-nav-item>
     <b-nav-item class="dropdown-item" to="/deck-selection">Decks</b-nav-item>

@@ -36,7 +36,8 @@ export default {
   max-width: 600px;
 }
 #logout{
-  margin-top: 15px
+  margin-top: 15px;
+  margin-bottom: 0px;
 }
 .settings-component{
   padding: 0

@@ -106,9 +106,6 @@ import { mapState } from 'vuex'
 </script>
 
 <style lang="scss">
-  @import "assets/_custom.scss";
-  @import "~bootstrap/scss/bootstrap.scss";
-  @import '~bootstrap-vue/dist/bootstrap-vue.css';
 .landing-page {
     background-image: url('/img/logo-long-h.svg');
     background-size: 100%;

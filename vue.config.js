@@ -1,5 +1,5 @@
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-//   .BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 // This will crash heroku build. to cancel:
 // To view all builds:
 // heroku builds -a YOUR_APP_NAME
@@ -12,6 +12,10 @@
 // },
   
 module.exports = {
+  configureWebpack: {
+  devtool: 'source-map',
+  plugins: [new BundleAnalyzerPlugin()]
+},
   publicPath: './',
   pwa: {
     name: 'Inter Planetary Flash Cards',

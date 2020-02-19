@@ -53,10 +53,10 @@
 </template>
 
 <script>
-import { BCard, BImgLazy, BFormInput } from 'bootstrap-vue'
+import { BCard, BImgLazy, BFormInput, BCardText } from 'bootstrap-vue'
 export default {
     name: 'deck-editor',
-    components: { BCard, BImgLazy, BFormInput},
+    components: { BCard, BImgLazy, BFormInput, BCardText},
     data() {
         return {
             editingDeckTitle: false,

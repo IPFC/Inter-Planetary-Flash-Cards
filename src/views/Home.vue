@@ -2,7 +2,7 @@
     <div>
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
             <b-row id="top-buttons-row" class="justify-content-end">
-                <a class="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
+                <a id="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
                 <b-col v-if="!spinner" class="card-col">
@@ -253,14 +253,14 @@ export default {
 </script>
 
 <style scoped>
-.edit {
+#edit {
     color: gray;
     margin: 7px;
     right: 3px;
     z-index: 5;
     position: absolute;
 }
-.edit:hover{
+#edit:hover{
     cursor: pointer;
 }
 #main-card-padding-outer{
