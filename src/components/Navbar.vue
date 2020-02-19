@@ -1,6 +1,6 @@
 <template>
 <div id="body">
-  <b-navbar  toggleable="xs" type="dark" variant="primary">
+  <b-navbar ref="navbarMain" toggleable="xs" type="dark" variant="primary">
   <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
   <b-link to="#" class="icon" ><font-awesome-icon style="color: white;" class="fa-lg"  icon="search"/></b-link>     
   <b-nav-text style="color: white;" id="session-counter" >{{ navProgressCounter }}</b-nav-text>    
@@ -15,11 +15,11 @@
   </b-link>     
   <b-collapse id="nav-collapse" is-nav>
     <b-navbar-nav  >
-    <b-nav-item to="/home">Review</b-nav-item>
-    <b-nav-item to="/Settings">Settings</b-nav-item>
-    <b-nav-item to="/deck-selection">Decks</b-nav-item>
-    <b-nav-item to="#" disabled>Lessons</b-nav-item>
-    <b-nav-item to="#" disabled>Classes</b-nav-item>
+    <b-nav-item class="dropdown-item" to="/home">Review</b-nav-item>
+    <b-nav-item class="dropdown-item" to="/Settings">Settings</b-nav-item>
+    <b-nav-item class="dropdown-item" to="/deck-selection">Decks</b-nav-item>
+    <b-nav-item class="dropdown-item" to="#" disabled>Lessons</b-nav-item>
+    <b-nav-item class="dropdown-item" to="#" disabled>Classes</b-nav-item>
     <b-nav-form>
     <b-form-input size="sm" class="mr-sm-1" placeholder="find decks and classes"></b-form-input>
       <b-button size="sm" type="submit">Search</b-button>
@@ -64,6 +64,9 @@ export default {
 </script>
 
 <style scoped>
+.dropdown-item{
+  padding-left: 15px;
+}
 #sync-layers {
   margin-top: 3px;
 }

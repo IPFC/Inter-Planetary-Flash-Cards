@@ -447,7 +447,7 @@ export default {
 .card {
     max-width: 600px;
     margin: auto;
-    top: 30px;
+    top: 15px;
     border-radius: 10px;
     cursor: pointer;
     font-size: 1.5em;

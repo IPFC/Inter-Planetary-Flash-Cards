@@ -1,7 +1,7 @@
 <template>
-    <div :class="bodyClass">
-        <Navbar v-if="bodyClass ==='body'" id="navbar" @new-card="newCard()"/>
-        <router-view @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
+    <div ref="appMain" id="app-main" :class="bodyClass">
+        <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
+        <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
 
@@ -68,10 +68,10 @@ import { mapState } from 'vuex'
         //     }
         },
         methods: {
-            homeLoaded() {
+            homeLoaded: function() {
                 this.bodyClass = 'body'
             },
-            editClicked(){
+            editClicked: function(){
                 if (this.currentDeckId === 'reviewDeck') {
                     this.toCardEditorFromReview = true
                 } else {
@@ -99,7 +99,7 @@ import { mapState } from 'vuex'
         components: {
             Navbar
         },
-        created () {
+        created: function () {
             this.bodyClass = 'landing-page'
         },
     }
@@ -110,7 +110,8 @@ import { mapState } from 'vuex'
   @import "~bootstrap/scss/bootstrap.scss";
   @import '~bootstrap-vue/dist/bootstrap-vue.css';
 .landing-page {
-    background-image: url('/img/logo-full-h.png');
+    background-image: url('/img/logo-long-h.svg');
+    background-size: 100%;
     background-position: center center;
     background-repeat: no-repeat;
     background-color: #F8690D;
@@ -130,10 +131,15 @@ import { mapState } from 'vuex'
         opacity: 0; 
     } 
 }
+#app-main {
+    height: 100vh;
+}
 .body {
     background-color: #F6F6F6;
     margin: 0;
-    margin-top: 55px;
+}
+#router-view{
+    height: calc(100vh-55px); padding-top: 55px;
 }
 h1 {
     padding: 0;

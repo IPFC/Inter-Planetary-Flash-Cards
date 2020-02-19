@@ -271,7 +271,7 @@ export default {
     width: 100%;
 }
 #main-card-padding {
-    width: 100%;
+    width: 95%;
     margin: auto;
     z-index: 5;
 }

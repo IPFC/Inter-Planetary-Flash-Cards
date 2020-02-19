@@ -1,7 +1,7 @@
 <template>
   <div id="main">
       <!-- <h3>Decks</h3> -->
-    <b-list-group >
+    <b-list-group id="list-group" >
     <b-list-group-item id="list-group-item" v-for="(deckMeta, index) in decksMeta" :key="index" > 
       <b-container id="list-group-item-container">
         <b-row id="list-group-item-row">
@@ -100,7 +100,9 @@ export default {
 #main{
   padding: 15px 0px 0px 10px;
 }
-
+#list-group{
+  margin-top: 15px
+}
 #list-group-item{
   margin: auto;
   margin-bottom: 5px;

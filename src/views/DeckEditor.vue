@@ -30,7 +30,7 @@
                                         <b-card-text class="font-weight-bold">{{ card.front_text }}</b-card-text>
                                     </b-col>
                                     <b-col cols="1">
-                                        <font-awesome-icon icon="edit" class="edit" @click="editCard(card)"/>
+                                        <font-awesome-icon icon="edit" class="edit" @click="editCard(card);$emit('edit-clicked')"/>
                                     </b-col>
                                 </b-row>
                                 <hr class="divider">
@@ -126,7 +126,9 @@ export default {
 #main{
   padding: 15px 15px 0px 10px;
 }
-
+#main-row{
+  margin-top: 15px
+}
 #main-col {
     margin: auto;
     max-width: 600px;
