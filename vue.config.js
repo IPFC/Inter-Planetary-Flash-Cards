@@ -5,11 +5,6 @@
 // heroku builds -a YOUR_APP_NAME
 // To cancel a specific (pending) build:
 // heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
-
-// configureWebpack: {
-//   devtool: 'source-map',
-//   plugins: [new BundleAnalyzerPlugin()]
-// },
   
 module.exports = {
 //   configureWebpack: {
