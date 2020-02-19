@@ -1,5 +1,7 @@
 <template>
-    <div ref="appMain" id="app-main" :class="bodyClass">
+
+    <div ref="appMain" id="app-main" >
+        <div id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
         <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
@@ -18,7 +20,7 @@ import { mapState } from 'vuex'
                 newCardClicked: 0,
                 newCardCommit: 0,
                 toCardEditorFromReview: false,
-                bodyClass: 'landing-page'
+                splashClass: 'splash'
             }
         },
         computed: {
@@ -69,7 +71,7 @@ import { mapState } from 'vuex'
         },
         methods: {
             homeLoaded: function() {
-                this.bodyClass = 'body'
+                this.splashClass = 'loaded'
             },
             editClicked: function(){
                 if (this.currentDeckId === 'reviewDeck') {
@@ -100,41 +102,48 @@ import { mapState } from 'vuex'
             Navbar
         },
         created: function () {
-            this.bodyClass = 'landing-page'
+            this.splashClass = 'splash'
         },
     }
 </script>
 
 <style lang="scss">
-.landing-page {
-    background-image: url('/img/logo-long-h.svg');
-    background-size: 100%;
+.splash {
+    background-image: url('/img/icons/icon-192x192.png');
     background-position: center center;
     background-repeat: no-repeat;
     background-color: #F8690D;
     position: absolute;
-    height: 100%; width: 100%;
+    height: 100%; 
+    width: 100%;
     margin: 0;
     padding: 0;
-    animation: fadeOutAnimation .5s; 
-    animation-iteration-count: 1; 
-    animation-fill-mode: forwards; 
+    visibility: visible;
+    opacity: 1;
+    z-index: 4000;
 }
-@keyframes fadeOutAnimation { 
-    0% { 
-        opacity: 1; 
-    } 
-    100% { 
-        opacity: 0; 
-    } 
+.loaded {
+      background-image: url('/img/icons/icon-192x192.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #F8690D;
+    position: absolute;
+    height: 100%; 
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s .5s, opacity .5s linear;
 }
+
 #app-main {
     height: 100vh;
-}
-.body {
     background-color: #F6F6F6;
     margin: 0;
+    padding: 0;
 }
+
 #router-view{
     height: calc(100vh-55px); padding-top: 55px;
 }
