@@ -2,315 +2,43 @@
     "userCollection": {
         "schedule": {
             "edited": 1581758711258,
-            "list": [{
+            "list": [
+                
+                {
                 "card_id": "6185906d-9c89-40d9-b301-0b1a76ffdb19",
-                "due": 1581435486.0834692,
+                "due": 15,
                 "lastInterval": 86400,
-                "level": 5
-            }, {
+                "level": 0
+            }, 
+            {
                 "card_id": "5de6a885-81e2-410c-9a08-4f5fb62fed20",
-                "due": 1581354719.4169881,
-                "lastInterval": null,
-                "level": 4
-            }, {
+                "due": 16,
+                "lastInterval": 86400,
+                "level": 0
+            }, 
+            {
                 "card_id": "e1e6d8e1-d836-4640-86c3-e0b83abc2ed8",
-                "due": 1582622902.3756185,
-                "lastInterval": null,
-                "level": 3
-            }, {
-                "card_id": "c15e525e-8a21-44f2-8daa-3568d3aed142",
-                "due": 1581349191.28,
-                "lastInterval": null,
+                "due": 17,
+                "lastInterval": 86400,
                 "level": 0
-            }, {
-                "card_id": "fea14a3b-948a-4347-9e23-e9fcec1774f9",
-                "due": 1581349203.585,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "6ad536ad-930c-485c-b577-5135257e5155",
-                "due": 1581349223.297,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "a854d94c-2c79-451b-8cba-9e7c3356164c",
-                "due": 1581349231.363,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "95404266-3643-4f9b-b84e-e341c2a953d1",
-                "due": 1581349237.685,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "8824b620-75e1-4d62-9206-431e624214f3",
-                "due": 1581349506.09,
-                "lastInterval": null,
-                "level": 0
-            }, {
+            }, 
+            {
                 "card_id": "0da68541-2545-4d4b-b9af-4e5d3149547f",
-                "due": 1581552602.082622,
-                "lastInterval": null,
-                "level": 1
-            }, {
-                "card_id": "58586466-c446-4193-b83a-346c0ed7ae73",
-                "due": 1581430837.04,
-                "lastInterval": null,
+                "due": 2,
+                "lastInterval": 86400,
                 "level": 0
-            }, {
-                "card_id": "ae4dcac6-55cf-4621-a8cc-a43fad39ef4e",
-                "due": 1581430873.099,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "86ce808b-ecdd-4ed3-820d-5d0f719fef92",
-                "due": 1581435196.306,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "02b4cd74-05c5-4e05-b532-78c7e2e9c723",
-                "due": 1581435206.369,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "d889178e-5467-4f60-aab0-f8d0cd0f2dbe",
-                "due": 1581435225.173,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "f0ff575b-f410-4034-a1a8-f4bbb09fb147",
-                "due": 1581436899.037,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "bd4054d1-30d0-49ea-8864-498544e94a46",
-                "due": 1581437278.05,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "59a70ebd-86ba-4b6c-b21d-c3fbe42710fa",
-                "due": 1581437346.426,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "5a61d0a8-9746-44ae-91a0-253c43f112a8",
-                "due": 1581437350.832,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "84c1129d-31c6-4066-a465-2feda49ed378",
-                "due": 1581437352.989,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "27fce1d6-678c-4afd-a64e-d87dbb65c14f",
-                "due": 1581437356.614,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "1dae7f1a-2f69-45d4-8bc8-1972fc4794c9",
-                "due": 1581437360.479,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "76a0b430-d323-4ec8-bb67-fe7b94929d2f",
-                "due": 1581504621.196,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "48915721-9dd7-4e6a-9fb5-d63f24bb205d",
-                "due": 1581505028.407,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "7a79fb1b-c81d-4bb1-a8c5-cc2b607bca5d",
-                "due": 1581505039.864,
-                "lastInterval": null,
-                "level": 0
-            }, {
+            }, 
+            {
                 "card_id": "c09cb5fc-f42d-4e73-bfb1-e8dd67d28ebc",
-                "due": 1581527956.056,
-                "lastInterval": null,
+                "due": 1,
+                "lastInterval": 86400,
                 "level": 0
-            }, {
-                "card_id": "0b55888a-a9c0-4ef0-b5b0-dc278b6ca3d2",
-                "due": 1581527998.985,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "8eac2b9a-1567-4263-9ad4-77e99b154186",
-                "due": 1581700346650,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "e7d0eb9e-030b-47ff-abcb-0ac1291a82fe",
-                "due": 1581700357396,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "41ec9129-0a20-486f-a97c-cf308bc0cd13",
-                "due": 1581700378889,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "86c3824b-8fa3-4d69-a452-4849b57c8fa3",
-                "due": 1581700394846,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "1bdaae7b-b6f0-4e0e-a05a-f85dc81b2d41",
-                "due": 1581747832607,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "11813b5c-548d-4597-857b-8e6796d25905",
-                "due": 1581747974483,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "98394f1f-26e9-4f2f-be11-bf1c6848c48f",
-                "due": 1581749538735,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "65305a8d-4e75-4a37-9c1e-f1bd594274b7",
-                "due": 1581749655630,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "fb17c968-33f1-4f6f-ac94-1d2c32696769",
-                "due": 1581749663070,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "9dc7e8f9-c945-4bb2-9e68-034b34d2cbde",
-                "due": 1581749664783,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "0308d2f9-ce8d-4543-b647-12be2bba9c46",
-                "due": 1581750073763,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "e4a67170-cd73-4c04-8b08-3e164b83d347",
-                "due": 1581750123511,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "c97539ad-050a-45cc-8354-99df8ff3659f",
-                "due": 1581750136659,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "2054c4d0-3653-4d88-acdd-8fd44b7f8bd2",
-                "due": 1581750140587,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "9df0669f-5e27-4e68-900b-8c404206c6cc",
-                "due": 1581750172135,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "09aec264-fddf-4da2-9e70-fc383eaae1e8",
-                "due": 1581750174408,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "f2b9cd73-5fbd-4d46-9d51-01d2a3b584ab",
-                "due": 1581750656186,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "a5ff672b-8f47-4084-86ee-170cc7ab3bd4",
-                "due": 1581750759112,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "f4859030-0f7a-49fd-a558-cb50d1f91b8c",
-                "due": 1581751801812,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "db6a43e2-2da1-4d19-8ce6-00b1033f5ae0",
-                "due": 1581752110627,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "d1c7acec-7f83-449a-9055-2a4aad3abe2a",
-                "due": 1581752116742,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "eda339ea-a76f-495e-8626-443f27238ab5",
-                "due": 1581752123843,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "36f70c17-a5f0-4c62-afa8-7982e0792b81",
-                "due": 1581752139782,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "1eb2f911-4ccb-4b3d-887b-13c637f82766",
-                "due": 1581752163243,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "f2f34fc8-2d13-42aa-8d14-34995754e05e",
-                "due": 1581752165557,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "0f868620-508d-46c6-886e-503d31ed59fc",
-                "due": 1581752170923,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "06b8b402-08cb-4e98-a603-d22af400cb4a",
-                "due": 1581752177558,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "5490fc69-4fb3-474c-94d1-45bb3ced3907",
-                "due": 1581752179847,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "d2bff97b-ebb8-4c53-88b2-6e58fc9cc9bd",
-                "due": 1581752182063,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "b686aad3-2619-46df-8a84-9a6fa3684786",
-                "due": 1581752185568,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "f953683e-b792-4ffd-a612-907dc7e618db",
-                "due": 1581753184178,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "fac9e972-d9ea-4d54-b651-f7ecfd8a6dbd",
-                "due": 1581753210524,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "c3961166-3f58-418d-932a-859fab91ac76",
-                "due": 1581753212798,
-                "lastInterval": null,
-                "level": 0
-            }, {
-                "card_id": "cfb11d32-4d9a-41e7-bdee-c96abc776719",
-                "level": 0,
-                "due": 1581758711258,
-                "lastInterval": null
-            }]
+            }
+        
+        ]
         },
         "deck_ids": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"],
-        "deleted_deck_ids": ["558d57aa-434b-4e9e-a5aa-d52b4fa33f72","e9d6567b-0792-4035-ad8f-42d7cc477d5d","3bd6ee6c-0796-4270-b142-9565684bf051","f434e4d1-8c59-49b4-b165-061ad9e4b38c","d6dfebea-1fc1-45e3-ac88-21d2ffbe37f1","84cec7f0-b3c2-47bc-ad45-1147755d5c65","30f12687-5471-4f92-b275-602f8065a4fa","1f5834e6-dce1-4166-9873-ccd22762a7a9","c36553db-11ef-4c85-8a9b-f01c1348f67f","e6d0ef97-5ce2-42f2-84f9-0afa655ecbe6","1e30d7e9-7c3f-4061-9401-4e97d26e978e","7889aff458a14cdf9c9eee807c05cca6","f67c3767-6c4e-4919-8833-3f7b770ee32a","a6015966-77f8-421b-9db5-f9a90b185ea3","96f0ef25-2132-464c-aded-bb8823f134de","0fa9b35d-8d67-4a91-b0a1-2a4608ab947e","1a344e40-6724-4142-a2d4-e75399dd5a28","d3f18a96-49a9-4038-9804-92746899fc16","20ead6d8-cee5-4b93-aa44-6fb71b3507e1","877ad2b8-3718-4878-99fc-d8c8c31cb523","2e14efcc-0089-4a54-9efe-48f030d04355","002637ce-a867-4ae1-b63d-dee3bee489c0"],
+        "deleted_deck_ids": ["558d57aa-434b-4e9e-a5aa-d52b4fa33f72", "e9d6567b-0792-4035-ad8f-42d7cc477d5d", "3bd6ee6c-0796-4270-b142-9565684bf051", "f434e4d1-8c59-49b4-b165-061ad9e4b38c", "d6dfebea-1fc1-45e3-ac88-21d2ffbe37f1", "84cec7f0-b3c2-47bc-ad45-1147755d5c65", "30f12687-5471-4f92-b275-602f8065a4fa", "1f5834e6-dce1-4166-9873-ccd22762a7a9", "c36553db-11ef-4c85-8a9b-f01c1348f67f", "e6d0ef97-5ce2-42f2-84f9-0afa655ecbe6", "1e30d7e9-7c3f-4061-9401-4e97d26e978e", "7889aff458a14cdf9c9eee807c05cca6", "f67c3767-6c4e-4919-8833-3f7b770ee32a", "a6015966-77f8-421b-9db5-f9a90b185ea3", "96f0ef25-2132-464c-aded-bb8823f134de", "0fa9b35d-8d67-4a91-b0a1-2a4608ab947e", "1a344e40-6724-4142-a2d4-e75399dd5a28", "d3f18a96-49a9-4038-9804-92746899fc16", "20ead6d8-cee5-4b93-aa44-6fb71b3507e1", "877ad2b8-3718-4878-99fc-d8c8c31cb523", "2e14efcc-0089-4a54-9efe-48f030d04355", "002637ce-a867-4ae1-b63d-dee3bee489c0"],
         "webapp_settings": {
             "textEditorSettings": {
                 "editorOptions": {
@@ -337,8 +65,7 @@
         "user_id": "tutorial"
     },
     "decks": [{
-        "cards": [
-            {
+        "cards": [{
             "back_image": "https://gateway.pinata.cloud/ipfs/QmatpNzKdUd5p8cxikMqbpwrXZ2FuSthhFrVJbb2aWQtem",
             "back_rich_text": "<p><img src=\"https://gateway.pinata.cloud/ipfs/QmatpNzKdUd5p8cxikMqbpwrXZ2FuSthhFrVJbb2aWQtem\"></p><p>The <strong>amygdala</strong> is involved in fear and fear memories. The <strong>hippocampus</strong> is associated with declarative and episodic memory as well as recognition memory. The <strong>cerebellum</strong> plays a role in processing procedural memories, such as how to play the piano. The <strong>prefrontal cortex</strong> appears to be involved in remembering semantic tasks.</p>",
             "back_text": "\nThe amygdala is involved in fear and fear memories. The hippocampus is associated with declarative and episodic memory as well as recognition memory. The cerebellum plays a role in processing procedural memories, such as how to play the piano. The prefrontal cortex appears to be involved in remembering semantic tasks.\n",
@@ -374,12 +101,12 @@
             "front_text": "Using a spaced repetition software app like this,\nhow much time does it take overall to\nmemorize \n1 card's content, for the rest of your life?\n",
             "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"]
         }, {
-            "back_rich_text": "<p>123=</p>",
-            "back_text": "123=\n",
+            "back_rich_text": "<p class=\"ql-align-center\"><span class=\"ql-size-small\" style=\"color: rgb(187, 187, 187);\">Before flipping, think of your answer.</span></p><p class=\"ql-align-center\">If you were <span style=\"background-color: rgb(0, 138, 0);\"> </span><span style=\"background-color: rgb(0, 138, 0); color: rgb(255, 255, 255);\">right</span><span style=\"background-color: rgb(0, 138, 0);\"> </span> hit the <span style=\"background-color: initial;\">✔️</span></p><p class=\"ql-align-center\">If you were <span style=\"background-color: rgb(230, 0, 0); color: rgb(255, 255, 255);\"> wrong </span> hit the  <span style=\"background-color: initial;\">❌</span></p><p class=\"ql-align-center\"><br></p><p class=\"ql-align-center\">Cards you remembered will be shown <span style=\"color: rgb(0, 138, 0);\">less often</span></p><p class=\"ql-align-center\">Cards you forgot will be shown <span style=\"color: rgb(230, 0, 0);\">more often</span></p>",
+            "back_text": "Before flipping, think of your answer.\nIf you were  right  hit the ✔️\nIf you were  wrong  hit the  ❌\n\nCards you remembered will be shown less often\nCards you forgot will be shown more often\n",
             "card_id": "c09cb5fc-f42d-4e73-bfb1-e8dd67d28ebc",
-            "card_tags": ["Hmmasdfasdf"],
-            "front_rich_text": "<p>123</p>",
-            "front_text": "123\n",
+            "card_tags": ["Daily Review"],
+            "front_rich_text": "<p class=\"ql-align-center\">Welcome to </p><h1 class=\"ql-align-center\"><span style=\"background-color: initial;\">🚀</span></h1><p class=\"ql-align-center\"><strong class=\"ql-size-large\" style=\"color: rgb(0, 102, 204);\">Inter Planetary </strong></p><p class=\"ql-align-center\"><strong class=\"ql-size-large\" style=\"color: rgb(0, 102, 204);\">Flash Cards</strong></p><h1 class=\"ql-align-center\"><span style=\"background-color: initial;\">🚀</span></h1><p class=\"ql-align-center\"><strong class=\"ql-size-small\" style=\"color: rgb(187, 187, 187);\">flip me!</strong></p>",
+            "front_text": "Welcome to \n🚀\nInter Planetary \nFlash Cards\n🚀\nflip me!\n",
             "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"]
         }],
         "created_by": "642a264a-00a2-4517-9d95-64a29174c4bd",
