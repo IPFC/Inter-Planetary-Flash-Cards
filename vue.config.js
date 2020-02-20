@@ -22,8 +22,8 @@ module.exports = {
     msTileColor: '#f8690d',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black-translucent',
-    start_url: "./index.html",
     manifestOptions: {
+      start_url: "./index.html",
       name: "Inter Planetary Flash Cards",
       short_name: "IPFC",
       theme_color: "#f8690d",
