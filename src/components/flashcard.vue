@@ -84,7 +84,7 @@ export default {
     cursor: pointer;
     border-radius: 10px;
     box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
-min-height: 100%;
+    height: 100%;
     margin: auto;
     width: 100%;
     padding: 0px 7px 0px 15px;
@@ -145,6 +145,7 @@ min-height: 100%;
   -moz-transform: perspective(1000px);
   -moz-transform-style: preserve-3d;
   position: relative;
+  height: 100%;
 }
 .front,
 .back {

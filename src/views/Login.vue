@@ -1,6 +1,7 @@
 
 <template>
-<div id="body">
+<div>
+<div id="login-body">
     <b-alert
       :show="dismissCountDown"
       dismissible
@@ -10,7 +11,6 @@
     >
     {{ apiErrorMsg }}
     </b-alert>
-    <h1>IPFC Login</h1>
     <b-form @submit.stop.prevent id="form-signin">
         <label for="feedback-email">Email</label>
         <b-form-input v-model="input.email" :state="emailValidation" id="feedback-email"></b-form-input>
@@ -47,6 +47,7 @@
             <b-button v-else :disabled="loginButtonDisable" type="submit" id="sign-up-a" @click="toggleSigningUp()" variant="secondary">Sign up</b-button>
         </span>
     </b-form>
+</div>
 </div>
 </template>
 <script>
@@ -268,7 +269,7 @@ export default {
 </script>
 
 <style scoped>
-#body {
+#login-body {
     align-items: center;
     margin: auto;
     max-width: 370px;

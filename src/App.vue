@@ -1,5 +1,4 @@
 <template>
-
     <div ref="appMain" id="app-main" >
         <div id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
@@ -151,7 +150,8 @@ import { mapState } from 'vuex'
 }
 
 #router-view{
-    height: calc(100vh-55px); padding-top: 55px;
+    height: 100%; 
+    padding-top: 55px;
 }
 h1 {
     padding: 0;

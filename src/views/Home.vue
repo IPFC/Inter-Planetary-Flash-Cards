@@ -6,35 +6,29 @@
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
                 <b-col v-if="!spinner" class="card-col">
-                    <div id="main-card-padding-outer">
-                        <div id="main-card-padding">
-                            <vue-flashcard
-                                id="main-card"
-                                :flipped= "cardFlipToggle"
-                                :front="currentCard.front_rich_text" 
-                                :back="currentCard.back_rich_text"
-                                >
-                            </vue-flashcard>  
+                    <div id="main-card-padding">
+                        <vue-flashcard
+                            id="main-card"
+                            :flipped= "cardFlipToggle"
+                            :front="currentCard.front_rich_text" 
+                            :back="currentCard.back_rich_text"
+                            >
+                        </vue-flashcard>  
                     </div>
+                    <div id="next-card-padding">
+                        <vue-flashcard  v-if="todaysDeck.cards.length > 1"
+                            id="next-card"
+                            :front="nextCard.front_text" 
+                            :back="nextCard.back_text"
+                            >
+                        </vue-flashcard>
                     </div>
-                    <div id="next-card-padding-outer">
-                        <div id="next-card-padding">
-                            <vue-flashcard  v-if="todaysDeck.cards.length > 1"
-                                id="next-card"
-                                :front="nextCard.front_text" 
-                                :back="nextCard.back_text"
-                                >
-                            </vue-flashcard>
-                        </div>
-                    </div>
-                    <div id="third-card-padding-outer">
-                        <div id="third-card-padding">
-                            <vue-flashcard  v-if="todaysDeck.cards.length > 2"
-                                id="third-card" class ="card"
-                                front="   /n hahaha! you'll never see me /n   " 
-                                back="   /n /n /n   " > 
-                            </vue-flashcard>
-                        </div>
+                    <div id="third-card-padding">
+                        <vue-flashcard  v-if="todaysDeck.cards.length > 2"
+                            id="third-card" class ="card"
+                            front="   /n hahaha! you'll never see me /n   " 
+                            back="   /n /n /n   " > 
+                        </vue-flashcard>
                     </div>
                 </b-col>
                 <b-col v-else>
@@ -253,6 +247,9 @@ export default {
 </script>
 
 <style scoped>
+#review-body{
+    height: 100%;
+}
 #edit {
     color: gray;
     margin: 7px;
@@ -263,63 +260,57 @@ export default {
 #edit:hover{
     cursor: pointer;
 }
-#main-card-padding-outer{
+#main-card-padding{
     z-index: 5;
-    position: absolute;
-    top: 0px;
+    position: fixed;
+    top: 56px;
     left: 0px;
     width: 100%;
-}
-#main-card-padding {
-    width: 95%;
-    margin: auto;
-    z-index: 5;
+    bottom: 105px;
 }
 #main-card {
+    width: 95%;
+    height: 100%;
+    max-width: 600px;
     z-index: 5;
     margin: auto;
-    margin-top: 35px;
-    max-width: 600px;
-}
-#next-card-padding-outer{
-    z-index: 3;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
+    margin-top: 30px;
 }
 #next-card-padding {
-    width: 82%;
-    margin: auto;
-    z-index: 3;
+    z-index: 4;
+    position: fixed;
+    top: 56px;
+    left: 0px;
+    width: 100%;
+    bottom: 105px;
 }
 #next-card {
     z-index: 3;
     margin: auto;
-    margin-top: 25px;
+    margin-top: 21px;
+    width: 82%;
+    height: 95%; 
     max-width: 480px;
 }
 #next-card >>> .card-content::-webkit-scrollbar-thumb {
     background-color: rgba(162, 162, 162, 0);
 }
-#third-card-padding-outer{
-    z-index: 2;
-    position: absolute;
-    top: 5px;
-    left: 0px;
-    width: 100%;
-}
+
 #third-card-padding {
-    width: 70%;
     margin: auto ;
     z-index: 2;
+    position: fixed;
+    top: 56px;
+    left: 0px;
+    width: 100%;
+    bottom: 105px;
 }
 #third-card {
     z-index: 2;
     margin: auto;
-    margin-top: 10px;
+    margin-top: 12px;
+    width: 70%;
     max-width: 380px;
-    border-radius: 10px;
 }
 .btn-icon{
     margin: auto;
@@ -346,7 +337,7 @@ export default {
     text-align: center;
     position: fixed;
     z-index: 5000;
-    height: 70px;
+    height: 60px;
     left: 0;
     bottom: 0;
     width: 100%;
