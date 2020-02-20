@@ -5,7 +5,7 @@
   <b-link to="#" class="icon" ><font-awesome-icon style="color: white;" class="fa-lg"  icon="search"/></b-link>     
   <b-nav-text style="color: white;" id="session-counter" >{{ navProgressCounter }}</b-nav-text>    
   <b-link @click="$emit('new-card');" class="icon"><img src="/img/icons/add card logo.svg" alt="add"></b-link>
-  <b-link @click="callSync()" id="sync-link">
+  <b-link @click="callSync()" id="sync-link" aria-label="sync status">
     <font-awesome-layers  class="fa-lg" id="sync-layers">
       <font-awesome-icon style="color: white;" class="fa-lg" id="cloud" icon="cloud"></font-awesome-icon>
       <font-awesome-icon style="color: primary;" v-if="syncing" class="fa-xs" id="sync-spinner" spin icon="sync"></font-awesome-icon>
@@ -18,6 +18,7 @@
     <b-nav-item class="dropdown-item" to="/home">Review</b-nav-item>
     <b-nav-item class="dropdown-item" to="/Settings">Settings</b-nav-item>
     <b-nav-item class="dropdown-item" to="/deck-selection">Decks</b-nav-item>
+    <b-nav-item v-if="!installed" class="dropdown-item" @click="installer()" >Install App</b-nav-item>   
     <b-nav-item class="dropdown-item" to="#" disabled>Lessons</b-nav-item>
     <b-nav-item class="dropdown-item" to="#" disabled>Classes</b-nav-item>
     <b-nav-form>
@@ -38,6 +39,8 @@ export default {
   components: { BLink, BNavbar, BNavbarNav, BNavForm, BFormInput, BNavbarToggle, BNavText, BNavItem, BCollapse},
   data () {
     return {
+      installed: true,
+      installer: undefined,
     }
   },
   computed: {
@@ -50,7 +53,6 @@ export default {
     }),
   },
   methods: {
-
     callSync() {
       if (this.$store.getters.isAuthenticated) {
         this.$store.dispatch('sync')
@@ -59,8 +61,28 @@ export default {
         this.$router.push('/login')
       }
     }
-  }  
+  },
+  created() {
+    let installPrompt;
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      installPrompt = e;
+      this.installed = false
+    });
+    this.installer = () => {
+      this.installed = true;
+      installPrompt.prompt();
+      installPrompt.userChoice.then(result => {
+        if(result.outcome === "accepted") {
+          console.log("user accepted")
+        } else {
+          console.log("user denied")
+        }
+        installPrompt = null
+      })
     }
+  }  
+}
 </script>
 
 <style scoped>

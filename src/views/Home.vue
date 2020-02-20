@@ -44,17 +44,17 @@
             </b-row>
             <b-row id="buttons-row" >
                 <b-col>
-                    <b-button v-if="cardFlipToggle" class="btn-circle" @click="incorrect()">
+                    <b-button aria-label="Incorrect" v-if="cardFlipToggle" class="btn-circle" @click="incorrect()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="times"/>
                     </b-button>
                 </b-col>
                 <b-col>    
-                    <b-button class="btn-circle" @click="flipCard()">
+                    <b-button aria-label="flip" class="btn-circle" @click="flipCard()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="sync"/>
                     </b-button>
                 </b-col>
                 <b-col>    
-                    <b-button v-if="cardFlipToggle" class="btn-circle" @click="correct()">
+                    <b-button aria-label="Correct" v-if="cardFlipToggle" class="btn-circle" @click="correct()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="check"/>
                     </b-button>
                 </b-col>

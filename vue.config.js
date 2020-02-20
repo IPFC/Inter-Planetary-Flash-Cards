@@ -1,5 +1,5 @@
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-//   .BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 // This will crash heroku build. to cancel:
 // To view all builds:
 // heroku builds -a YOUR_APP_NAME
@@ -7,17 +7,22 @@
 // heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
   
 module.exports = {
-//   configureWebpack: {
-//   devtool: 'source-map',
-//   plugins: [new BundleAnalyzerPlugin()]
-// },
+  configureWebpack: {
+  devtool: 'source-map',
+  plugins: [new BundleAnalyzerPlugin()]
+},
   publicPath: './',
   pwa: {
+    workboxPluginMode: "InjectManifest",
+    workboxOptions: {
+      swSrc: "src/service-worker.js"
+    },
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
     msTileColor: '#f8690d',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black-translucent',
+    start_url: "./index.html",
     manifestOptions: {
       name: "Inter Planetary Flash Cards",
       short_name: "IPFC",
