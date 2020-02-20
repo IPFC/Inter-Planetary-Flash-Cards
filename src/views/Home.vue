@@ -252,9 +252,9 @@ export default {
 }
 #edit {
     color: gray;
-    margin: 7px;
+    margin: 5px;
     right: 3px;
-    z-index: 5;
+    z-index: 6;
     position: absolute;
 }
 #edit:hover{
@@ -263,10 +263,10 @@ export default {
 #main-card-padding{
     z-index: 5;
     position: fixed;
-    top: 56px;
+    top: 60px;
     left: 0px;
     width: 100%;
-    bottom: 105px;
+    bottom: 95px;
 }
 #main-card {
     width: 95%;
@@ -279,7 +279,7 @@ export default {
 #next-card-padding {
     z-index: 4;
     position: fixed;
-    top: 56px;
+    top: 60px;
     left: 0px;
     width: 100%;
     bottom: 105px;
@@ -300,7 +300,7 @@ export default {
     margin: auto ;
     z-index: 2;
     position: fixed;
-    top: 56px;
+    top: 60px;
     left: 0px;
     width: 100%;
     bottom: 105px;
