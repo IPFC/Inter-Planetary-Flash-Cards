@@ -106,6 +106,9 @@ export default {
             }
         }
     },
+    mounted () {
+        this.$emit('homeLoad')
+    }
 }
 </script>
 

@@ -27,6 +27,9 @@ export default {
       this.$store.dispatch('logout')
       this.$router.push('/login')
     }
+  },
+  mounted () {
+    this.$emit('homeLoad')
   }
 }
 </script>

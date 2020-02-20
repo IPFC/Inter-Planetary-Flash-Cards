@@ -420,6 +420,9 @@ export default {
             this.newCardThen()
         }
     },
+    mounted () {
+        this.$emit('homeLoad')
+    }
   }
 </script>
 

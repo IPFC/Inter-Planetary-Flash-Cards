@@ -263,6 +263,9 @@ export default {
         showAlert() {
         this.dismissCountDown = this.dismissSecs
         }
+    },
+    mounted () {
+        this.$emit('homeLoad')
     }
 }
 

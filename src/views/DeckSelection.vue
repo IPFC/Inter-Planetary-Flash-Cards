@@ -95,6 +95,9 @@ export default {
   },
   created () {
     this.$store.commit('updateCurrentDeckId', 'defaultDeck')
+  },
+  mounted () {
+    this.$emit('homeLoad')
   }
 }
 </script>
