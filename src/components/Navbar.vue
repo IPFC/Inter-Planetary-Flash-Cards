@@ -74,9 +74,9 @@ export default {
       installPrompt.prompt();
       installPrompt.userChoice.then(result => {
         if(result.outcome === "accepted") {
-          console.log("user accepted")
+          // console.log("user accepted")
         } else {
-          console.log("user denied")
+          // console.log("user denied")
         }
         installPrompt = null
       })

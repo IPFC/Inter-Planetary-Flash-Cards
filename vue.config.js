@@ -1,5 +1,5 @@
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin;
 // This will crash heroku build. to cancel:
 // To view all builds:
 // heroku builds -a YOUR_APP_NAME
@@ -7,10 +7,10 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 // heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
   
 module.exports = {
-  configureWebpack: {
-  devtool: 'source-map',
-  plugins: [new BundleAnalyzerPlugin()]
-},
+//   configureWebpack: {
+//   devtool: 'source-map',
+//   plugins: [new BundleAnalyzerPlugin()]
+// },
   publicPath: './',
   pwa: {
     workboxPluginMode: "InjectManifest",
