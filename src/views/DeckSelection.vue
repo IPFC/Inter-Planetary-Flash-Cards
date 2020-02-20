@@ -1,5 +1,6 @@
 <template>
-  <div id="main">
+<div>
+  <div id="deck-select-main">
       <!-- <h3>Decks</h3> -->
     <b-list-group id="list-group" >
     <b-list-group-item id="list-group-item" v-for="(deckMeta, index) in decksMeta" :key="index" > 
@@ -39,7 +40,8 @@
      </b-container>
   </b-list-group-item>
     </b-list-group>
-    </div>
+  </div>
+</div>
 </template>
 
 
@@ -97,7 +99,7 @@ export default {
 }
 </script>
 <style scoped>
-#main{
+#deck-select-main{
   padding: 15px 0px 0px 10px;
 }
 #list-group{
