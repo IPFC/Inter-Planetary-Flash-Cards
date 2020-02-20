@@ -8,30 +8,24 @@ const DeckEditor = () => import('../views/DeckEditor.vue')
 const Settings = () => import('../views/Settings.vue')
 const CardEditor = () => import('../views/CardEditor.vue')
 
-// import store from "../store"
+import store from "../store"
 
 Vue.use(Router)
 
-// async function redirectIfNotAuth (to, from, next) {
-//     await store.dispatch('checkJwt')
-//     if (store.getters.isAuthenticated) {
-//       next()
-//     } else {
-//       next('/login')
-//     }
-// }
+async function redirectIfNotAuth (to, from, next) {
+    await store.dispatch('checkJwt')
+    if (store.getters.isAuthenticated) {
+      next()
+    } else {
+      next('/login')
+    }
+}
 
 
 
 export default new Router({
-    // mode: 'history',
+    mode: 'history',
     routes: [
-        {
-            path: '/*',
-            redirect: {
-            name: "home",
-            }
-        },
         {
             path: '/',
             redirect: {
@@ -52,19 +46,19 @@ export default new Router({
             path: "/deck-selection",
             name: "deck-selection",
             component: DeckSelection,
-            // beforeEnter: redirectIfNotAuth
+            beforeEnter: redirectIfNotAuth
         },
         {
             path: "/deck-editor",
             name: "deck-editor",
             component: DeckEditor,
-            // beforeEnter: redirectIfNotAuth
+            beforeEnter: redirectIfNotAuth
         },
         {
             path: "/settings",
             name: "settings",
             component: Settings,
-            // beforeEnter: redirectIfNotAuth
+            beforeEnter: redirectIfNotAuth
         },
         {
             path: "/card-editor",

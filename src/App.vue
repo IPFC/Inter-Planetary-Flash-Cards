@@ -127,6 +127,7 @@ import { mapState } from 'vuex'
     z-index: 4000;
 }
 .loaded {
+
     background-color: #F8690D;
     position: fixed;
     height: 100%; 
