@@ -89,6 +89,9 @@ export default {
 .dropdown-item{
   padding-left: 15px;
 }
+.dropdown-item:hover {
+  color: primary;
+}
 #sync-layers {
   margin-top: 3px;
 }

@@ -84,7 +84,7 @@ export default {
     cursor: pointer;
     border-radius: 10px;
     box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
-    height: calc(100vh - 200px);
+min-height: 100%;
     margin: auto;
     width: 100%;
     padding: 0px 7px 0px 15px;

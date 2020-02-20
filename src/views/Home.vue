@@ -43,17 +43,17 @@
                 </b-col>
             </b-row>
             <b-row id="buttons-row" >
-                <b-col>
+                <b-col class="buttons-col">
                     <b-button aria-label="Incorrect" v-if="cardFlipToggle" class="btn-circle" @click="incorrect()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="times"/>
                     </b-button>
                 </b-col>
-                <b-col>    
+                <b-col class="buttons-col">    
                     <b-button aria-label="flip" class="btn-circle" @click="flipCard()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="sync"/>
                     </b-button>
                 </b-col>
-                <b-col>    
+                <b-col class="buttons-col">    
                     <b-button aria-label="Correct" v-if="cardFlipToggle" class="btn-circle" @click="correct()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="check"/>
                     </b-button>
@@ -336,7 +336,6 @@ export default {
     background-color: white;
     border: none;
     box-shadow: 0 0px 5px rgba(0, 0, 0, 0.5);
-    max-height: 25vh;
     } 
 .btn-circle.btn-xl:hover {
     box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
@@ -346,10 +345,14 @@ export default {
     margin: auto;
     text-align: center;
     position: fixed;
+    z-index: 5000;
+    height: 70px;
     left: 0;
     bottom: 0;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.3)
-
+}
+.buttons-col{
+    align-self: center;
 }
 </style>

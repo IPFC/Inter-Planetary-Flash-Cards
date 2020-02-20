@@ -1,9 +1,8 @@
 <template>
-
-    <div ref="appMain" id="app-main" >
+    <div :style="viewportHeight" id="app-main" >
         <div id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
-        <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
+        <router-view :style="routerViewHeight" id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
 
@@ -20,7 +19,8 @@ import { mapState } from 'vuex'
                 newCardClicked: 0,
                 newCardCommit: 0,
                 toCardEditorFromReview: false,
-                splashClass: 'splash'
+                splashClass: 'splash',
+                routerViewHeightData: 0,
             }
         },
         computed: {
@@ -29,13 +29,36 @@ import { mapState } from 'vuex'
                 'currentDeck',
             ]),
             ...mapState([
-                 'currentDeckId',
+                'currentDeckId',
                 // 'decks',
                 // 'syncing',
                 // 'userCollection',
                 // 'lastSyncsData'
             ]),
-        // watch: {
+            viewportHeight(){
+                return {height: this.viewportHeightCalc.toString() + 'px'}
+            },
+            viewportHeightCalc () {
+                return "visualViewport" in window
+                ? window.visualViewport.height
+                : document.documentElement.offsetHeight; 
+            },
+            routerViewHeight(){
+                // normally can't use this.$refs in a computed property, have to refresh after mounted...
+                let navHeight = 57
+                if (this.splashClass == 'loaded') {
+                    navHeight = this.$refs.navbar.$el.offsetHeight
+                    let height = this.viewportHeightCalc - navHeight
+                console.log(height)
+                return {height: height.toString() + 'px', marginTop: navHeight.toString() + 'px' }  
+            
+                } else {
+                    let height = this.viewportHeightCalc - navHeight
+                    return  {height: height.toString() + 'px', marginTop: navHeight.toString() + 'px' }
+                }
+            },
+        },
+        watch: {
         //     userCollection: {
         //         handler: function() {
         //             if (this.syncing === false) {
@@ -103,11 +126,6 @@ import { mapState } from 'vuex'
         },
         created: function () {
             this.splashClass = 'splash'
-            // console.log(document)
-            // window.addEventListener('resize', () => {
-            //     let vh = window.innerHeight * 0.01;
-            //     this.$refs.appMain.style.setProperty('--vh', `${vh}px`);
-            // });
         },
     }
 </script>
@@ -118,40 +136,36 @@ import { mapState } from 'vuex'
     background-position: center center;
     background-repeat: no-repeat;
     background-color: #F8690D;
-    position: fixed;
+    position: absolute;
     height: 100%; 
     width: 100%;
     margin: 0;
     padding: 0;
     visibility: visible;
     opacity: 1;
-    z-index: 4000;
+    z-index: 6000;
 }
 .loaded {
-
     background-color: #F8690D;
-    position: fixed;
+    position: absolute;
     height: 100%; 
     width: 100%;
     margin: 0;
     padding: 0;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s .25s, opacity .25s linear;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s .25s, opacity .25s linear;
 }
-
 #app-main {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    // height: calc(var(--vh, 1vh) * 100);
     background-color: #F6F6F6;
-    margin: 0;
-    padding: 0;
+    height: 100vh;
+    width: 100%;
+    position:absolute;
 }
 
 #router-view{
-    height: calc(100vh-55px); padding-top: 55px;
+    width: 100%;
+    position:absolute;
 }
 h1 {
     padding: 0;
@@ -161,8 +175,8 @@ h1 {
     position: absolute;
     top: 0;
     right: 0;
-    width: 100vw;
-    z-index: 2000;
+    width: 100%;
+    z-index: 5000;
 }
 .body::-webkit-scrollbar {
     width: .5em;

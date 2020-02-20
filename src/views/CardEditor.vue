@@ -571,7 +571,7 @@ box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 text-align: center;
 position: fixed;
 bottom: 0;
-width: 100vw;
+width: 100%;
 z-index: 1000;
 background-color: rgba(63, 47, 47, 0.3)
 }
