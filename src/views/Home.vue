@@ -6,7 +6,7 @@
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
                 <b-col v-if="!spinner" class="card-col">
-                    <div id="main-card-padding">
+                    <div id="main-card-padding" class="card-padding">
                         <vue-flashcard
                             :class="switchCardSequence ? 'switch-card-sequence-first-card': 'first-card' "
                             id="main-card"
@@ -17,7 +17,7 @@
                             >
                         </vue-flashcard>  
                     </div>
-                    <div id="next-card-padding">
+                    <div id="next-card-padding" class="card-padding">
                         <vue-flashcard  v-if="todaysDeck.cards.length > 1"
                             :class="switchCardSequence ? 'switch-crd-seq-next-crd': 'next-card' "
                             id="next-card"
@@ -26,7 +26,7 @@
                             >
                         </vue-flashcard>
                     </div>
-                    <div id="third-card-padding">
+                    <div id="third-card-padding" class="card-padding">
                         <vue-flashcard  v-if="todaysDeck.cards.length > 2"
                             :class="switchCardSequence ? 'switch-crd-seq-third-crd': 'third-card' "
                             id="third-card" class ="card"
@@ -34,7 +34,7 @@
                             back="   /n /n /n   " > 
                         </vue-flashcard>
                     </div>
-                    <div id="fourth-card-padding">
+                    <div id="fourth-card-padding" class="card-padding">
                         <vue-flashcard  v-if="todaysDeck.cards.length > 2"
                             :class="switchCardSequence ? 'switch-crd-seq-fourth-crd': 'fourth-card' "
                             id="fourth-card" class ="card"
@@ -143,7 +143,7 @@ export default {
                     this.$store.dispatch('levelDownCard', this.currentCard.card_id)
                     this.NavbarProgess()
                     this.incorrect(true)
-                }, 200);
+                }, 300);
                 return;
             }                
             this.cardFlipToggle = false
@@ -159,7 +159,7 @@ export default {
                     this.$store.dispatch('levelUpCard', this.currentCard.card_id)
                     this.NavbarProgess()
                     this.correct(true)
-                }, 200);
+                }, 300);
                 return;
             }    
             this.cardFlipToggle = false
@@ -302,14 +302,15 @@ export default {
 .first-card{
     visibility: visible;
     opacity: 1;
+        height: 100%;  
 }
 .switch-crd-seq-next-crd{
-    width: 100%;
+    width: 95%;
     height: 100%;  
     max-width: 600px;  
     margin: auto;
     margin-top: 30px;
-    transition: margin-top .3s, max-width .3s, width .3s, height .3s linear;
+    transition: margin-top .3s, max-width .3s, width .3s, height .3s ease-in-out ;
 }
 .next-card{
     width: 82%;
@@ -324,7 +325,7 @@ export default {
     max-width: 480px;
     margin: auto;
     margin-top: 21px;
-    transition: margin-top .3s, max-width .3s, width .3s, height .3s linear;
+    transition: margin-top .3s, max-width .3s, width .3s, height .3s ease-in-out;
 }
 .third-card{
     width: 70%;
@@ -341,7 +342,7 @@ export default {
     max-width: 380px;
     margin: auto;
     margin-top: 12px;
-    transition: opacity .3s, visibility .3s, margin-top .3s, max-width .3s, width .3s, height .3s linear;
+    transition: opacity .3s, visibility .3s, margin-top .3s, max-width .3s, width .3s, height .3s ease-in-out;
 }
 .fourth-card{
     opacity: 0;
@@ -352,13 +353,15 @@ export default {
     margin-top: 8px;
     max-width: 280px;
 }
-#main-card-padding{
-    z-index: 5;
+.card-padding{
     position: fixed;
     top: 60px;
     left: 0px;
     width: 100%;
     bottom: 95px;
+}
+#main-card-padding{
+    z-index: 5;
 }
 #main-card {
     width: 95%;
@@ -370,11 +373,6 @@ export default {
 }
 #next-card-padding {
     z-index: 4;
-    position: fixed;
-    top: 60px;
-    left: 0px;
-    width: 100%;
-    bottom: 105px;
 }
 #next-card {
     z-index: 3;
@@ -383,26 +381,14 @@ export default {
     background-color: rgba(162, 162, 162, 0);
 }
 #third-card-padding {
-    margin: auto ;
     z-index: 2;
-    position: fixed;
-    top: 60px;
-    left: 0px;
-    width: 100%;
-    bottom: 105px;
 }
 #third-card {
     z-index: 2;
     border: none;
 }
 #fourth-card-padding {
-    margin: auto ;
     z-index: 1;
-    position: fixed;
-    top: 60px;
-    left: 0px;
-    width: 100%;
-    bottom: 105px;
 }
 #fourth-card {
     z-index: 1;
