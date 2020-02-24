@@ -15,6 +15,7 @@ module.exports = {
   pwa: {
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
+      swDest: 'service-worker.js',
       swSrc: "src/service-worker.js"
     },
     name: 'Inter Planetary Flash Cards',
