@@ -140,7 +140,6 @@ export default {
     },
     methods: {
         swipeHandler (direction) {
-            console.log(direction)  // May be left / right / top / bottom
             if (direction === 'left') {
                 this.incorrect()
             } else if( direction === 'right') {
