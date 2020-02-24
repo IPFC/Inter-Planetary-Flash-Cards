@@ -6,9 +6,11 @@
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
                 <b-col v-if="!spinner" class="card-col">
-                    <div id="main-card-padding" class="card-padding">
+                    <div id="main-card-padding" class="card-padding"
+                      :class="switchCardSequence && correctAnswer ? 'throw-right': 
+                              switchCardSequence  && !correctAnswer ? 'throw-left': '' ">
                         <vue-flashcard
-                            :class="switchCardSequence ? 'switch-card-sequence-first-card': 'first-card' "
+                            class="first-card"
                             id="main-card"
                             :flipped="cardFlipToggle"
                             :front="currentCard.front_rich_text" 
@@ -96,6 +98,7 @@ export default {
             loggingIn: false,
             switchCardSequence: false,
             reDrawCardKey: 0,
+            correctAnswer: false,
         }
     },
     computed: {
@@ -137,13 +140,14 @@ export default {
             this.cardFlipToggle = !this.cardFlipToggle
         },
         incorrect (flag) {
+            this.correctAnswer = false            
             this.switchCardSequence = true
             if(!flag) {
                 setTimeout( ()=>{
                     this.$store.dispatch('levelDownCard', this.currentCard.card_id)
                     this.NavbarProgess()
                     this.incorrect(true)
-                }, 300);
+                }, 305);
                 return;
             }                
             this.cardFlipToggle = false
@@ -152,13 +156,14 @@ export default {
             this.switchCardSequence= false
         },
         correct (flag) {
+            this.correctAnswer = true
             this.switchCardSequence = true
             if(!flag) {
                 setTimeout( ()=>{
                     this.$store.dispatch('levelUpCard', this.currentCard.card_id)
                     this.NavbarProgess()
                     this.correct(true)
-                }, 300);
+                }, 305);
                 return;
             }    
             this.cardFlipToggle = false
@@ -291,16 +296,22 @@ export default {
 #edit:hover{
     cursor: pointer;
 }
-.switch-card-sequence-first-card{
-    /* box-shadow: 0 0px 20px rgba(254, 1, 1, 0.5); */
-    visibility: hidden;
-    opacity: 0;
-    /* transition: visibility 0s .3s, opacity .3s linear; */
+.throw-right{
+    transform: translateX(1000px) translateY(-100px);
+    z-index: 10000;
+    transition: transform .3s 0.1s ease-in; 
+}
+.throw-left{
+    transform: translateX(-1000px) translateY(-100px);
+    z-index: 10000;
+    transition: transform .3s 0.1s ease-in;
 }
 .first-card{
-    visibility: visible;
-    opacity: 1;
-        height: 100%;  
+    width: 95%;
+    height: 100%;
+    max-width: 600px;
+    margin: auto;
+    margin-top: 30px;    
 }
 .switch-crd-seq-next-crd{
     width: 95%;
@@ -362,12 +373,7 @@ export default {
     z-index: 5;
 }
 #main-card {
-    width: 95%;
-    height: 100%;
-    max-width: 600px;
     z-index: 5;
-    margin: auto;
-    margin-top: 30px;
 }
 #next-card-padding {
     z-index: 4;
@@ -416,7 +422,7 @@ export default {
     margin: auto;
     text-align: center;
     position: fixed;
-    z-index: 5000;
+    z-index: 1;
     height: 60px;
     left: 0;
     bottom: 0;
