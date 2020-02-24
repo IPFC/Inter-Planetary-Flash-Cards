@@ -318,21 +318,21 @@ export default {
                 this.deleteCard()
             }
             else {
-                let deck_id = null 
+                let deckId = null 
                 if (this.currentDeck.title === 'Review Deck') {
-                    deck_id = this.findCardsDeck(card.card_id)
+                    deckId = this.findCardsDeck(card.card_id)
                 } else {
-                    deck_id = this.currentDeck.deck_id
+                    deckId = this.currentDeck.deck_id
                 }
-                let updateData = {deck_id: deck_id, card: card}
+                let updateData = {deck_id: deckId, card: card}
                 this.$store.dispatch('updateCard', updateData)
             }
             this.setCard()
         },
         // use later for dropdown menu, copy to other deck
-        addCardToDeck: function (deck_id) {
+        addCardToDeck: function (deckId) {
             let card = JSON.parse(JSON.stringify(this.card))
-            let addData = {deck_id: deck_id, card: card}
+            let addData = {deck_id: deckId, card: card}
             this.$store.commit('addCard', addData)
         },
         removeTagFromCard: function(tag){
