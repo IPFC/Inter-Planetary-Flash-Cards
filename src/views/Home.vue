@@ -6,10 +6,12 @@
             </b-row>
             <b-row id="card-row" class="">
                 <b-col v-if="!spinner" class="card-col">
-                    <span id="main-card-padding" class="card-padding"  @click="flipCard()"
+                    <span id="main-card-padding" class="card-padding" 
                       :class="switchCardSequence && correctAnswer ? 'throw-right': 
                               switchCardSequence  && !correctAnswer ? 'throw-left': '' "
-                            v-touch:swipe="swipeHandler">
+                            v-touch:swipe="swipeHandler"
+                            v-touch:tap="flipCard"
+                            >
                         <vue-flashcard 
                             class="first-card"
                             id="main-card"
