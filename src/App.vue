@@ -95,7 +95,7 @@ import { mapState } from 'vuex'
             // sync: debounce(function(){
             //     //  console.log('debounced sync')
             //     this.$store.dispatch('sync')
-            // }, 600000),
+            // }, 60000),
         },
         components: {
             Navbar
@@ -134,9 +134,9 @@ import { mapState } from 'vuex'
     width: 100%;
     margin: 0;
     padding: 0;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s .25s, opacity .25s linear;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s .25s, opacity .25s linear;
 }
 
 #app-main {

@@ -2,11 +2,11 @@
     <div v-bind:class="flipped ? 'flip-container flipped': 'flip-container'">
     <div class="flipper">
 
-    <div v-bind:style="{ backgroundColor: colorFront, color: colorTextFront}"
+    <div v-bind:style="{ backgroundColor: colorFront}"
     class="flashcard front">
         <div class="card-content" v-highlight v-html="front"></div>
     </div>
-    <div v-bind:style="{backgroundColor: colorBack, color: colorTextBack}"
+    <div v-bind:style="{backgroundColor: colorBack}"
     class="flashcard back">
         <div class="card-content" v-highlight v-html="back"></div>
     </div>
@@ -36,22 +36,7 @@ export default {
             type: String,
             default: ''
         },
-        // textSizeFront: {
-        //     type: String,
-        //     default: '1.5em'
-        // },
-        // textSizeBack: {
-        //     type: String,
-        //     default: '1.5em'
-        // },
-        colorTextFront: {
-            type: String,
-            default: 'black'
-        },
-        colorTextBack: {
-            type: String,
-            default: 'black'
-        },
+        // Need to add a quill.js module for this
         colorFront: {
             type: String,
             default: 'white'
@@ -64,14 +49,6 @@ export default {
             type: Boolean,
             default: false,
         },
-        // height: {
-        //       type: String,
-        //     default: '60vh'
-        // },
-        // width: {
-        //       type: String,
-        //     default: '90vw'
-        // }
     }
 }
 </script>
@@ -144,6 +121,8 @@ export default {
 .flipper {
   -moz-transform: perspective(1000px);
   -moz-transform-style: preserve-3d;
+  transform: perspective(1000px);
+  transform-style: preserve-3d;
   position: relative;
   height: 100%;
 }

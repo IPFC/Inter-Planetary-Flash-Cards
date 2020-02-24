@@ -8,28 +8,40 @@
                 <b-col v-if="!spinner" class="card-col">
                     <div id="main-card-padding">
                         <vue-flashcard
+                            :class="switchCardSequence ? 'switch-card-sequence-first-card': 'first-card' "
                             id="main-card"
-                            :flipped= "cardFlipToggle"
+                            :flipped="cardFlipToggle"
                             :front="currentCard.front_rich_text" 
                             :back="currentCard.back_rich_text"
+                            :key="reDrawCardKey"
                             >
                         </vue-flashcard>  
                     </div>
                     <div id="next-card-padding">
                         <vue-flashcard  v-if="todaysDeck.cards.length > 1"
+                            :class="switchCardSequence ? 'switch-crd-seq-next-crd': 'next-card' "
                             id="next-card"
-                            :front="nextCard.front_text" 
-                            :back="nextCard.back_text"
+                            :front="nextCard.front_rich_text" 
+                            :back="' '"
                             >
                         </vue-flashcard>
                     </div>
                     <div id="third-card-padding">
                         <vue-flashcard  v-if="todaysDeck.cards.length > 2"
+                            :class="switchCardSequence ? 'switch-crd-seq-third-crd': 'third-card' "
                             id="third-card" class ="card"
                             front="   /n hahaha! you'll never see me /n   " 
                             back="   /n /n /n   " > 
                         </vue-flashcard>
                     </div>
+                    <div id="fourth-card-padding">
+                        <vue-flashcard  v-if="todaysDeck.cards.length > 2"
+                            :class="switchCardSequence ? 'switch-crd-seq-fourth-crd': 'fourth-card' "
+                            id="fourth-card" class ="card"
+                            front="   /n hahaha! you'll never see me /n   " 
+                            back="   /n /n /n   " > 
+                        </vue-flashcard>
+                    </div>                    
                 </b-col>
                 <b-col v-else>
                     <font-awesome-icon style="margin: auto" icon="spinner" spin size="3x" />
@@ -82,6 +94,8 @@ export default {
             cardsTotal: 0,
             todaysDeckCardIds: [], 
             loggingIn: false,
+            switchCardSequence: false,
+            reDrawCardKey: 0,
         }
     },
     computed: {
@@ -122,18 +136,37 @@ export default {
         flipCard () {
             this.cardFlipToggle = !this.cardFlipToggle
         },
-        incorrect () {
-            this.$store.dispatch('levelDownCard', this.currentCard.card_id)
-            // this.currentCardIndex ++
+        incorrect (flag) {
+            this.nextCardSequence = true
+            if(!flag) {
+                setTimeout( ()=>{
+                    this.$store.dispatch('levelDownCard', this.currentCard.card_id)
+                    this.NavbarProgess()
+                    this.incorrect(true)
+                }, 200);
+                return;
+            }                
             this.cardFlipToggle = false
-            this.NavbarProgess()
+            this.reDrawCardKey ++
+            // this.currentCardIndex ++
+            this.nextCardSequence= false
            
         },
-        correct () {
-            this.$store.dispatch('levelUpCard', this.currentCard.card_id)
-            // this.currentCardIndex ++
+        correct (flag) {
+            this.switchCardSequence = true
+            if(!flag) {
+                setTimeout( ()=>{
+                    this.$store.dispatch('levelUpCard', this.currentCard.card_id)
+                    this.NavbarProgess()
+                    this.correct(true)
+                }, 200);
+                return;
+            }    
             this.cardFlipToggle = false
-            this.NavbarProgess()
+            this.reDrawCardKey ++
+            // this.currentCardIndex ++
+            this.switchCardSequence = false
+
         },
         NavbarProgess() {
             let totalCards = this.todaysDeckCardIds.length
@@ -260,6 +293,65 @@ export default {
 #edit:hover{
     cursor: pointer;
 }
+.switch-card-sequence-first-card{
+    /* box-shadow: 0 0px 20px rgba(254, 1, 1, 0.5); */
+    visibility: hidden;
+    opacity: 0;
+    /* transition: visibility 0s .3s, opacity .3s linear; */
+}
+.first-card{
+    visibility: visible;
+    opacity: 1;
+}
+.switch-crd-seq-next-crd{
+    width: 100%;
+    height: 100%;  
+    max-width: 600px;  
+    margin: auto;
+    margin-top: 30px;
+    transition: margin-top .3s, max-width .3s, width .3s, height .3s linear;
+}
+.next-card{
+    width: 82%;
+    height: 95%; 
+    max-width: 480px;
+    margin: auto;
+    margin-top: 21px;
+}
+.switch-crd-seq-third-crd{
+    width: 82%;
+    height: 95%; 
+    max-width: 480px;
+    margin: auto;
+    margin-top: 21px;
+    transition: margin-top .3s, max-width .3s, width .3s, height .3s linear;
+}
+.third-card{
+    width: 70%;
+    height: 90%; 
+    margin: auto;
+    margin-top: 12px;
+    max-width: 380px;
+}
+.switch-crd-seq-fourth-crd{
+    opacity: 1;
+    visibility: visible;
+    width: 70%;
+    height: 90%; 
+    max-width: 380px;
+    margin: auto;
+    margin-top: 12px;
+    transition: opacity .3s, visibility .3s, margin-top .3s, max-width .3s, width .3s, height .3s linear;
+}
+.fourth-card{
+    opacity: 0;
+    visibility: hidden;
+    width: 58%;
+    height: 85%; 
+    margin: auto;
+    margin-top: 8px;
+    max-width: 280px;
+}
 #main-card-padding{
     z-index: 5;
     position: fixed;
@@ -286,16 +378,10 @@ export default {
 }
 #next-card {
     z-index: 3;
-    margin: auto;
-    margin-top: 21px;
-    width: 82%;
-    height: 95%; 
-    max-width: 480px;
 }
 #next-card >>> .card-content::-webkit-scrollbar-thumb {
     background-color: rgba(162, 162, 162, 0);
 }
-
 #third-card-padding {
     margin: auto ;
     z-index: 2;
@@ -307,10 +393,20 @@ export default {
 }
 #third-card {
     z-index: 2;
-    margin: auto;
-    margin-top: 12px;
-    width: 70%;
-    max-width: 380px;
+    border: none;
+}
+#fourth-card-padding {
+    margin: auto ;
+    z-index: 1;
+    position: fixed;
+    top: 60px;
+    left: 0px;
+    width: 100%;
+    bottom: 105px;
+}
+#fourth-card {
+    z-index: 1;
+    border: none;
 }
 .btn-icon{
     margin: auto;
