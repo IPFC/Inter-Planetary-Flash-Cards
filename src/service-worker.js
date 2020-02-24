@@ -7,7 +7,7 @@ workbox.core.setCacheNameDetails({prefix: "lumpsum"})
 workbox.precaching.precacheAndRoute(self._precacheManifest, {});
 
 // install new service worker when ok, then reload page.
-self.addEventListener("message", msg =>{
+addEventListener("message", msg =>{
     if (msg.data.action == 'skipWaiting'){
 
         skipWaiting()
