@@ -137,7 +137,7 @@ export default {
             this.cardFlipToggle = !this.cardFlipToggle
         },
         incorrect (flag) {
-            this.nextCardSequence = true
+            this.switchCardSequence = true
             if(!flag) {
                 setTimeout( ()=>{
                     this.$store.dispatch('levelDownCard', this.currentCard.card_id)
@@ -149,8 +149,7 @@ export default {
             this.cardFlipToggle = false
             this.reDrawCardKey ++
             // this.currentCardIndex ++
-            this.nextCardSequence= false
-           
+            this.switchCardSequence= false
         },
         correct (flag) {
             this.switchCardSequence = true
@@ -166,7 +165,6 @@ export default {
             this.reDrawCardKey ++
             // this.currentCardIndex ++
             this.switchCardSequence = false
-
         },
         NavbarProgess() {
             let totalCards = this.todaysDeckCardIds.length
@@ -310,7 +308,7 @@ export default {
     max-width: 600px;  
     margin: auto;
     margin-top: 30px;
-    transition: margin-top .3s, max-width .3s, width .3s, height .3s ease-in-out ;
+    transition: margin-top .3s, max-width .3s, width .3s, height .3s ease-in-out;
 }
 .next-card{
     width: 82%;
