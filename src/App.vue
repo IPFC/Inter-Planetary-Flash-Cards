@@ -2,9 +2,6 @@
     <div ref="appMain" id="app-main" >
         <div id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
-        <button v-if="updateExists" @click="refreshApp">
-            New version available! Click to update
-        </button>
         <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
@@ -22,10 +19,7 @@ import { mapState } from 'vuex'
                 newCardClicked: 0,
                 newCardCommit: 0,
                 toCardEditorFromReview: false,
-                splashClass: 'splash',
-                refreshing: false,
-                registration: null,
-                updateExists: false,
+                splashClass: 'splash'
             }
         },
         computed: {
@@ -108,16 +102,6 @@ import { mapState } from 'vuex'
         },
         created: function () {
             this.splashClass = 'splash'
-            // FOR PWA
-            document.addEventListener(
-                'swUpdated', this.showRefreshUI, { once: true }
-            );  navigator.serviceWorker.addEventListener(
-                'controllerchange', () => {
-                if (this.refreshing) return;
-                this.refreshing = true;
-                window.location.reload();
-                }
-            );
             // console.log(document)
             // window.addEventListener('resize', () => {
             //     let vh = window.innerHeight * 0.01;
