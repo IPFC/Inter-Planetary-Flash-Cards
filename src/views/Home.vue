@@ -6,9 +6,11 @@
             </b-row>
             <b-row id="card-row" class="" @click="flipCard()">
                 <b-col v-if="!spinner" class="card-col">
-                    <div id="main-card-padding" class="card-padding"
+                    <span id="main-card-padding" class="card-padding"
                       :class="switchCardSequence && correctAnswer ? 'throw-right': 
-                              switchCardSequence  && !correctAnswer ? 'throw-left': '' ">
+                              switchCardSequence  && !correctAnswer ? 'throw-left': '' "
+                                           v-touch:swipe.left="incorrect"
+                            v-touch:swipe.right="correct">
                         <vue-flashcard
                             class="first-card"
                             id="main-card"
@@ -18,7 +20,7 @@
                             :key="reDrawCardKey"
                             >
                         </vue-flashcard>  
-                    </div>
+                    </span>
                     <div id="next-card-padding" class="card-padding">
                         <vue-flashcard  v-if="todaysDeck.cards.length > 1"
                             :class="switchCardSequence ? 'switch-crd-seq-next-crd': 'next-card' "

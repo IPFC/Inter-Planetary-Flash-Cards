@@ -6,6 +6,8 @@ import store from './store'
 // import 'bootstrap-vue/dist/bootstrap-vue.css'
 import "./assets/_custom.scss";
 
+import Vue2TouchEvents from 'vue2-touch-events'
+Vue.use(Vue2TouchEvents)
 
 import { LayoutPlugin } from 'bootstrap-vue'
 Vue.use(LayoutPlugin)
@@ -13,7 +15,6 @@ import { BButton } from 'bootstrap-vue'
 Vue.component('b-button', BButton)
 
 // import BootstrapVue from 'bootstrap-vue'
-
 // Vue.use(BootstrapVue)
 
 import 'highlight.js/styles/monokai-sublime.css'
