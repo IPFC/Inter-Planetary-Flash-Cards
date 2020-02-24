@@ -4,14 +4,13 @@
             <b-row id="top-buttons-row" class="justify-content-end">
                 <a id="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
             </b-row>
-            <b-row id="card-row" class="" @click="flipCard()">
+            <b-row id="card-row" class="">
                 <b-col v-if="!spinner" class="card-col">
-                    <span id="main-card-padding" class="card-padding"
+                    <span id="main-card-padding" class="card-padding"  @click="flipCard()"
                       :class="switchCardSequence && correctAnswer ? 'throw-right': 
                               switchCardSequence  && !correctAnswer ? 'throw-left': '' "
-                                           v-touch:swipe.left="incorrect"
-                            v-touch:swipe.right="correct">
-                        <vue-flashcard
+                            v-touch:swipe="swipeHandler">
+                        <vue-flashcard 
                             class="first-card"
                             id="main-card"
                             :flipped="cardFlipToggle"
@@ -138,6 +137,14 @@ export default {
         },
     },
     methods: {
+        swipeHandler (direction) {
+            console.log(direction)  // May be left / right / top / bottom
+            if (direction === 'left') {
+                this.incorrect()
+            } else if( direction === 'right') {
+                this.correct()
+            }
+        },
         flipCard () {
             this.cardFlipToggle = !this.cardFlipToggle
         },
