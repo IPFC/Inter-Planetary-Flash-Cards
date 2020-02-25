@@ -1,8 +1,8 @@
 <template>
     <div ref="appMain" id="app-main" >
-        <div v-if="snackWithBtnText !== 'Refresh'" id="splash" :class="splashClass">splash</div>
+        <div v-if="!snackWithButtons" id="splash" :class="splashClass">splash</div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
-        <b-button @click="snackWithButtons" v-if="snackWithBtnText === 'Refresh'">{{ snackBtnText}}</b-button>
+        <b-button @click="snackWithButtons" >{{ snackBtnText}}</b-button>
         <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
