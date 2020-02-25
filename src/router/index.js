@@ -13,11 +13,15 @@ import store from "../store"
 Vue.use(Router)
 
 async function redirectIfNotAuth (to, from, next) {
-    await store.dispatch('checkJwt')
     if (store.getters.isAuthenticated) {
-      next()
+        next()
     } else {
-      next('/login')
+        await store.dispatch('checkJwt')
+        if (store.getters.isAuthenticated) {
+          next()
+        } else {
+          next('/login')
+        }
     }
 }
 
