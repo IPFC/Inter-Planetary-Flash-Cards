@@ -113,6 +113,7 @@ export default {
             switchCardSequence: false,
             reDrawCardKey: 0,
             correctAnswer: false,
+            snackWithButtonsLocal: false,
         }
     },
     computed: {
@@ -150,6 +151,14 @@ export default {
         },
     },
     methods: {
+            refreshApp() {
+                this.snackWithButtonsLocal = false;
+
+                // Protect against missing registration.waiting.
+                if (!this.registration || !this.registration.waiting) { return; }
+
+                this.registration.waiting.postMessage('skipWaiting');
+            },
         swipeHandler (direction) {
             if (direction === 'left') {
                 this.incorrect()
@@ -215,6 +224,7 @@ export default {
     },
     created () {
         this.checkAuth()
+        this.snackWithButtonsLocal = true
     },
     mounted () {
         this.$store.commit('updateCurrentDeckId', 'reviewDeck')

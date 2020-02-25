@@ -115,15 +115,6 @@ import { mapState } from 'vuex'
                 this.snackWithBtnText = 'New version available!';
                 this.snackWithButtons = true;
                 },
-
-            refreshApp() {
-                this.snackWithButtons = false;
-
-                // Protect against missing registration.waiting.
-                if (!this.registration || !this.registration.waiting) { return; }
-
-                this.registration.waiting.postMessage('skipWaiting');
-            },
         },
         components: {
             Navbar,
