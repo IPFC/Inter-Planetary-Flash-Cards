@@ -1,21 +1,24 @@
 <template>
     <div ref="appMain" id="app-main" >
-        <b-alert
-        :show="snackWithButtons"
+
+        <div v-if="!snackWithButtons" id="splash" :class="splashClass"></div>
+        <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
+               <b-alert
+        :show="true"
       dismissible
       fade
       variant="warning"
     >
-    {{ snackWithBtnText }}  <b-button @click="refreshApp()" >{{ snackBtnText}}</b-button>
-'
+    {{ snackWithBtnText }}  
+        <b-button @click="refreshApp()" >{{ snackBtnText}}</b-button>
     </b-alert>
-        <div v-if="!snackWithButtons" id="splash" :class="splashClass">splash</div>
-        <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
         <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
+
     </div>
 </template>
 
 <script>
+import { BAlert } from 'bootstrap-vue'
 import Navbar from './components/Navbar'
 import { mapGetters } from 'vuex'
 import { mapState } from 'vuex'
@@ -132,7 +135,8 @@ import { mapState } from 'vuex'
             },
         },
         components: {
-            Navbar
+            Navbar,
+            BAlert
         },
         created: function () {
             this.splashClass = 'splash'
