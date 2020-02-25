@@ -14,6 +14,9 @@ Vue.use(LayoutPlugin)
 import { BButton } from 'bootstrap-vue'
 Vue.component('b-button', BButton)
 
+import { AlertPlugin } from 'bootstrap-vue'
+Vue.use(AlertPlugin)
+
 // import BootstrapVue from 'bootstrap-vue'
 // Vue.use(BootstrapVue)
 
