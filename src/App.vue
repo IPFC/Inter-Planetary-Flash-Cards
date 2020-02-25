@@ -2,6 +2,7 @@
     <div ref="appMain" id="app-main" >
         <div id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
+        <b-button @click="snackWithButtons" v-if="refreshing">{{ snackBtnText}}</b-button>
         <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
     </div>
 </template>
@@ -19,7 +20,13 @@ import { mapState } from 'vuex'
                 newCardClicked: 0,
                 newCardCommit: 0,
                 toCardEditorFromReview: false,
-                splashClass: 'splash'
+                splashClass: 'splash',
+                refreshing: false,
+                registration: null,
+                snackBtnText: '',
+                snackWithBtnText: '',
+                snackWithButtons: false,
+                timeout: 0,
             }
         },
         computed: {
@@ -96,12 +103,42 @@ import { mapState } from 'vuex'
             //     //  console.log('debounced sync')
             //     this.$store.dispatch('sync')
             // }, 60000),
+            showRefreshUI(e) {
+                // Display a snackbar inviting the user to refresh/reload the app due
+                // to an app update being available.
+                // The new service worker is installed, but not yet active.
+                // Store the ServiceWorkerRegistration instance for later use.
+                this.registration = e.detail;
+                this.snackBtnText = 'Refresh';
+                this.snackWithBtnText = 'New version available!';
+                this.snackWithButtons = true;
+                },
+
+            refreshApp() {
+                this.snackWithButtons = false;
+
+                // Protect against missing registration.waiting.
+                if (!this.registration || !this.registration.waiting) { return; }
+
+                this.registration.waiting.postMessage('skipWaiting');
+            },
         },
         components: {
             Navbar
         },
         created: function () {
             this.splashClass = 'splash'
+            //PWA
+            // Listen for swUpdated event and display refresh snackbar as required.
+            document.addEventListener('swUpdated', this.showRefreshUI, { once: true });
+
+            // Refresh all open app tabs when a new service worker is installed.
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (this.refreshing) return;
+                this.refreshing = true;
+                window.location.reload();
+            });
+            // use this to 
             // console.log(document)
             // window.addEventListener('resize', () => {
             //     let vh = window.innerHeight * 0.01;
