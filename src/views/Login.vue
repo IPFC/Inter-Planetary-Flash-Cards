@@ -258,10 +258,10 @@ export default {
             window.open("https://pinata.cloud/signup", "_blank")
         },
         countDownChanged(dismissCountDown) {
-        this.dismissCountDown = dismissCountDown
+            this.dismissCountDown = dismissCountDown
         },
         showAlert() {
-        this.dismissCountDown = this.dismissSecs
+            this.dismissCountDown = this.dismissSecs
         }
     },
     mounted () {
