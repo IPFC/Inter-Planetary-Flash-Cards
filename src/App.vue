@@ -14,132 +14,98 @@ import Navbar from './components/Navbar'
 import { mapGetters } from 'vuex'
 import { mapState } from 'vuex'
 // import { debounce } from 'lodash/core';
-
-    export default {
-        name: 'App',
-        data() {
-            return {
-                newCardClicked: 0,
-                newCardCommit: 0,
-                toCardEditorFromReview: false,
-                splashClass: 'splash',
-                refreshing: false,
-                registration: null,
-                snackWithBtnText: '',
-                snackBtnText: '',
-                snackWithButtons: false,
-                timeout: 0,
+export default {
+    name: 'App',
+    data() {
+        return {
+            newCardClicked: 0,
+            newCardCommit: 0,
+            toCardEditorFromReview: false,
+            splashClass: 'splash',
+        }
+    },
+    computed: {
+        ...mapGetters([
+            'decksMeta',
+            'currentDeck',
+        ]),
+        ...mapState([
+                'currentDeckId',
+            // 'decks',
+            // 'syncing',
+            // 'userCollection',
+            // 'lastSyncsData'
+        ]),
+    // watch: {
+    //     userCollection: {
+    //         handler: function() {
+    //             if (this.syncing === false) {
+    //                 if (this.$store.getters.dataChanged) {                            
+    //                     // console.log('    watched user collection for syncing')
+    //                     this.sync()
+    //                 }
+    //             } 
+    //         },
+    //         deep: true
+    //     },
+    //     decks: {
+    //         handler: function() {
+    //             if (this.syncing === false) {
+    //                 if (this.$store.getters.dataChanged) {                            
+    //                     // console.log('    watched decks for syncing')
+    //                     this.sync()
+    //                 }
+    //             }
+    //         },
+    //         deep: true
+    //     },
+    //     syncing: function() {
+    //         if (this.syncing === false) {
+    //             if (this.$store.getters.dataChanged) {
+    //                 // console.log('    this.decks', this.decks)
+    //                 // console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
+    //                 // console.log('    watched syncing for syncing')
+    //                 this.sync()
+    //              }
+    //         }
+    //     }
+    },
+    methods: {
+        homeLoaded: function() {
+            this.splashClass = 'loaded'
+        },
+        editClicked: function(){
+            if (this.currentDeckId === 'reviewDeck') {
+                this.toCardEditorFromReview = true
+            } else {
+                this.toCardEditorFromReview = false
             }
         },
-        computed: {
-            ...mapGetters([
-                'decksMeta',
-                'currentDeck',
-            ]),
-            ...mapState([
-                 'currentDeckId',
-                // 'decks',
-                // 'syncing',
-                // 'userCollection',
-                // 'lastSyncsData'
-            ]),
-        // watch: {
-        //     userCollection: {
-        //         handler: function() {
-        //             if (this.syncing === false) {
-        //                 if (this.$store.getters.dataChanged) {                            
-        //                     // console.log('    watched user collection for syncing')
-        //                     this.sync()
-        //                 }
-        //             } 
-        //         },
-        //         deep: true
-        //     },
-        //     decks: {
-        //         handler: function() {
-        //             if (this.syncing === false) {
-        //                 if (this.$store.getters.dataChanged) {                            
-        //                     // console.log('    watched decks for syncing')
-        //                     this.sync()
-        //                 }
-        //             }
-        //         },
-        //         deep: true
-        //     },
-        //     syncing: function() {
-        //         if (this.syncing === false) {
-        //             if (this.$store.getters.dataChanged) {
-        //                 // console.log('    this.decks', this.decks)
-        //                 // console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
-        //                 // console.log('    watched syncing for syncing')
-        //                 this.sync()
-        //              }
-        //         }
-        //     }
+        newCard: function() {
+            this.newCardClicked ++
+            if (this.currentDeckId === 'reviewDeck' || this.currentDeckId === 'defaultDeck') {
+                this.toCardEditorFromReview = true
+                this.$store.commit('updateCurrentDeckId', this.decksMeta[0].deck_id)
+            } 
+            this.$store.dispatch('newCard', this.currentDeckId)
+            this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1) 
+            if (this.$route.name !== 'card-editor' ) {
+                this.$router.push('/card-editor')
+            }
+            this.newCardCommit ++
         },
-        methods: {
-            homeLoaded: function() {
-                this.splashClass = 'loaded'
-            },
-            editClicked: function(){
-                if (this.currentDeckId === 'reviewDeck') {
-                    this.toCardEditorFromReview = true
-                } else {
-                    this.toCardEditorFromReview = false
-                }
-            },
-            newCard: function() {
-                this.newCardClicked ++
-                if (this.currentDeckId === 'reviewDeck' || this.currentDeckId === 'defaultDeck') {
-                    this.toCardEditorFromReview = true
-                    this.$store.commit('updateCurrentDeckId', this.decksMeta[0].deck_id)
-                } 
-                this.$store.dispatch('newCard', this.currentDeckId)
-                this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length -1) 
-                if (this.$route.name !== 'card-editor' ) {
-                    this.$router.push('/card-editor')
-                }
-                this.newCardCommit ++
-            },
-            // sync: debounce(function(){
-            //     //  console.log('debounced sync')
-            //     this.$store.dispatch('sync')
-            // }, 60000),
-            showRefreshUI(e) {
-                // Display a snackbar inviting the user to refresh/reload the app due
-                // to an app update being available.
-                // The new service worker is installed, but not yet active.
-                // Store the ServiceWorkerRegistration instance for later use.
-                this.registration = e.detail;
-                this.snackBtnText = 'Refresh';
-                this.snackWithBtnText = 'New version available!';
-                this.snackWithButtons = true;
-                },
-        },
-        components: {
-            Navbar,
-            
-        },
-        created: function () {
-            this.splashClass = 'splash'
-            //PWA
-            // Listen for swUpdated event and display refresh snackbar as required.
-            document.addEventListener('swUpdated', this.showRefreshUI, { once: true });
-
-            // Refresh all open app tabs when a new service worker is installed.
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (this.refreshing) return;
-                this.refreshing = true;
-                window.location.reload();
-            });
-            // use this to 
-            // console.log(document)
-            // window.addEventListener('resize', () => {
-            //     let vh = window.innerHeight * 0.01;
-            //     this.$refs.appMain.style.setProperty('--vh', `${vh}px`);
-            // });
-        },
-    }
+        // sync: debounce(function(){
+        //     //  console.log('debounced sync')
+        //     this.$store.dispatch('sync')
+        // }, 60000),
+    },
+    components: {
+        Navbar,
+    },
+    created: function () {
+        this.splashClass = 'splash'
+    },
+}
 </script>
 
 <style lang="scss">
@@ -182,10 +148,6 @@ import { mapState } from 'vuex'
 #router-view{
     height: 100%; 
     padding-top: 55px;
-}
-h1 {
-    padding: 0;
-    margin-top: 0;
 }
 #navbar {
     position: absolute;

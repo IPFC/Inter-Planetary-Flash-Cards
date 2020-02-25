@@ -37,6 +37,9 @@ library.add( faMinusCircle, faToggleOn, faToggleOff, faEllipsisH, faPlusCircle, 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('font-awesome-layers', FontAwesomeLayers)
 
+import UpdatePWA  from './components/UpdatePWA.vue'
+Vue.component('update-pwa-alert', UpdatePWA)
+
 import App from './App.vue'
 import './registerServiceWorker'
 Vue.config.productionTip = false

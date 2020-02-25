@@ -1,15 +1,6 @@
 <template>
     <div>
-    <b-alert
-    style="z-index: 40000"
-    :show="snackWithButtons"
-      dismissible
-      fade
-      variant="warning"
-    >
-    {{ snackWithBtnText }}  
-        <b-button @click="refreshApp()" >{{ snackBtnText}}</b-button>
-    </b-alert>
+        <update-pwa-alert/>
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
             <b-row id="top-buttons-row" class="justify-content-end">
                 <a id="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
@@ -99,7 +90,6 @@ const vueFlashcard = () => import('../components/flashcard')
 import defaultCollection from '../assets/defaultCollection.json'
 export default {
     name: "home",
-    props: ['snackWithBtnText', 'snackWithButtons','snackBtnText' ] ,
     data() {
         return {
             // currentCardIndex: 0,
@@ -113,7 +103,6 @@ export default {
             switchCardSequence: false,
             reDrawCardKey: 0,
             correctAnswer: false,
-            snackWithButtonsLocal: false,
         }
     },
     computed: {
@@ -151,14 +140,6 @@ export default {
         },
     },
     methods: {
-            refreshApp() {
-                this.snackWithButtonsLocal = false;
-
-                // Protect against missing registration.waiting.
-                if (!this.registration || !this.registration.waiting) { return; }
-
-                this.registration.waiting.postMessage('skipWaiting');
-            },
         swipeHandler (direction) {
             if (direction === 'left') {
                 this.incorrect()
@@ -224,7 +205,6 @@ export default {
     },
     created () {
         this.checkAuth()
-        this.snackWithButtonsLocal = true
     },
     mounted () {
         this.$store.commit('updateCurrentDeckId', 'reviewDeck')
