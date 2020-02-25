@@ -1,6 +1,6 @@
 <template>
     <div ref="appMain" id="app-main" >
-        <div id="splash" :class="splashClass"></div>
+        <div v-if="!refreshing" id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
         <b-button @click="snackWithButtons" v-if="refreshing">{{ snackBtnText}}</b-button>
         <router-view id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
