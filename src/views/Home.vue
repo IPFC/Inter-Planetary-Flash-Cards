@@ -226,38 +226,31 @@ export default {
             returningNewUser = true
 
         }
-        console.log('   userCollection',this.userCollection)
-        console.log('   returningNewUser',returningNewUser)
-        console.log('   localStorageEmpty',localStorageEmpty)
-        console.log('   this.jwt',this.jwt)
-
         // returning user, expired jwt
         if (!this.isAuthenticated&& this.jwt !== null && !returningNewUser){
-            console.log('returning user, expired jwt')
+            // console.log('returning user, expired jwt')
             this.$router.push('login');
         }
         // returning user, valid jwt, no cache
         else if (this.isAuthenticated && localStorageEmpty){
-            console.log('returning user, valid jwt, no cache')
+            // console.log('returning user, valid jwt, no cache')
             this.$store.commit('updateUserCollection', defaultCollection['userCollection'])
             this.$store.commit('updateDecks', defaultCollection['decks']) 
             this.$store.dispatch('sync')
         }
         // returning user, valid jwt, has cache
         else if (this.isAuthenticated && !localStorageEmpty){
-            console.log('returning user, valid jwt, has cache')
+            // console.log('returning user, valid jwt, has cache')
             if (this.initialSync === 0) {
                 this.$store.dispatch('sync')
             }
         }
         // new user or no JWT
         else if(!this.isAuthenticated && this.jwt === null || returningNewUser ) {
-            console.log('new user or no JWT')
+            // console.log('new user or no JWT')
             this.$store.commit('updateUserCollection', defaultCollection['userCollection'])
             this.$store.commit('updateDecks', defaultCollection['decks'])
         }
-        console.log(this.$store.state.userCollection)
-        console.log(this.$store.state.decks)
         if (this.lastSyncsData === null) {
             this.$store.dispatch('refreshLastSyncsData')
         }
@@ -269,13 +262,11 @@ export default {
             this.maxCardsUnset = true
         }
         this.$store.dispatch('navProgress', {totalCards: this.todaysDeckCardIds.length, completed: 0})
-        console.log('    home loaded')
         this.$emit('homeLoad')
     },
     watch: {
         syncing: function () {
             this.$store.commit('updateInitialSync', this.initialSync + 1)
-            console.log('   sync watched', this.initialSync)
             if (this.initialSync === 2 && this.maxCardsUnset) {
                 this.setTodaysMaxCards
             }
