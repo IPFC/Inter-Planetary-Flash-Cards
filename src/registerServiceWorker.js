@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
       // Routinely check for app updates by testing for a new service worker.
       setInterval(() => {
         registration.update();
-      }, 1000 * 60 * 60); // hourly checks
+      }, 1000 * 60); // hourly checks
     },
     cached () {
       console.log('Content has been cached for offline use.');
