@@ -21,6 +21,13 @@ async function redirectIfNotAuth (to, from, next) {
     }
 }
 
+function redirectIfNoUserCollection (to, from, next) {
+    if (store.state.userCollection !== null) {
+        next()
+    } else {
+        next('home')
+    }
+}
 
 
 export default new Router({
@@ -36,6 +43,7 @@ export default new Router({
             path: "/login",
             name: "login",
             component: Login,
+            beforeEnter: redirectIfNoUserCollection
         },
         {
             path: "/home",

@@ -46,6 +46,7 @@ const store = new Vuex.Store({
     lastSyncsData: null,
     syncing: false,
     syncFailed: false,
+    initialSync: 0,
     serverURL: 'https://ipfc-midware.herokuapp.com',
   },
   mutations: {
@@ -63,6 +64,9 @@ const store = new Vuex.Store({
     },
     toggleSyncing(state, bool) {
       state.syncing = bool
+    },
+    updateInitialSync(state, num) {
+      state.initialSync = num
     },
     updateUserCollection(state, data) {
       state.userCollection = data

@@ -206,6 +206,10 @@ export default {
                         this.$store.commit('updateJwt', data['token']);
                         this.$store.dispatch('checkJwt')
                         this.$store.commit('updatePinataKeys', data['pinata_keys'])
+                        let userCollection = this.$store.state.userCollection
+                        userCollection.user_id = data['user_id']
+                        this.$store.commit('updateUserCollection', userCollection)
+                        console.log(' userCollection at login',userCollection)
                         this.$router.push('home');
                     }
                     this.loggingIn = false

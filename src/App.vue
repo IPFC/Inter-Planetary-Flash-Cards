@@ -1,11 +1,14 @@
 <template>
     <div ref="appMain" id="app-main" >
-
-        <div v-if="!snackWithButtons" id="splash" :class="splashClass"></div>
+        <div id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
-
-        <router-view :snackBtnText="snackBtnText" :snackWithBtnText="snackWithBtnText" :snackWithButtons="snackWithButtons" id="router-view" @homeLoad="homeLoaded()" @edit-clicked="editClicked()" :newCardClicked="newCardClicked" :newCardCommit="newCardCommit" :comingToCardEditorFromReview="toCardEditorFromReview" />
-
+        <router-view id="router-view" 
+        @homeLoad="homeLoaded()" 
+        @edit-clicked="editClicked()" 
+        :newCardClicked="newCardClicked" 
+        :newCardCommit="newCardCommit" 
+        :comingToCardEditorFromReview="toCardEditorFromReview" 
+        />
     </div>
 </template>
 
