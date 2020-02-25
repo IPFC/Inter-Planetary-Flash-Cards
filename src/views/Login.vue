@@ -209,7 +209,6 @@ export default {
                         let userCollection = this.$store.state.userCollection
                         userCollection.user_id = data['user_id']
                         this.$store.commit('updateUserCollection', userCollection)
-                        console.log(' userCollection at login',userCollection)
                         this.$router.push('home');
                     }
                     this.loggingIn = false
