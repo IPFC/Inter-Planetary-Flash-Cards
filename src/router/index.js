@@ -38,6 +38,12 @@ export default new Router({
     mode: 'history',
     routes: [
         {
+            path: '/index.html',
+            redirect: {
+            name: "home",
+            }
+        },        
+        {
             path: '/',
             redirect: {
             name: "home",
