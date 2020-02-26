@@ -1,13 +1,14 @@
 <template>
     <div ref="appMain" id="app-main" >
-        <div id="splash" :class="splashClass"></div>
+        <div v-if="!updatePWA" id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
         <router-view id="router-view" 
         @homeLoad="homeLoaded()" 
         @edit-clicked="editClicked()" 
+        @updatePWA="PWAUpdate(bool)"
         :newCardClicked="newCardClicked" 
         :newCardCommit="newCardCommit" 
-        :comingToCardEditorFromReview="toCardEditorFromReview" 
+        :comingToCardEditorFromReview="toCardEditorFromReview"
         />
     </div>
 </template>
@@ -25,6 +26,7 @@ export default {
             newCardCommit: 0,
             toCardEditorFromReview: false,
             splashClass: 'splash',
+            updatePWA: false,
         }
     },
     computed: {
@@ -96,6 +98,13 @@ export default {
                 this.$router.push('/card-editor')
             }
             this.newCardCommit ++
+        },
+        PWAUpdate (bool) {
+            if (bool) {
+                this.updatePWA = true
+            } else {
+                this.updatePWA = false
+            }
         },
         // sync: debounce(function(){
         //     //  console.log('debounced sync')

@@ -30,6 +30,7 @@ export default {
             // Protect against missing registration.waiting.
             if (!this.registration || !this.registration.waiting) { return; }
             this.registration.waiting.postMessage('skipWaiting');
+            this.$emit('updatePWA', false)
         },
         showRefreshUI(e) {
             // Display a snackbar inviting the user to refresh/reload the app due
@@ -38,6 +39,7 @@ export default {
             // Store the ServiceWorkerRegistration instance for later use.
             this.registration = e.detail;
             this.showPrompt = true;
+            this.$emit('updatePWA', true)
         },
     }, 
     created: function (){

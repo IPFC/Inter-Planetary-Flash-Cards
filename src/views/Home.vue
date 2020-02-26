@@ -1,6 +1,6 @@
 <template>
     <div>
-        <update-pwa-alert/>
+        <update-pwa-alert @updatePWA="PWAUpdate(bool)" />
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
             <b-row v-if="!spinner" id="top-buttons-row" class="justify-content-end">
                 <a id="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
@@ -208,6 +208,9 @@ export default {
                     }
                 }
             }
+        },
+        PWAUpdate (bool) {
+            this.$emit('updatePWA', bool)
         },
 
     },
