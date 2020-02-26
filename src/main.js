@@ -14,9 +14,6 @@ Vue.use(LayoutPlugin)
 import { BButton } from 'bootstrap-vue'
 Vue.component('b-button', BButton)
 
-import { AlertPlugin } from 'bootstrap-vue'
-Vue.use(AlertPlugin)
-
 // import BootstrapVue from 'bootstrap-vue'
 // Vue.use(BootstrapVue)
 
@@ -39,6 +36,12 @@ Vue.component('font-awesome-layers', FontAwesomeLayers)
 
 import UpdatePWA  from './components/UpdatePWA.vue'
 Vue.component('update-pwa-alert', UpdatePWA)
+
+import { VOffline } from 'v-offline'
+
+Vue.component('VOffline', VOffline);
+import OfflineWarning  from './components/OfflineWarning.vue'
+Vue.component('offline-warning', OfflineWarning)
 
 import App from './App.vue'
 import './registerServiceWorker'

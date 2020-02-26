@@ -1,5 +1,6 @@
 <template>
     <div>
+        <offline-warning/>
         <update-pwa-alert @updatePWA="PWAUpdate(bool)" />
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
             <b-row v-if="!spinner" id="top-buttons-row" class="justify-content-end">
