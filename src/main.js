@@ -34,11 +34,14 @@ library.add( faMinusCircle, faToggleOn, faToggleOff, faEllipsisH, faPlusCircle, 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('font-awesome-layers', FontAwesomeLayers)
 
-import UpdatePWA  from './components/UpdatePWA.vue'
-Vue.component('update-pwa-alert', UpdatePWA)
+import AlertUpdatePWA  from './components/AlertUpdatePWA.vue'
+Vue.component('alert-update-pwa', AlertUpdatePWA)
 
-import OfflineWarning  from './components/OfflineWarning.vue'
-Vue.component('offline-warning', OfflineWarning)
+import AlertOffline  from './components/AlertOffline.vue'
+Vue.component('alert-offline', AlertOffline)
+
+import AlertFailedSync from './components/AlertFailedSync.vue'
+Vue.component('alert-failed-sync', AlertFailedSync)
 
 import App from './App.vue'
 import './registerServiceWorker'

@@ -9,7 +9,7 @@
     <font-awesome-layers  class="fa-lg" id="sync-layers">
       <font-awesome-icon style="color: white;" class="fa-lg" id="cloud" icon="cloud"></font-awesome-icon>
       <font-awesome-icon style="color: primary;" v-if="syncing" class="fa-xs" id="sync-spinner" spin icon="sync"></font-awesome-icon>
-      <font-awesome-icon style="color: primary;" v-else-if="syncFailed || $store.getters.dataChanged" class="fa-xs" id="exclamation" icon="exclamation"></font-awesome-icon>
+      <font-awesome-icon style="color: primary;" v-else-if="syncFailed || !online" class="fa-xs" id="exclamation" icon="exclamation"></font-awesome-icon>
       <font-awesome-icon style="color: primary;" v-else class="fa-xs" id="checkmark" icon="check"></font-awesome-icon>
     </font-awesome-layers>
   </b-link> 
@@ -47,10 +47,11 @@ export default {
     navProgressCounter () {
 				return this.$store.getters.navProgressCounter
 				},
-    ...mapState({
-            syncing: 'syncing',
-            syncFailed: 'syncFailed',
-    }),
+    ...mapState([
+            'syncing',
+            'syncFailed',
+            'online'
+   ] ),
   },
   methods: {
     callSync() {

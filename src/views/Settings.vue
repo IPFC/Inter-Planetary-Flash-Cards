@@ -1,5 +1,8 @@
 <template>
   <b-container id="body">
+    <alert-failed-sync/>
+    <alert-offline/>
+    <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
     <b-list-group id="top-layer-settings">
       <b-list-group-item id="logout" button @click="logout()">
         Logout
@@ -26,7 +29,10 @@ export default {
     logout () {
       this.$store.dispatch('logout')
       this.$router.push('/login')
-    }
+    },
+    PWAUpdate (bool) {
+      this.$emit('updatePWA', bool)
+    },
   },
   mounted () {
     this.$emit('homeLoad')

@@ -1,10 +1,7 @@
 
 <template>
     <div>         
-
-        <v-offline
-            @detected-condition="amIOnline">
-                    <b-alert
+        <b-alert
             style="z-index: 40000"
             :show="dismissCountDown"
             dismissible
@@ -12,41 +9,44 @@
             variant="warning"
             @dismiss-count-down="countDownChanged"
             >
-            {{ offlineWarningTxt }}  
+            {{ syncFailedWarningTxt }}  
         </b-alert>
-        </v-offline>
     </div>
 </template>
 
 <script>
-
+import { mapState } from 'vuex'
 import { BAlert } from 'bootstrap-vue'
-import VOffline from 'v-offline';
 export default {
     components: {
-        BAlert, VOffline
+        BAlert
     },
     data: () => ({
-        dismissSecs: 5,
+        dismissSecs: 8,
         dismissCountDown: 0,   
-        offlineWarningTxt: "Offline mode: Media files might not load. Sync before using on another device to avoid data being overwritten"    
+        syncFailedWarningTxt: 
+        `Cloud sync failed`
     }),
+    computed: {
+        ...mapState([
+            'syncFailed'
+        ]),
+    },
     methods: {
-        amIOnline(e) {
-            /* eslint-disable no-console */
-
-            console.log('   e: ',e)
-            if (!e) {
-                this.showAlert()
-            }
-        },
         countDownChanged(dismissCountDown) {
             this.dismissCountDown = dismissCountDown
         },
         showAlert() {
             this.dismissCountDown = this.dismissSecs
-        }   
-    }  
+        },   
+    },
+    watch: {
+        syncFailed () {
+            if (!this.syncFailed){
+                this.showAlert()
+            }
+        }
+    }
 }
 
 

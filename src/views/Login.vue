@@ -209,6 +209,7 @@ export default {
                         let userCollection = this.$store.state.userCollection
                         userCollection.user_id = data['user_id']
                         this.$store.commit('updateUserCollection', userCollection)
+                        this.$store.commit('updateInitialSync', 0)
                         this.$router.push('home');
                     }
                     this.loggingIn = false

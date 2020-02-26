@@ -1,7 +1,8 @@
 <template>
     <div>
-        <offline-warning/>
-        <update-pwa-alert @updatePWA="PWAUpdate(bool)" />
+        <alert-failed-sync/>
+        <alert-offline/>
+        <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
             <b-row v-if="!spinner" id="top-buttons-row" class="justify-content-end">
                 <a id="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
@@ -213,7 +214,6 @@ export default {
         PWAUpdate (bool) {
             this.$emit('updatePWA', bool)
         },
-
     },
     created () {
     },
@@ -245,6 +245,7 @@ export default {
         // returning user, valid jwt, has cache
         else if (this.isAuthenticated && !localStorageEmpty){
             // console.log('returning user, valid jwt, has cache')
+            // could be coming back from other parts of the app, so need to suppress sync if not initial
             if (this.initialSync === 0) {
                 this.$store.dispatch('sync')
             }
@@ -254,13 +255,16 @@ export default {
             // console.log('new user or no JWT')
             this.$store.commit('updateUserCollection', defaultCollection['userCollection'])
             this.$store.commit('updateDecks', defaultCollection['decks'])
+            // each path through mounted (except to login) needs to end with initialSync at 2, 
+            //to allow sync calls elsewhere (decks and collection watcher, and the online warning component) and supress them at the start
+            this.$store.commit('updateInitialSync', 2)
         }
         if (this.lastSyncsData === null) {
             this.$store.dispatch('refreshLastSyncsData')
         }
         // this.currentCardIndex = 0 // this was before using store. Return to it for speed?
 
-        // set todaysDeck to maximum length as per settings, but if syncing, do after sync.
+        // set todaysDeck to maximum length as per settings, but if syncing, do after sync. Hence the watcher
         this.setTodaysMaxCards()
         if (this.syncing) {
             this.maxCardsUnset = true

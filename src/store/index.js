@@ -47,6 +47,7 @@ const store = new Vuex.Store({
     syncing: false,
     syncFailed: false,
     initialSync: 0,
+    online: false,
     serverURL: 'https://ipfc-midware.herokuapp.com',
   },
   mutations: {
@@ -67,6 +68,9 @@ const store = new Vuex.Store({
     },
     updateInitialSync(state, num) {
       state.initialSync = num
+    },
+    updateOnline(state, bool) {
+      state.online = bool
     },
     updateUserCollection(state, data) {
       state.userCollection = data
@@ -398,8 +402,15 @@ const store = new Vuex.Store({
     },
     async sync(context) {
       // console.log('    sync called')
-      if (context.state.syncing === true) {
+      if (context.state.syncing || context.state.userCollection.user_id === 'Tutorial') {
         // console.log('    syncing blocked')
+        return null
+      }
+      else if(!context.state.online){
+        context.commit('toggleSyncing', true)
+        context.commit('toggleSyncFailed', true)
+        // toggle sync to show we tried, this makes sure initial sync will always be incremented at startup
+        context.commit('toggleSyncing', false)
         return null
       }
       else{
