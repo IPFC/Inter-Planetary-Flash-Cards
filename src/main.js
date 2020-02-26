@@ -37,9 +37,6 @@ Vue.component('font-awesome-layers', FontAwesomeLayers)
 import UpdatePWA  from './components/UpdatePWA.vue'
 Vue.component('update-pwa-alert', UpdatePWA)
 
-import { VOffline } from 'v-offline'
-
-Vue.component('VOffline', VOffline);
 import OfflineWarning  from './components/OfflineWarning.vue'
 Vue.component('offline-warning', OfflineWarning)
 

@@ -1,7 +1,10 @@
 
 <template>
     <div>         
-        <b-alert
+
+        <v-offline
+            @detected-condition="amIOnline">
+                    <b-alert
             style="z-index: 40000"
             :show="dismissCountDown"
             dismissible
@@ -11,13 +14,12 @@
             >
             {{ offlineWarningTxt }}  
         </b-alert>
-        <v-offline
-            @detected-condition="amIOnline">
         </v-offline>
     </div>
 </template>
 
 <script>
+
 import { BAlert } from 'bootstrap-vue'
 import VOffline from 'v-offline';
 export default {
@@ -31,6 +33,9 @@ export default {
     }),
     methods: {
         amIOnline(e) {
+            /* eslint-disable no-console */
+
+            console.log('   e: ',e)
             if (!e) {
                 this.showAlert()
             }
