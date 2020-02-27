@@ -17,7 +17,8 @@
 import Navbar from './components/Navbar'
 import { mapGetters } from 'vuex'
 import { mapState } from 'vuex'
-// import { debounce } from 'lodash/core';
+const debounce = require('lodash/debounce');
+
 export default {
     name: 'App',
     data() {
@@ -35,45 +36,34 @@ export default {
             'currentDeck',
         ]),
         ...mapState([
-                'currentDeckId',
-            // 'decks',
-            // 'syncing',
-            // 'userCollection',
+            'currentDeckId',
+            'decks',
+            'syncing',
+            'userCollection',
+            'initialSync',
             // 'lastSyncsData'
         ]),
-    // watch: {
-    //     userCollection: {
-    //         handler: function() {
-    //             if (this.syncing === false) {
-    //                 if (this.$store.getters.dataChanged) {                            
-    //                     // console.log('    watched user collection for syncing')
-    //                     this.sync()
-    //                 }
-    //             } 
-    //         },
-    //         deep: true
-    //     },
-    //     decks: {
-    //         handler: function() {
-    //             if (this.syncing === false) {
-    //                 if (this.$store.getters.dataChanged) {                            
-    //                     // console.log('    watched decks for syncing')
-    //                     this.sync()
-    //                 }
-    //             }
-    //         },
-    //         deep: true
-    //     },
-    //     syncing: function() {
-    //         if (this.syncing === false) {
-    //             if (this.$store.getters.dataChanged) {
-    //                 // console.log('    this.decks', this.decks)
-    //                 // console.log('    this.lastSyncsData.decks', this.lastSyncsData.decks)
-    //                 // console.log('    watched syncing for syncing')
-    //                 this.sync()
-    //              }
-    //         }
-    //     }
+    },
+    watch: {
+        userCollection: {
+            handler: function() {
+                // console.log(  'sync called from user collection change')
+                this.debouncedSync()
+            },
+            deep: true
+        },
+        decks: {
+            handler: function() {
+                // console.log(  'sync called from decks change')
+                this.debouncedSync()
+            },
+            deep: true
+        },
+        syncing: function() {
+            // in case there were changes made during sync, try again after each sync
+            // console.log(  'sync called from syncing change')
+            this.debouncedSync()
+        }
     },
     methods: {
         homeLoaded: function() {
@@ -106,17 +96,18 @@ export default {
                 this.updatePWA = false
             }
         },
-        // sync: debounce(function(){
-        //     //  console.log('debounced sync')
-        //     this.$store.dispatch('sync')
-        // }, 60000),
+        debouncedSync: debounce(function(){
+            if (!this.syncing && this.initialSync > 1) {
+                this.$store.dispatch('cloudSync')
+            }
+        }, 15000),
     },
     components: {
-        Navbar,
+        Navbar
     },
     created: function () {
         this.splashClass = 'splash'
-    },
+    }
 }
 </script>
 

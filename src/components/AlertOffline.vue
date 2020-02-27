@@ -24,6 +24,7 @@ export default {
     components: {
         BAlert
     },
+    props: ['display'],
     data: () => ({
         online: navigator.onLine,
         dismissSecs: 5,
@@ -53,17 +54,21 @@ export default {
             }
         },
         debouncedSync: debounce(function(){ 
-            this.sync
-        }, 2000),
+            this.cloudSync
+        }, 10000),
     },
     computed: {
         ...mapActions({
-            sync: 'sync',
+            cloudSync: 'cloudSync',
         }),
         ...mapState([
             'initialSync',
-            'reNavTime',
         ]),
+    },
+    watch: {
+        display: function () {
+            this.showAlert()
+        }
     },
     mounted () {
         window.addEventListener("online", this.connectivityChange);

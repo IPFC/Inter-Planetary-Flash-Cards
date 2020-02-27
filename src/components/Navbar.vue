@@ -48,15 +48,15 @@ export default {
 				return this.$store.getters.navProgressCounter
 				},
     ...mapState([
-            'syncing',
-            'syncFailed',
-            'online'
+      'syncing',
+      'syncFailed',
+      'online'
    ] ),
   },
   methods: {
     callSync() {
       if (this.$store.getters.isAuthenticated) {
-        this.$store.dispatch('sync')
+        this.$store.dispatch('cloudSync', true)
       } 
       else {
         this.$router.push('/login')

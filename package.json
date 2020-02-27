@@ -60,6 +60,7 @@
     "purgecss-webpack-plugin": "^2.0.6",
     "sass-loader": "^8.0.2",
     "vue-loader": "^15.8.3",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "worker-plugin": "^3.2.0"
   }
 }

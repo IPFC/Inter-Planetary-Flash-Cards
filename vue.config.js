@@ -5,12 +5,16 @@
 // heroku builds -a YOUR_APP_NAME
 // To cancel a specific (pending) build:
 // heroku builds:cancel -a YOUR_APP_NAME HEROKU_BUILD_ID
-  
-module.exports = {
-//   configureWebpack: {
+  //   configureWebpack: {
 //   devtool: 'source-map',
 //   plugins: [new BundleAnalyzerPlugin()]
 // },
+const WorkerPlugin = require('worker-plugin');
+
+module.exports = {
+  chainWebpack: config => {
+    config.plugin("worker").use(WorkerPlugin);
+  },
   publicPath: './',
   pwa: {
     workboxPluginMode: "InjectManifest",

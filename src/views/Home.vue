@@ -1,7 +1,7 @@
 <template>
     <div>
         <alert-failed-sync/>
-        <alert-offline/>
+        <alert-offline :display="alertOffline" />
         <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
             <b-row v-if="!spinner" id="top-buttons-row" class="justify-content-end">
@@ -102,6 +102,7 @@ export default {
             reDrawCardKey: 0,
             correctAnswer: false,
             maxCardsUnset: false,
+            alertOffline: false,
         }
     },
     computed: {
@@ -117,7 +118,8 @@ export default {
             'lastSyncsData',
             'syncing',
             'syncFailed',
-            'initialSync'
+            'initialSync',
+            'online',
         ]),
         spinner () {
             if (this.syncing && this.initialSync === 1 ) {
@@ -218,6 +220,9 @@ export default {
     created () {
     },
     mounted () {
+        if(!this.online && this.initialSync === 0) {
+            this.alertOffline = !this.alertOffline
+        }
         this.$store.dispatch('checkJwt')
         this.$store.commit('updateCurrentDeckId', 'reviewDeck')
         // Determine status of user. New or returning:
@@ -240,15 +245,15 @@ export default {
             // console.log('returning user, valid jwt, no cache')
             this.$store.commit('updateUserCollection', defaultCollection['userCollection'])
             this.$store.commit('updateDecks', defaultCollection['decks']) 
-            this.$store.dispatch('sync')
+            this.$store.dispatch('cloudSync', true)
+            this.$store.commit('toggleSyncing', true)
         }
         // returning user, valid jwt, has cache
-        else if (this.isAuthenticated && !localStorageEmpty){
+        else if (this.isAuthenticated && !localStorageEmpty && this.initialSync === 0){
             // console.log('returning user, valid jwt, has cache')
             // could be coming back from other parts of the app, so need to suppress sync if not initial
-            if (this.initialSync === 0) {
-                this.$store.dispatch('sync')
-            }
+            this.$store.dispatch('cloudSync', true)
+            this.$store.commit('toggleSyncing', true)
         }
         // new user or no JWT
         else if(!this.isAuthenticated && this.jwt === null || returningNewUser ) {
