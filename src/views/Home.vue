@@ -56,7 +56,7 @@
                     <font-awesome-icon id="spinner" icon="spinner" spin size="5x" />
                 </b-col>
             </b-row>
-            <b-row id="buttons-row" >
+            <b-row id="bot-buttons-row" >
                 <b-col class="buttons-col">
                     <b-button aria-label="Incorrect" v-if="cardFlipToggle" class="btn-circle" @click="incorrect()">
                         <font-awesome-icon class="btn-icon" size="2x" icon="times"/>
@@ -294,12 +294,16 @@ export default {
 #review-body{
     height: 100%;
 }
+#top-buttons-row {
+    position: fixed;
+    width: 100%;
+}
 #edit {
     color: gray;
-    margin: 5px;
-    right: 3px;
+    margin-left: auto;
+    margin-right: 5px;
     z-index: 6;
-    position: absolute;
+    /* position: absolute; */
 }
 #edit:hover{
     cursor: pointer;
@@ -426,7 +430,7 @@ export default {
     box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
 
-#buttons-row {
+#bot-buttons-row {
     margin: auto;
     text-align: center;
     position: fixed;

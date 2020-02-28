@@ -153,7 +153,7 @@ export default {
 
     alertBrowserReccomendation: debounce(function() {
       this.alertBrowserRec = !this.alertBrowserRec;
-    }, 30000)
+    }, 1000)
   },
   components: {
     Navbar
@@ -164,7 +164,7 @@ export default {
     // Chrome 1 - 79
     const chrome =
       !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
-    // console.log("chrome", chrome);
+    console.log("chrome", chrome);
     const isIos = () => {
       const userAgent = window.navigator.userAgent.toLowerCase();
       return /iphone|ipad|ipod/.test(userAgent);
@@ -172,8 +172,8 @@ export default {
     // Detects if device is in standalone mode
     const isInStandaloneMode = () =>
       "standalone" in window.navigator && window.navigator.standalone;
-    // console.log("isInStandaloneMode", isInStandaloneMode());
-    // console.log("isIos", isIos());
+    console.log("isInStandaloneMode", isInStandaloneMode());
+    console.log("isIos", isIos());
 
     // Checks if should display install popup notification:
     if (isIos() && !isInStandaloneMode() && !this.promptDissmissed) {
@@ -182,7 +182,8 @@ export default {
     if (chrome && !isInStandaloneMode()) {
       this.promptChromeInstall();
     }
-    if (!isIos && !chrome && !isInStandaloneMode()) {
+    if (!isIos() && !chrome && !isInStandaloneMode()) {
+        console.log('alert rec')
       this.alertBrowserReccomendation();
     }
   }
