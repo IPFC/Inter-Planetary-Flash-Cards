@@ -1,4 +1,4 @@
-![Logo](./src/assets/ipfc_logo.png)
+![](./public/img/icons/icon-384x384.png)
 
 For a detailed introduction, see our [powerpoint](https://www.slideshare.net/secret/2zumYsfCV7f69s)
 
