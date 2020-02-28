@@ -18,7 +18,7 @@ Vue.component('b-button', BButton)
 // Vue.use(BootstrapVue)
 
 import 'highlight.js/styles/monokai-sublime.css'
-import Highlight from './components/highlight.js'
+import Highlight from './utils/highlight.js'
 Vue.use(Highlight)
 
 import { library } from '@fortawesome/fontawesome-svg-core'

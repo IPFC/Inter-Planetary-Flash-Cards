@@ -2,7 +2,7 @@
     <div ref="appMain" id="app-main" >
         <div v-if="!updatePWA" id="splash" :class="splashClass"></div>
         <Navbar ref="navbar" id="navbar" @new-card="newCard()"/>
-        <router-view id="router-view" 
+        <router-view class="router-view" 
         @homeLoad="homeLoaded()" 
         @edit-clicked="editClicked()" 
         @updatePWA="PWAUpdate(bool)"
@@ -148,9 +148,24 @@ export default {
     padding: 0;
 }
 
-#router-view{
+.router-view{
     height: 100%; 
     padding-top: 55px;
+    overflow-y:auto;
+}
+.router-view::-webkit-scrollbar {
+    width: .5em;
+}
+.router-view::-webkit-scrollbar-thumb {
+    background-color: rgba(162, 162, 162, 0.5);
+    border-radius: 0px;
+}
+.router-view::scrollbar {
+    width: .5em;
+}
+.router-view::scrollbar-thumb {
+    background-color: rgba(162, 162, 162, 0.5);
+    border-radius: 0px;
 }
 #navbar {
     position: absolute;
