@@ -1,7 +1,7 @@
 
 <template>
     <b-alert
-    style="z-index: 40000"
+    style="z-index: 40000; width:"
     :show="showPrompt"
       dismissible
       fade
@@ -60,6 +60,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>
