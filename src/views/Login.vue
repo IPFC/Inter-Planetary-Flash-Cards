@@ -69,7 +69,7 @@ export default {
             dismissSecs: 5,
             dismissCountDown: 0,
             loggingIn: false,
-            signingUp: false
+            signingUp: false,
         }
     },
     computed: {

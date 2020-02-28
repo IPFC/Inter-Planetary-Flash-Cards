@@ -43,6 +43,9 @@ Vue.component('alert-offline', AlertOffline)
 import AlertFailedSync from './components/AlertFailedSync.vue'
 Vue.component('alert-failed-sync', AlertFailedSync)
 
+import AlertBrowserRec from './components/AlertBrowserRec.vue'
+Vue.component('alert-browser-rec', AlertBrowserRec)
+
 import App from './App.vue'
 import './registerServiceWorker'
 Vue.config.productionTip = false

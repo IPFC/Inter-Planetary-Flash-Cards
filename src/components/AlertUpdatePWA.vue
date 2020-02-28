@@ -20,7 +20,7 @@ export default {
             refreshing: false,
             registration: null,
             promptBtnText : 'Refresh',
-            promptText : 'New version available!',
+            promptText : 'New version available!  ',
             showPrompt: false,
         }
     },

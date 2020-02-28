@@ -41,8 +41,10 @@ export default {
     return {
       installed: true,
       installer: undefined,
+      installPrompt: null,
     }
   },
+  props: ['chromeInstallPrompt'],
   computed: {
     navProgressCounter () {
 				return this.$store.getters.navProgressCounter
@@ -63,23 +65,29 @@ export default {
       }
     }
   },
+  watch: {
+    chromeInstallPrompt () {
+      if (this.installPrompt !== null) {
+        this.installer()
+      }
+    }
+  },
   created() {
-    let installPrompt;
     window.addEventListener("beforeinstallprompt", e => {
       e.preventDefault();
-      installPrompt = e;
+      this.installPrompt = e;
       this.installed = false
     });
     this.installer = () => {
       this.installed = true;
-      installPrompt.prompt();
-      installPrompt.userChoice.then(result => {
+      this.installPrompt.prompt();
+      this.installPrompt.userChoice.then(result => {
         if(result.outcome === "accepted") {
           // console.log("user accepted")
         } else {
           // console.log("user denied")
         }
-        installPrompt = null
+        this.installPrompt = null
       })
     }
   }  

@@ -3,6 +3,7 @@
     <alert-failed-sync/>
     <alert-offline/>
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
+    <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
     <b-list-group id="top-layer-settings">
       <b-list-group-item id="logout" button @click="logout()">
         Logout
@@ -25,6 +26,7 @@ export default {
     return {
     }
   },
+  props: ['alertBrowserRec'],
   methods: {
     logout () {
       this.$store.dispatch('logout')
