@@ -131,7 +131,11 @@ export default {
       }
     },
     debouncedSync: debounce(function() {
-      if (!this.syncing && this.initialSync > 1) {
+      if (
+        !this.syncing &&
+        this.initialSync > 1 &&
+        this.userCollection.user_id !== "tutorial"
+      ) {
         this.$store.dispatch("cloudSync");
       }
     }, 15000),
@@ -160,7 +164,7 @@ export default {
     // Chrome 1 - 79
     const chrome =
       !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
-    console.log("chrome", chrome);
+    // console.log("chrome", chrome);
     const isIos = () => {
       const userAgent = window.navigator.userAgent.toLowerCase();
       return /iphone|ipad|ipod/.test(userAgent);
@@ -168,8 +172,8 @@ export default {
     // Detects if device is in standalone mode
     const isInStandaloneMode = () =>
       "standalone" in window.navigator && window.navigator.standalone;
-    console.log("isInStandaloneMode", isInStandaloneMode());
-    console.log("isIos", isIos());
+    // console.log("isInStandaloneMode", isInStandaloneMode());
+    // console.log("isIos", isIos());
 
     // Checks if should display install popup notification:
     if (isIos() && !isInStandaloneMode() && !this.promptDissmissed) {

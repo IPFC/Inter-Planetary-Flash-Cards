@@ -235,7 +235,6 @@ export default {
         }
         else if(this.userCollection.user_id === "tutorial") {
             returningNewUser = true
-
         }
         // returning user, expired jwt
         if (!this.isAuthenticated&& this.jwt !== null && !returningNewUser){
