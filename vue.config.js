@@ -23,6 +23,7 @@ module.exports = {
     },
     name: 'Inter Planetary Flash Cards',
     themeColor: '#f8690d',
+    backgroundColor: '#f8690d',
     msTileColor: '#f8690d',
     appleMobileWebAppCapable: 'yes',
     // appleMobileWebAppStatusBarStyle: 'black-translucent',
