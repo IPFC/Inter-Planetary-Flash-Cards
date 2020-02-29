@@ -5,27 +5,29 @@
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
     <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
     <b-row id="main-row">
-      <b-col id="main-col" :class="swipeTransition">
+      <b-col id="main-col" :class="swipeTransition" >
         <b-container class="card scroller" :class="frontFocusClass">
-          <div
+          <div v-touch:swipe="swipeHandler"
             class="preview"
             v-if="!frontFocused"
             @click="focusInputFront()"
             v-highlight
             v-html="card.front_rich_text"
           ></div>
+          <!-- @shift enter is for quill module I'm trying to implement -->
           <quill-editor
             v-if="frontFocused"
             v-model="card.front_rich_text"
             class="quill"
             ref="myQuillEditorFront"
+            @shiftEnter="editorShiftEnter"
             :options="editorOption"
             v-highlight
           ></quill-editor>
         </b-container>
         <br />
         <b-container class="card scroller" :class="backFocusClass">
-          <div
+          <div v-touch:swipe="swipeHandler"
             class="preview"
             v-if="!backFocused"
             @click="focusInputBack()"
@@ -41,9 +43,9 @@
             v-highlight
           ></quill-editor>
         </b-container>
-        <p id="counter">{{ cardNumberOutOfDeck }}</p>
-        <br />
-        <b-container class="tag-chooser" id="tags-bottom">
+        <p id="counter" v-touch:swipe="swipeHandler">{{ cardNumberOutOfDeck }}</p>
+        <br v-touch:swipe="swipeHandler" />
+        <b-container class="tag-chooser" id="tags-bottom" v-touch:swipe="swipeHandler">
           <p class="d-inline tags-label">
             Tags:
             <b-button class="add-btn">
@@ -59,6 +61,8 @@
                 v-if="addingTag"
                 class="d-inline add-icon"
                 @click="addNewTag()"
+                            @keydown.enter="editorShiftEnter(e)"
+
                 color="white"
                 size="1x"
                 icon="plus-circle"
@@ -67,7 +71,7 @@
                 class="d-inline tag-input"
                 @keyup.enter="addNewTag()"
                 v-if="addingTag"
-                v-model="newTagTitle"
+                v -model="newTagTitle"
               ></b-form-input>
             </b-button>
           </p>
@@ -268,6 +272,23 @@ export default {
     }
   },
   methods: {
+    swipeHandler(direction) {
+      if (direction === "left" && !this.rightNavDisabled) {
+        this.nextCard();
+      } else if (direction === "right" && !this.leftNavDisabled) {
+        this.previousCard();
+      }
+    },
+    editorShiftEnter(e){
+      console.log('called shift enter')
+      if (e.keycode === 16 ) {
+        if (this.frontFocused) {
+          this.focusInputBack()
+        } else {
+          this.doneCheck()
+        }
+      }
+    },
     PWAUpdate(bool) {
       this.$emit("updatePWA", bool);
     },
@@ -375,7 +396,7 @@ export default {
             backGottenText: this.$refs.myQuillEditorBack.quill.getText()
           })
         );
-        // don't know why this fails if you call submit step one. says Quill undefined, 
+        // don't know why this fails if you call submit step one. says Quill undefined,
         this.submitStep2(this.card, quill).then(() => {
           this.$store.commit(
             "updateCardToEditIndex",
