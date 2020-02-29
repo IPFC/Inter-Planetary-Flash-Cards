@@ -166,9 +166,9 @@ export default {
     // Chrome 1 - 79
     const chrome =
       !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
-    console.log("chrome", chrome);
+    // console.log("chrome", chrome);
     const userAgent = window.navigator.userAgent.toLowerCase();
-    console.log("user agent", userAgent);
+    // console.log("user agent", userAgent);
     const isIos = () => {
       return /iphone|ipad|ipod/.test(userAgent);
     };
