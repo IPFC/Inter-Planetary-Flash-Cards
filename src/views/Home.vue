@@ -5,7 +5,7 @@
         <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
         <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
         <b-container id="review-body" v-if="todaysDeck.cards.length > 0">
-            <b-row v-if="!spinner" id="top-buttons-row" class="justify-content-end">
+            <b-row v-if="!spinner" id="top-buttons-row">
                 <a id="edit"><font-awesome-icon @click="editCard(currentCard, reviewDeck); $emit('edit-clicked')" size="1x" icon="edit"/></a>
             </b-row>
             <b-row id="card-row">
@@ -293,10 +293,11 @@ export default {
 <style scoped>
 #review-body{
     height: 100%;
+    max-width: 600vw;
 }
 #top-buttons-row {
-    position: fixed;
-    width: 100%;
+    margin: auto;
+    max-width: 600px;
     z-index: 6;
 
 }

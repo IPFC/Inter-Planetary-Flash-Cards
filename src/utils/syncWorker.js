@@ -18,12 +18,12 @@ async function callAPI(data) {
     await axios(options)
     .then((response) => {
         result = response.data
-        console.log(result)
+        // console.log(result)
     })
-    .catch(function (err) {
+    .catch(function () {
         postMessage({mutation: 'toggleSyncing', payload: false})
         postMessage({mutation: 'toggleSyncFailed', payload: true})
-        console.log(err); 
+        // console.log(err); 
     });
     return result
 }
@@ -32,21 +32,21 @@ async function cloudSync(data) {
     let decks = data.decks 
     let userCollection = data.userCollection
     let lastSyncsData = data.lastSyncsData
-    console.log('    sync called')
+    // console.log('    sync called')
     if (!data.skipSameCheck){
         if(isEqual(lastSyncsData.userCollection, userCollection) && isEqual(lastSyncsData.decks, decks)) {
-            console.log('equality with last syncs data')
+            // console.log('equality with last syncs data')
             return null
         }
     }    
     postMessage({mutation: 'toggleSyncing', payload: true})
     if (data.syncing || userCollection.user_id === 'Tutorial') {
-        console.log('    syncing blocked')
+        // console.log('    syncing blocked')
         postMessage({mutation: 'toggleSyncing', payload: false})
         return null
     } 
     if (!data.online || lastSyncsData === null) {
-        console.log('!online, lastSyncData == null')
+        // console.log('!online, lastSyncData == null')
         postMessage({mutation: 'toggleSyncFailed', payload: true})
         postMessage({mutation: 'toggleSyncing', payload: false})
         // toggle sync to show we tried, this makes sure initial sync will always be incremented at startup
@@ -54,7 +54,7 @@ async function cloudSync(data) {
     } 
 
     postMessage({mutation: 'toggleSyncFailed', payload: false})
-    console.log("    starting sync")
+    // console.log("    starting sync")
     let serverCollection
     let localDecksMeta = data.decksMeta
     let serverDecksMeta = null
@@ -67,7 +67,7 @@ async function cloudSync(data) {
     await callAPI(getMetaDataCall).then( (data) => {
         metaDataCallResults = data
     } )
-    console.log("    Get Meta and Collection ", metaDataCallResults)        
+    // console.log("    Get Meta and Collection ", metaDataCallResults)        
     if (metaDataCallResults === null) {
         return null
     }
@@ -79,7 +79,7 @@ async function cloudSync(data) {
             // if server deleted, but local deleted isn't, delete locally
             if (!userCollection.deleted_deck_ids.includes(server_deleted_deck_id)) {
                 // add to local usercollection deleted list
-                userCollection.deleted_deck_ids.push(server_deleted_deck_id)
+                userCollection.deleted_deck_ids.push(server_deleted_deck_id);
                 // remove from usercollection included list
                 let deck_idIndex = userCollection.deck_ids.indexOf(server_deleted_deck_id)
                 // if its actually in local
@@ -116,7 +116,7 @@ async function cloudSync(data) {
             await callAPI(deleteCallData).then( (data) => {
                 deleteDecksCallResults = data
             } )
-            console.log("    decks deleted: ", deleteDecksCallResults)        
+            // console.log("    decks deleted: ", deleteDecksCallResults)        
             if (deleteDecksCallResults === null) {
                 return null
             }
@@ -139,7 +139,7 @@ async function cloudSync(data) {
             await callAPI(downloadCallData).then((data) => {
                 downloadDecksCallResults = data
             })
-            console.log("    decks downloaded: ", downloadDecksCallResults)        
+            // console.log("    decks downloaded: ", downloadDecksCallResults)        
             if (downloadDecksCallResults === null) {
                 return null
             }
@@ -165,7 +165,7 @@ async function cloudSync(data) {
             }
         }
         if (decksToPost.length > 0) {
-            console.log('    posting decks ', decksToPost)
+            // console.log('    posting decks ', decksToPost)
             let postCallData = {
                 url: data.serverURL + '/post_decks',
                 jwt: data.jwt,
@@ -176,7 +176,7 @@ async function cloudSync(data) {
             await callAPI(postCallData).then((data) => {
                 postDecksResult = data
             })
-            console.log("    POSTed decks ", postDecksResult)        
+            // console.log("    POSTed decks ", postDecksResult)        
             if (postDecksResult === null) {
                 return null
             }
@@ -187,7 +187,7 @@ async function cloudSync(data) {
                 postMessage({mutation: 'updateSettings', payload: serverCollection.webapp_settings})
             }
             if (serverCollection.webapp_settings.edited < userCollection.webapp_settings.edited) {
-                console.log('posting settings')
+                // console.log('posting settings')
                 let putSettingsData = {
                     url: data.serverURL + '/put_user_collection',
                     jwt: data.jwt,
@@ -200,7 +200,7 @@ async function cloudSync(data) {
                 await callAPI(putSettingsData).then((data) => {
                     putSettingsResult = data
                 })
-                console.log("    PUT webapp settings", putSettingsResult)        
+                // console.log("    PUT webapp settings", putSettingsResult)        
                 if (putSettingsResult === null) {
                     return null
                 }
@@ -212,7 +212,7 @@ async function cloudSync(data) {
                 postMessage({mutation: 'updateSchedule', payload: serverCollection.schedule})
             }
             if (serverCollection.schedule.edited < userCollection.schedule.edited) {
-                console.log('posting settings')
+                // console.log('posting settings')
                 let putSettingsData = {
                     url: data.serverURL + '/put_user_collection',
                     jwt: data.jwt,
@@ -225,7 +225,7 @@ async function cloudSync(data) {
                 await callAPI(putSettingsData).then((data) => {
                     putSettingsResult = data
                 })
-                console.log("      Put schedule changes", putSettingsResult)        
+                // console.log("      Put schedule changes", putSettingsResult)        
                 if (putSettingsResult === null) {
                     return null
                 }
@@ -259,7 +259,7 @@ async function cloudSync(data) {
     }
     // upload all the decks to put
     if (decksToPut.length > 0) {
-        console.log('     PUTing decks', decksToPut)
+        // console.log('     PUTing decks', decksToPut)
         let putDecksData = {
             url: data.serverURL + '/put_decks',
             jwt: data.jwt,
@@ -270,14 +270,14 @@ async function cloudSync(data) {
         await callAPI(putDecksData).then((data) => {
             putDecksResult = data
         })
-        console.log("      Put decks: ", putDecksResult)        
+        // console.log("      Put decks: ", putDecksResult)        
         if (putDecksResult === null) {
             return null
         }
     }
     // get all newer server decks
     if (decksToUpdateLocally.length > 0) {
-        console.log('     GETing decks', decksToPut)
+        // console.log('     GETing decks', decksToPut)
         let getDecksData = {
             url: data.serverURL + '/get_decks',
             jwt: data.jwt,
@@ -292,7 +292,7 @@ async function cloudSync(data) {
             return null
         }
         else {
-            console.log("    decks downloaded", getDecksResult)
+            // console.log("    decks downloaded", getDecksResult)
             for (let newerDeck of responseData) {
                 let oldDeckLst = decks.filter(function (deckToCheck) {
                     return deckToCheck.deck_id === newerDeck.deck_id
@@ -314,10 +314,10 @@ async function cloudSync(data) {
         decks: decks,
         userCollection: userCollection }
     })
-    console.log('    set last sync data',{
-      decks: decks,
-      userCollection: userCollection
-    } )
+    // console.log('    set last sync data',{
+    //   decks: decks,
+    //   userCollection: userCollection
+    // } )
     postMessage({mutation: 'toggleSyncing', payload: false})
 }
 

@@ -5,9 +5,17 @@
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
     <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
     <b-row id="main-row">
-      <b-col id="main-col">
-        <b-container class="card">
+      <b-col id="main-col" :class="swipeTransition">
+        <b-container class="card scroller" :class="frontFocusClass">
+          <div
+            class="preview"
+            v-if="!frontFocused"
+            @click="focusInputFront()"
+            v-highlight
+            v-html="card.front_rich_text"
+          ></div>
           <quill-editor
+            v-if="frontFocused"
             v-model="card.front_rich_text"
             class="quill"
             ref="myQuillEditorFront"
@@ -16,8 +24,16 @@
           ></quill-editor>
         </b-container>
         <br />
-        <b-container class="card">
+        <b-container class="card scroller" :class="backFocusClass">
+          <div
+            class="preview"
+            v-if="frontFocused"
+            @click="focusInputBack()"
+            v-highlight
+            v-html="card.back_rich_text"
+          ></div>
           <quill-editor
+            v-if="!frontFocused"
             v-model="card.back_rich_text"
             class="quill"
             ref="myQuillEditorBack"
@@ -134,6 +150,10 @@ export default {
   data() {
     return {
       card: "",
+      frontFocused: true,
+      frontFocusClass: "",
+      backFocusClass: "",
+      swipeTransition: 'enter',
       initialDeckState: null,
       addingTag: false,
       newTagTitle: "",
@@ -259,6 +279,22 @@ export default {
     PWAUpdate(bool) {
       this.$emit("updatePWA", bool);
     },
+    focusInputFront() {
+      this.frontFocused = true;
+      this.frontFocusClass = "focused";
+      this.backFocusClass = "unfocused";
+      this.$nextTick(() => {
+        this.$refs.myQuillEditorFront.$el.focus();
+      });
+    },
+    focusInputBack() {
+      this.frontFocused = false;
+      this.frontFocusClass = "unfocused";
+      this.backFocusClass = "focused";
+      this.$nextTick(() => {
+        this.$refs.myQuillEditorBack.$el.focus();
+      });
+    },
     setCard() {
       this.card = JSON.parse(
         JSON.stringify(this.currentDeck.cards[this.cardToEditIndex])
@@ -300,22 +336,44 @@ export default {
         }
       }
     },
-    previousCard: function() {
-      if (!this.unChanged) {
-        this.submit(this.card);
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex - 1);
-      } else {
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex - 1);
-        this.setCard();
-      }
-    },
     nextCard: function() {
+      this.swipeTransition = 'throw-right'
+      window.setTimeout(() => {
+        this.nextCardAnimation()
+        this.switchCard(1)
+      }, 120);
+    },
+    previousCard: function() {
+      this.swipeTransition = 'throw-left'
+      window.setTimeout(() => {
+        this.previousCardAnimation()
+        this.switchCard(-1)
+      }, 120);
+    },
+    nextCardAnimation() {
+      this.swipeTransition = 'offscreen-left'
+      window.setTimeout(() => {
+        this.returnCardAnimation()
+      }, 1);
+    },
+    previousCardAnimation(){
+      this.swipeTransition = 'offscreen-right'
+      window.setTimeout(() => {
+        this.returnCardAnimation()
+      }, 1);
+    },
+    returnCardAnimation() {
+      this.swipeTransition = 'enter'
+    },
+    switchCard(index) {
       if (!this.unChanged) {
         this.submit(this.card);
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex + 1);
-      } else {
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex + 1);
+        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex + index);
+        this.focusInputFront() 
+     } else {
+        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex + index);
         this.setCard();
+        this.focusInputFront() 
       }
     },
     doneCheck: function() {
@@ -445,6 +503,7 @@ export default {
     newCardThen() {
       this.setCard();
       this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck));
+      this.focusInputFront() 
     }
   },
   created() {
@@ -460,6 +519,7 @@ export default {
     }
   },
   mounted() {
+    this.focusInputFront();
     this.$emit("homeLoad");
   }
 };
@@ -470,11 +530,12 @@ export default {
   overflow-y: auto;
 }
 .scroller::-webkit-scrollbar {
-  width: 0.5em;
+  width: 8px;
+  padding-right: 5px;
 }
 .scroller::-webkit-scrollbar-thumb {
   background-color: rgba(162, 162, 162, 0.5);
-  border-radius: 0px;
+  border-radius: 10px;
 }
 #main-col {
   width: 100%;
@@ -486,7 +547,6 @@ export default {
 .card {
   width: 100%;
   max-width: 600px;
-  max-height: 6em;
   margin: auto;
   top: 15px;
   border-radius: 10px;
@@ -497,13 +557,41 @@ export default {
   text-align: left;
   overflow-y: auto;
 }
-.img {
-  margin: auto;
-  margin-top: 0.5em;
-  object-fit: fill;
-  width: 90%;
+.focused {
+  max-height: 20em;
+  transition: max-height .5s ease;
 }
-
+.unfocused {
+  max-height: 5em;
+}
+.preview {
+  padding: 12px 15px;
+  min-height: 2em;
+}
+.throw-right{
+    transform: translateX(1000px);
+    z-index: 10000;
+    transition: transform .15s ease-in; 
+}
+.throw-left{
+    transform: translateX(-1000px);
+    z-index: 10000;
+    transition: transform .15s ease-in;
+}
+.offscreen-left{
+  visibility: hidden;
+  transform: translateX(-1000px);
+  transition: transform 0s linear;
+}
+.offscreen-right{
+  visibility: hidden;
+  transform: translateX(1000px);
+  transition: transform 0s linear;
+}
+.enter{
+  transform: translateX(0px);
+  transition: transform .15s ease-out;
+}
 .flashcard:hover {
   box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
@@ -526,8 +614,8 @@ export default {
   height: 0.5em;
 }
 .tag-chooser::-webkit-scrollbar-thumb {
-  background-color: lightgrey;
-  border-radius: 5px;
+  background-color: rgba(162, 162, 162, 0.5);
+  border-radius: 0px;
 }
 .tags-label {
   margin: 0px 0px 5px 0px;
@@ -575,7 +663,6 @@ export default {
   border-radius: 20px;
   font-size: 10px;
   text-align: center;
-
   color: grey;
   background-color: white;
   border: none;
@@ -602,9 +689,39 @@ export default {
   padding: 0px;
   margin: 5px 2px;
 }
+.preview >>> img {
+    width: 100%;
+    margin: auto;
+    object-fit: fill;
+}
+.preview >>> .ql-align-center {
+    text-align: center;
+}
+.preview >>> .ql-align-right {
+    text-align: right;
+}
+.preview >>> .ql-align-left {
+    text-align: left;
+}
+.preview >>> .ql-align-justify {
+    text-align: justify;
+}
+.preview >>> p {
+    font-size: 1em;
+}
+.preview >>> p .ql-size-small{
+    font-size: 0.65em;
+}
+.preview >>> p .ql-size-large{
+    font-size: 1.5em;
+}
+.preview >>> p .ql-size-huge{
+    font-size: 2.5em;
+}
 .quill >>> .ql-container.ql-snow {
   border: 0px;
 }
+
 .quill >>> .ql-toolbar.ql-snow {
   border: 0px solid #ccc;
   border-bottom: 1px solid #ccc;
