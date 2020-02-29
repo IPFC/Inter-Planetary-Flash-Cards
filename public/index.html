@@ -1,56 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta name="Description" content="Inter Planetary Flash Cards is a spaced repetition flash card progressive web app. cross platform decentralized cloud storage using IPFS. learning platform for educational technology">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <!-- <meta name="apple-mobile-web-app-status-bar-style" content="black">     -->
-    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="img/icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="img/icons/icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="img/icons/icon-167x167.png">
-    <link href="img/splash/apple_splash_2048.png" sizes="2048x2732" rel="apple-touch-startup-image" />
-    <link href="img/splash/apple_splash_1668.png" sizes="1668x2224" rel="apple-touch-startup-image" />
-    <link href="img/splash/apple_splash_1536.png" sizes="1536x2048" rel="apple-touch-startup-image" />
-    <link href="img/splash/apple_splash_1125.png" sizes="1125x2436" rel="apple-touch-startup-image" />
-    <link href="img/splash/apple_splash_1242.png" sizes="1242x2208" rel="apple-touch-startup-image" />
-    <link href="img/splash/apple_splash_750.png" sizes="750x1334" rel="apple-touch-startup-image" />
-    <link href="img/splash/apple_splash_640.png" sizes="640x1136" rel="apple-touch-startup-image" />
-    <link rel="shortcut icon" type="image/png" href="img/icons/icon-32x32.png"/>
-    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script> -->
-    <title>Inter Planetary Flash Cards</title>
-    <style> 
-      #landing-page {
-        background-image: url('/img/icons/icon-192x192.png');
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-color: #F8690D;
-        position: absolute;
-        /* height: 100vh; 
-        width: 100vw; */
-        margin: 0;
-        padding: 0
-      }
-      body { 
-        padding: 0;
-        margin: 0;
-      } 
-      #app { 
-        padding: 0;
-        margin: 0;
-      } 
 
-  </style> 
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but IPFC doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app">
-      <div id="landing-page"></div>
-    </div>
-    <!-- built files will be auto injected -->
-  </body>
+<head>
+  <meta name="Description"
+    content="Inter Planetary Flash Cards is a spaced repetition flash card progressive web app. cross platform decentralized cloud storage using IPFS. learning platform for educational technology">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-0640x1136.png"
+    media="(device-width:  320px) and (device-height:  568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-0750x1334.png"
+    media="(device-width:  375px) and (device-height:  667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-0828x1792.png"
+    media="(device-width:  414px) and (device-height:  896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-1125x2436.png"
+    media="(device-width:  375px) and (device-height:  812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-1242x2208.png"
+    media="(device-width:  414px) and (device-height:  736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-1242x2688.png"
+    media="(device-width:  414px) and (device-height:  896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-1536x2048.png"
+    media="(device-width:  768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-1668x2224.png"
+    media="(device-width:  834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-1668x2388.png"
+    media="(device-width:  834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-portrait-2048x2732.png"
+    media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-1136x0640.png"
+    media="(device-width:  320px) and (device-height:  568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-1334x0750.png"
+    media="(device-width:  375px) and (device-height:  667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-1792x0828.png"
+    media="(device-width:  414px) and (device-height:  896px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-2436x1125.png"
+    media="(device-width:  375px) and (device-height:  812px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-2208x1242.png"
+    media="(device-width:  414px) and (device-height:  736px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-2688x1242.png"
+    media="(device-width:  414px) and (device-height:  896px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-2048x1536.png"
+    media="(device-width:  768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-2224x1668.png"
+    media="(device-width:  834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-2388x1668.png"
+    media="(device-width:  834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="img/splash/splash-landscape-2732x2048.png"
+    media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="img/icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/icons/icon-180x180.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="img/icons/icon-167x167.png">
+  <link rel="shortcut icon" type="image/png" href="img/icons/icon-32x32.png" />
+  <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script> -->
+  <title>Inter Planetary Flash Cards</title>
+  <style>
+    #landing-page {
+      background-image: url('/img/icons/icon-192x192.png');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-color: #F8690D;
+      position: absolute;
+      /* height: 100vh; 
+        width: 100vw; */
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    #app {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but IPFC doesn't work properly without JavaScript enabled. Please enable it to
+      continue.</strong>
+  </noscript>
+  <div id="app">
+    <div id="landing-page"></div>
+  </div>
+  <!-- built files will be auto injected -->
+</body>
+
 </html>
