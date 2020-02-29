@@ -281,6 +281,7 @@ export default {
     margin: auto;
     max-width: 370px;
     padding: 20px;
+    overflow-y: auto;
 }
 h1{
     text-align: center;

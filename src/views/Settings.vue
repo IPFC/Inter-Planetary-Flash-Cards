@@ -1,5 +1,6 @@
 <template>
-  <b-container id="body">
+
+  <b-container class="review-body">
     <alert-failed-sync/>
     <alert-offline/>
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
@@ -43,8 +44,17 @@ export default {
 </script>
 
 <style scoped>
-#body{
+.review-body{
   max-width: 600px;
+  overflow-y: auto;
+  margin:auto;
+}
+.review-body::-webkit-scrollbar {
+  width: 0.5em;
+}
+.review-body::-webkit-scrollbar-thumb {
+  background-color: rgba(162, 162, 162, 0.5);
+  border-radius: 0px;
 }
 #logout{
   margin-top: 15px;

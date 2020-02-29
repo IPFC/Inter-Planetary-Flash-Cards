@@ -1,5 +1,5 @@
 <template>
-  <b-container id="main">
+  <b-container class="deck-editor-main">
     <alert-failed-sync />
     <alert-offline />
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
@@ -157,10 +157,14 @@ export default {
   cursor: pointer;
   color: black;
 }
-#main {
-  padding: 15px 15px 0px 10px;
+.deck-editor-main {
+  overflow-y: auto;
+}
+.deck-editor-main::-webkit-scrollbar {
+  width: 0em;
 }
 #main-row {
+  margin: 15px 15px 0px 10px;
   margin-top: 15px;
 }
 #main-col {

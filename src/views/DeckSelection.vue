@@ -1,80 +1,75 @@
 <template>
-  <div>
-    <div id="deck-select-main">
-      <alert-failed-sync />
-      <alert-offline />
-      <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
-      <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
-      <!-- <h3>Decks</h3> -->
-      <b-list-group id="list-group">
-        <b-list-group-item
-          id="list-group-item"
-          v-for="(deckMeta, index) in decksMeta"
-          :key="index"
-        >
-          <b-container id="list-group-item-container">
-            <b-row id="list-group-item-row">
-              <b-col id="icon-col" cols="1" class="align-self-center">
-                <div
-                  id="icon"
-                  :style="{ backgroundColor: deckMeta.icon_color }"
+  <div class="deck-select-main">
+    <alert-failed-sync />
+    <alert-offline />
+    <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
+    <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
+    <!-- <h3>Decks</h3> -->
+    <b-list-group id="list-group">
+      <b-list-group-item
+        id="list-group-item"
+        v-for="(deckMeta, index) in decksMeta"
+        :key="index"
+      >
+        <b-container id="list-group-item-container">
+          <b-row id="list-group-item-row">
+            <b-col id="icon-col" cols="1" class="align-self-center">
+              <div id="icon" :style="{ backgroundColor: deckMeta.icon_color }">
+                <p id="deck-abrev">
+                  <strong>{{ getTitleAbrev(deckMeta.title) }}</strong>
+                </p>
+              </div>
+            </b-col>
+            <b-col id="text-and-edit-col" cols="11">
+              <b-row>
+                <b-col
+                  id="text-col"
+                  @click="openDeck(decksMeta[index].deck_id)"
                 >
-                  <p id="deck-abrev">
-                    <strong>{{ getTitleAbrev(deckMeta.title) }}</strong>
+                  <p class="text title">{{ deckMeta.title }}</p>
+                  <p class="text card-count">
+                    {{ deckMeta.deck_length }} card{{
+                      cardOrCards(deckMeta.deck_length)
+                    }}
                   </p>
-                </div>
-              </b-col>
-              <b-col id="text-and-edit-col" cols="11">
-                <b-row>
-                  <b-col
-                    id="text-col"
-                    @click="openDeck(decksMeta[index].deck_id)"
+                </b-col>
+                <b-col id="edit-col" cols="1">
+                  <b-dropdown
+                    id="edit-btn"
+                    class="deck-options"
+                    dropleft
+                    size="lg"
+                    variant="link"
+                    toggle-class="text-decoration-none"
+                    no-caret
                   >
-                    <p class="text title">{{ deckMeta.title }}</p>
-                    <p class="text card-count">
-                      {{ deckMeta.deck_length }} card{{
-                        cardOrCards(deckMeta.deck_length)
-                      }}
-                    </p>
-                  </b-col>
-                  <b-col id="edit-col" cols="1">
-                    <b-dropdown
-                      id="edit-btn"
-                      class="deck-options"
-                      dropleft
-                      size="lg"
-                      variant="link"
-                      toggle-class="text-decoration-none"
-                      no-caret
+                    <template v-slot:button-content>
+                      <font-awesome-icon
+                        class="deck-options"
+                        color="grey"
+                        size="1x"
+                        icon="ellipsis-h"
+                      />
+                      <span class="sr-only">Search</span>
+                    </template>
+                    <b-dropdown-item-button
+                      @click="deleteDeck(deckMeta.deck_id)"
+                      >Delete</b-dropdown-item-button
                     >
-                      <template v-slot:button-content>
-                        <font-awesome-icon
-                          class="deck-options"
-                          color="grey"
-                          size="1x"
-                          icon="ellipsis-h"
-                        />
-                        <span class="sr-only">Search</span>
-                      </template>
-                      <b-dropdown-item-button
-                        @click="deleteDeck(deckMeta.deck_id)"
-                        >Delete</b-dropdown-item-button
-                      >
-                      <b-dropdown-item-button disabled href="#"
-                        >Export</b-dropdown-item-button
-                      >
-                    </b-dropdown>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <div id="underline"></div>
-                </b-row>
-              </b-col>
-            </b-row>
-          </b-container>
-        </b-list-group-item>
-      </b-list-group>
-    </div>
+                    <b-dropdown-item-button disabled href="#"
+                      >Export</b-dropdown-item-button
+                    >
+                  </b-dropdown>
+                </b-col>
+              </b-row>
+              <b-row>
+                <div id="underline"></div>
+              </b-row>
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-list-group-item>
+    </b-list-group>
   </div>
 </template>
 
@@ -141,11 +136,18 @@ export default {
 };
 </script>
 <style scoped>
-#deck-select-main {
-  padding: 15px 0px 0px 10px;
+.deck-select-main {
+  overflow-y: auto;
+}
+.deck-select-main::-webkit-scrollbar {
+  width: 0.5em;
+}
+.deck-select-main::-webkit-scrollbar-thumb {
+  background-color: rgba(162, 162, 162, 0.5);
+  border-radius: 0px;
 }
 #list-group {
-  margin-top: 15px;
+  margin: 10px 10px 0px 10px;
 }
 #list-group-item {
   margin: auto;

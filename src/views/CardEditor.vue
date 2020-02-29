@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="body">
+  <b-container fluid class="body scroller">
     <alert-failed-sync />
     <alert-offline />
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
@@ -322,18 +322,7 @@ export default {
       if (!this.unChanged) {
         this.submit(this.card);
       }
-      let wasLastCard;
-      if (this.rightNavDisabled) {
-        wasLastCard = true;
-      }
-      let currentDeckLength = this.currentDeck.cards.length;
-      if (currentDeckLength === 1 || this.comingToCardEditorFromReview) {
-        this.$router.go(-1);
-      } else if (wasLastCard) {
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex - 1);
-      } else {
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex + 1);
-      }
+      this.$router.go(-1);
     },
     getQuillData: function(cardInput) {
       // copy image and plaintext
@@ -478,18 +467,15 @@ export default {
 
 <style scoped>
 .body {
-  background-color: C7C7C7;
   overflow-y: auto;
-  margin: auto;
 }
-.body::-webkit-scrollbar {
+.scroller::-webkit-scrollbar {
   width: 0.5em;
 }
-.body::-webkit-scrollbar-thumb {
-  background-color: grey;
-  border-radius: 5px;
+.scroller::-webkit-scrollbar-thumb {
+  background-color: rgba(162, 162, 162, 0.5);
+  border-radius: 0px;
 }
-
 #main-col {
   width: 100%;
   padding: 0px 10px;
@@ -498,7 +484,9 @@ export default {
   padding: 0;
 }
 .card {
+  width: 100%;
   max-width: 600px;
+  max-height: 6em;
   margin: auto;
   top: 15px;
   border-radius: 10px;
@@ -508,30 +496,6 @@ export default {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.51);
   text-align: left;
   overflow-y: auto;
-  width: 100%;
-}
-.card::-webkit-scrollbar {
-  width: 0.5em;
-}
-.card::-webkit-scrollbar-thumb {
-  background-color: grey;
-  border-radius: 5px;
-}
-.card-text-input {
-  border: hidden;
-  word-wrap: normal;
-  margin: auto;
-  margin-top: 0px;
-  font-size: 1em;
-  padding: 0.3em 0px 0px;
-  min-height: 4.8em;
-}
-.card-text-input::-webkit-scrollbar {
-  width: 0.5em;
-}
-.card-text-input::-webkit-scrollbar-thumb {
-  background-color: lightgrey;
-  border-radius: 5px;
 }
 .img {
   margin: auto;

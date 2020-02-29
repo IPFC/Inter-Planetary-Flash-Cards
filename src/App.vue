@@ -158,15 +158,18 @@ export default {
   components: {
     Navbar
   },
+
   created: function() {
     this.splashClass = "splash";
-
+  },
+  mounted: function() {
     // Chrome 1 - 79
     const chrome =
       !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
-    // console.log("chrome", chrome);
+    console.log("chrome", chrome);
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    console.log("user agent", userAgent);
     const isIos = () => {
-      const userAgent = window.navigator.userAgent.toLowerCase();
       return /iphone|ipad|ipod/.test(userAgent);
     };
     // Detects if device is in standalone mode
@@ -183,7 +186,7 @@ export default {
       this.promptChromeInstall();
     }
     if (!isIos() && !chrome && !isInStandaloneMode()) {
-        // console.log('alert rec')
+      // console.log('alert rec')
       this.alertBrowserReccomendation();
     }
   }
@@ -258,23 +261,10 @@ export default {
 
 .router-view {
   height: 100%;
+  width: 100%;
   padding-top: 55px;
-  overflow-y: auto;
 }
-.router-view::-webkit-scrollbar {
-  width: 0.5em;
-}
-.router-view::-webkit-scrollbar-thumb {
-  background-color: rgba(162, 162, 162, 0.5);
-  border-radius: 0px;
-}
-.router-view::scrollbar {
-  width: 0.5em;
-}
-.router-view::scrollbar-thumb {
-  background-color: rgba(162, 162, 162, 0.5);
-  border-radius: 0px;
-}
+
 #navbar {
   position: absolute;
   top: 0;
@@ -282,11 +272,5 @@ export default {
   width: 100vw;
   z-index: 2000;
 }
-.body::-webkit-scrollbar {
-  width: 0.5em;
-}
-.body::-webkit-scrollbar-thumb {
-  background-color: transparent;
-  border-radius: 5px;
-}
+
 </style>

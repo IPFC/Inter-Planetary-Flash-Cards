@@ -297,6 +297,8 @@ export default {
 #top-buttons-row {
     position: fixed;
     width: 100%;
+    z-index: 6;
+
 }
 #edit {
     color: gray;
