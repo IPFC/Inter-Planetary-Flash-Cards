@@ -27,13 +27,13 @@
         <b-container class="card scroller" :class="backFocusClass">
           <div
             class="preview"
-            v-if="frontFocused"
+            v-if="!backFocused"
             @click="focusInputBack()"
             v-highlight
             v-html="card.back_rich_text"
           ></div>
           <quill-editor
-            v-if="!frontFocused"
+            v-if="backFocused"
             v-model="card.back_rich_text"
             class="quill"
             ref="myQuillEditorBack"
@@ -68,8 +68,7 @@
                 @keyup.enter="addNewTag()"
                 v-if="addingTag"
                 v-model="newTagTitle"
-              >
-              </b-form-input>
+              ></b-form-input>
             </b-button>
           </p>
           <b-button
@@ -77,18 +76,14 @@
             class="tag-style-button green-btn d-inline"
             v-for="tag in card.card_tags"
             :key="tag"
-          >
-            {{ tag }}
-          </b-button>
+          >{{ tag }}</b-button>
           <br />
           <b-button
             @click="addTagToCard(tag)"
             class="tag-style-button white-btn d-inline"
             v-for="tag in unincludedTags"
             :key="tag"
-          >
-            {{ tag }}
-          </b-button>
+          >{{ tag }}</b-button>
         </b-container>
       </b-col>
     </b-row>
@@ -111,11 +106,7 @@
               </b-button>
             </b-col>
             <b-col class="btn-col">
-              <b-button
-                :disabled="rightNavDisabled"
-                class="btn-circle btn-md"
-                @click="nextCard()"
-              >
+              <b-button :disabled="rightNavDisabled" class="btn-circle btn-md" @click="nextCard()">
                 <font-awesome-icon size="2x" icon="step-forward" />
               </b-button>
             </b-col>
@@ -151,9 +142,10 @@ export default {
     return {
       card: "",
       frontFocused: true,
+      backFocused: false,
       frontFocusClass: "",
       backFocusClass: "",
-      swipeTransition: 'enter',
+      swipeTransition: "enter",
       initialDeckState: null,
       addingTag: false,
       newTagTitle: "",
@@ -281,6 +273,7 @@ export default {
     },
     focusInputFront() {
       this.frontFocused = true;
+      this.backFocused = false;
       this.frontFocusClass = "focused";
       this.backFocusClass = "unfocused";
       this.$nextTick(() => {
@@ -289,6 +282,8 @@ export default {
     },
     focusInputBack() {
       this.frontFocused = false;
+      this.backFocused = true;
+
       this.frontFocusClass = "unfocused";
       this.backFocusClass = "focused";
       this.$nextTick(() => {
@@ -337,43 +332,64 @@ export default {
       }
     },
     nextCard: function() {
-      this.swipeTransition = 'throw-right'
+      this.swipeTransition = "throw-left";
+      this.backFocused = true;
+      this.frontFocused = true;
       window.setTimeout(() => {
-        this.nextCardAnimation()
-        this.switchCard(1)
+        this.nextCardAnimation();
+        this.switchCard(1);
       }, 120);
     },
     previousCard: function() {
-      this.swipeTransition = 'throw-left'
+      this.swipeTransition = "throw-right";
+      this.backFocused = true;
+      this.frontFocused = true;
       window.setTimeout(() => {
-        this.previousCardAnimation()
-        this.switchCard(-1)
+        this.previousCardAnimation();
+        this.switchCard(-1);
       }, 120);
     },
     nextCardAnimation() {
-      this.swipeTransition = 'offscreen-left'
+      this.swipeTransition = "offscreen-right";
       window.setTimeout(() => {
-        this.returnCardAnimation()
+        this.returnCardAnimation();
       }, 1);
     },
-    previousCardAnimation(){
-      this.swipeTransition = 'offscreen-right'
+    previousCardAnimation() {
+      this.swipeTransition = "offscreen-left";
       window.setTimeout(() => {
-        this.returnCardAnimation()
+        this.returnCardAnimation();
       }, 1);
     },
     returnCardAnimation() {
-      this.swipeTransition = 'enter'
+      this.swipeTransition = "enter";
     },
     switchCard(index) {
-      if (!this.unChanged) {
-        this.submit(this.card);
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex + index);
-        this.focusInputFront() 
-     } else {
-        this.$store.commit("updateCardToEditIndex", this.cardToEditIndex + index);
+      const unChanged = JSON.parse(JSON.stringify(this.unChanged));
+      if (!unChanged) {
+        let quill = JSON.parse(
+          JSON.stringify({
+            quillFrontDelta: this.$refs.myQuillEditorFront.quill.getContents(),
+            frontGottenText: this.$refs.myQuillEditorFront.quill.getText(),
+            quillBackDelta: this.$refs.myQuillEditorBack.quill.getContents(),
+            backGottenText: this.$refs.myQuillEditorBack.quill.getText()
+          })
+        );
+        // don't know why this fails if you call submit step one. says Quill undefined, 
+        this.submitStep2(this.card, quill).then(() => {
+          this.$store.commit(
+            "updateCardToEditIndex",
+            this.cardToEditIndex + index
+          );
+        });
+        this.focusInputFront();
+      } else {
+        this.$store.commit(
+          "updateCardToEditIndex",
+          this.cardToEditIndex + index
+        );
         this.setCard();
-        this.focusInputFront() 
+        this.focusInputFront();
       }
     },
     doneCheck: function() {
@@ -382,31 +398,44 @@ export default {
       }
       this.$router.go(-1);
     },
-    getQuillData: function(cardInput) {
+    getQuillData: function(cardInput, quill) {
       // copy image and plaintext
+
       let card = JSON.parse(JSON.stringify(cardInput));
-      let quillFrontDelta = this.$refs.myQuillEditorFront.quill.getContents();
-      for (let line of quillFrontDelta.ops) {
+      for (let line of quill.quillFrontDelta.ops) {
         if (line.insert.image) {
           card.front_image = line.insert.image;
           break;
         }
       }
-      let frontGottenText = this.$refs.myQuillEditorFront.quill.getText();
-      card.front_text = frontGottenText;
-      let quillBackDelta = this.$refs.myQuillEditorBack.quill.getContents();
-      for (let line of quillBackDelta.ops) {
+      card.front_text = quill.frontGottenText;
+      for (let line of quill.quillBackDelta.ops) {
         if (line.insert.image) {
           card.back_image = line.insert.image;
           break;
         }
       }
-      let backGottenText = this.$refs.myQuillEditorBack.quill.getText();
-      card.back_text = backGottenText;
+      card.back_text = quill.backGottenText;
       return card;
     },
-    submit: function(cardInput) {
-      let card = this.getQuillData(cardInput);
+    submit(card) {
+      // this focuses both sides so that quill is showing
+      this.backFocused = true;
+      this.frontFocused = true;
+      this.$nextTick(() => {
+        let quill = JSON.parse(
+          JSON.stringify({
+            quillFrontDelta: this.$refs.myQuillEditorFront.quill.getContents(),
+            frontGottenText: this.$refs.myQuillEditorFront.quill.getText(),
+            quillBackDelta: this.$refs.myQuillEditorBack.quill.getContents(),
+            backGottenText: this.$refs.myQuillEditorBack.quill.getText()
+          })
+        );
+        this.submitStep2(card, quill);
+      });
+    },
+    async submitStep2(cardInput, quill) {
+      let card = await this.getQuillData(cardInput, quill);
       // remove empty card
       if (card.front_text === "" && card.back_text === "") {
         this.deleteCard();
@@ -420,7 +449,9 @@ export default {
         let updateData = { deck_id: deckId, card: card };
         this.$store.dispatch("updateCard", updateData);
       }
+      this.focusInputFront();
       this.setCard();
+      return true;
     },
     // use later for dropdown menu, copy to other deck
     addCardToDeck: function(deckId) {
@@ -503,7 +534,7 @@ export default {
     newCardThen() {
       this.setCard();
       this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck));
-      this.focusInputFront() 
+      this.focusInputFront();
     }
   },
   created() {
@@ -559,7 +590,7 @@ export default {
 }
 .focused {
   max-height: 20em;
-  transition: max-height .5s ease;
+  transition: max-height 0.5s ease;
 }
 .unfocused {
   max-height: 5em;
@@ -568,29 +599,29 @@ export default {
   padding: 12px 15px;
   min-height: 2em;
 }
-.throw-right{
-    transform: translateX(1000px);
-    z-index: 10000;
-    transition: transform .15s ease-in; 
+.throw-right {
+  transform: translateX(1000px);
+  z-index: 10000;
+  transition: transform 0.15s ease-in;
 }
-.throw-left{
-    transform: translateX(-1000px);
-    z-index: 10000;
-    transition: transform .15s ease-in;
+.throw-left {
+  transform: translateX(-1000px);
+  z-index: 10000;
+  transition: transform 0.15s ease-in;
 }
-.offscreen-left{
+.offscreen-left {
   visibility: hidden;
   transform: translateX(-1000px);
   transition: transform 0s linear;
 }
-.offscreen-right{
+.offscreen-right {
   visibility: hidden;
   transform: translateX(1000px);
   transition: transform 0s linear;
 }
-.enter{
+.enter {
   transform: translateX(0px);
-  transition: transform .15s ease-out;
+  transition: transform 0.15s ease-out;
 }
 .flashcard:hover {
   box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
@@ -690,33 +721,33 @@ export default {
   margin: 5px 2px;
 }
 .preview >>> img {
-    width: 100%;
-    margin: auto;
-    object-fit: fill;
+  width: 100%;
+  margin: auto;
+  object-fit: fill;
 }
 .preview >>> .ql-align-center {
-    text-align: center;
+  text-align: center;
 }
 .preview >>> .ql-align-right {
-    text-align: right;
+  text-align: right;
 }
 .preview >>> .ql-align-left {
-    text-align: left;
+  text-align: left;
 }
 .preview >>> .ql-align-justify {
-    text-align: justify;
+  text-align: justify;
 }
 .preview >>> p {
-    font-size: 1em;
+  font-size: 1em;
 }
-.preview >>> p .ql-size-small{
-    font-size: 0.65em;
+.preview >>> p .ql-size-small {
+  font-size: 0.65em;
 }
-.preview >>> p .ql-size-large{
-    font-size: 1.5em;
+.preview >>> p .ql-size-large {
+  font-size: 1.5em;
 }
-.preview >>> p .ql-size-huge{
-    font-size: 2.5em;
+.preview >>> p .ql-size-huge {
+  font-size: 2.5em;
 }
 .quill >>> .ql-container.ql-snow {
   border: 0px;
