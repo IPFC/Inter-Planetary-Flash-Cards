@@ -8,11 +8,7 @@
             Enjoying our app? To view full screen and get the full IPFC
             experience, tap the share button then add to home screen.
           </p>
-          <img
-            class="apple-prompt-img"
-            src="img/apple-share-icon.png"
-            alt="Apple share icon"
-          />
+          <img class="apple-prompt-img" src="img/apple-share-icon.png" alt="Apple share icon" />
           <b-button @click="dismissApplePrompt()">got it</b-button>
           <img
             class="apple-prompt-img"
@@ -33,6 +29,7 @@
       @homeLoad="homeLoaded()"
       @edit-clicked="editClicked()"
       @updatePWA="PWAUpdate(bool)"
+      @new-card="newCard()"
       :newCardClicked="newCardClicked"
       :newCardCommit="newCardCommit"
       :comingToCardEditorFromReview="toCardEditorFromReview"
@@ -272,5 +269,4 @@ export default {
   width: 100vw;
   z-index: 2000;
 }
-
 </style>

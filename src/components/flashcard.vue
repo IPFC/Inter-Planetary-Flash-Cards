@@ -1,12 +1,12 @@
 <template>
-    <div v-bind:class="flipped ? 'flip-container flipped': 'flip-container'">
+    <div :class="flipped ? 'flip-container flipped': 'flip-container'">
     <div class="flipper">
 
-    <div v-bind:style="{ backgroundColor: colorFront}"
+    <div :style="{ backgroundColor: colorFront}"
     class="flashcard front">
         <div class="card-content" v-highlight v-html="front"></div>
     </div>
-    <div v-bind:style="{backgroundColor: colorBack}"
+    <div :style="{backgroundColor: colorBack}"
     class="flashcard back">
         <div class="card-content" v-highlight v-html="back"></div>
     </div>

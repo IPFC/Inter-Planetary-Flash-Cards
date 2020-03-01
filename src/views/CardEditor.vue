@@ -1,33 +1,37 @@
 <template>
-  <b-container fluid class="body scroller">
+  <b-container
+    fluid
+    class="body scroller"
+    @keydown.ctrl.delete.prevent="deleteCard"
+  >
     <alert-failed-sync />
     <alert-offline />
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
     <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
     <b-row id="main-row">
-      <b-col id="main-col" :class="swipeTransition" >
+      <b-col id="main-col" :class="swipeTransition">
         <b-container class="card scroller" :class="frontFocusClass">
-          <div v-touch:swipe="swipeHandler"
+          <div
+            v-touch:swipe="swipeHandler"
             class="preview"
             v-if="!frontFocused"
             @click="focusInputFront()"
             v-highlight
             v-html="card.front_rich_text"
           ></div>
-          <!-- @shift enter is for quill module I'm trying to implement -->
           <quill-editor
             v-if="frontFocused"
             v-model="card.front_rich_text"
             class="quill"
             ref="myQuillEditorFront"
-            @shiftEnter="editorShiftEnter"
             :options="editorOption"
             v-highlight
           ></quill-editor>
         </b-container>
         <br />
         <b-container class="card scroller" :class="backFocusClass">
-          <div v-touch:swipe="swipeHandler"
+          <div
+            v-touch:swipe="swipeHandler"
             class="preview"
             v-if="!backFocused"
             @click="focusInputBack()"
@@ -61,17 +65,16 @@
                 v-if="addingTag"
                 class="d-inline add-icon"
                 @click="addNewTag()"
-                            @keydown.enter="editorShiftEnter(e)"
-
                 color="white"
                 size="1x"
                 icon="plus-circle"
               />
               <b-form-input
                 class="d-inline tag-input"
-                @keyup.enter="addNewTag()"
+                @keyup.enter.prevent="addNewTag()"
                 v-if="addingTag"
-                v -model="newTagTitle"
+                v
+                -model="newTagTitle"
               ></b-form-input>
             </b-button>
           </p>
@@ -127,17 +130,45 @@
 </template>
 
 <script>
-import { BFormInput } from "bootstrap-vue";
+/* eslint-disable vue/valid-v-on */
 
+import { BFormInput } from "bootstrap-vue";
 import { isEqual } from "lodash/core";
 const uuidv4 = require("uuid/v4");
 import { mapState } from "vuex";
+const axios = require("axios");
+const FormData = require("form-data");
+
 import { Quill, quillEditor } from "vue-quill-editor";
 import "quill/dist/quill.snow.css";
 import imageUpload from "quill-plugin-image-upload";
 Quill.register("modules/imageUpload", imageUpload);
-const axios = require("axios");
-const FormData = require("form-data");
+var quillKeyBindings = {
+  custom: {
+    key: "ENTER",
+    shiftKey: true,
+    handler: function() {
+      document
+        .querySelector("#app-main > div.router-view")
+        .__vue__.editorShiftEnter();
+    }
+  },
+  // custom2: {
+  //   key: ",",
+  //   ctrlKey: true,
+  //   handler: function() {
+  //     document.querySelector("#app-main > div.router-view").__vue__.previousCard();
+  //   }
+  // },
+  // custom3: {
+  //   key: ".",
+  //   ctrlKey: true,
+  //   handler: function() {
+  //     console.log('right called')
+  //     document.querySelector("#app-main > div.router-view").__vue__.nextCard();
+  //   }
+  // }  
+};
 
 export default {
   name: "card-editor",
@@ -195,6 +226,9 @@ export default {
             delay: 2000,
             maxStack: 500,
             userOnly: true
+          },
+          keyboard: {
+            bindings: quillKeyBindings
           }
         }
       }
@@ -279,14 +313,12 @@ export default {
         this.previousCard();
       }
     },
-    editorShiftEnter(e){
-      console.log('called shift enter')
-      if (e.keycode === 16 ) {
-        if (this.frontFocused) {
-          this.focusInputBack()
-        } else {
-          this.doneCheck()
-        }
+    editorShiftEnter() {
+      event.preventDefault();
+      if (this.frontFocused) {
+        this.focusInputBack();
+      } else {
+        this.doneCheck();
       }
     },
     PWAUpdate(bool) {
@@ -298,17 +330,18 @@ export default {
       this.frontFocusClass = "focused";
       this.backFocusClass = "unfocused";
       this.$nextTick(() => {
-        this.$refs.myQuillEditorFront.$el.focus();
+        let length = this.$refs.myQuillEditorFront.quill.getLength();
+        this.$refs.myQuillEditorFront.quill.setSelection(length);
       });
     },
     focusInputBack() {
       this.frontFocused = false;
       this.backFocused = true;
-
       this.frontFocusClass = "unfocused";
       this.backFocusClass = "focused";
       this.$nextTick(() => {
-        this.$refs.myQuillEditorBack.$el.focus();
+        let length = this.$refs.myQuillEditorBack.quill.getLength();
+        this.$refs.myQuillEditorBack.quill.setSelection(length);
       });
     },
     setCard() {
@@ -353,22 +386,26 @@ export default {
       }
     },
     nextCard: function() {
-      this.swipeTransition = "throw-left";
-      this.backFocused = true;
-      this.frontFocused = true;
-      window.setTimeout(() => {
-        this.nextCardAnimation();
-        this.switchCard(1);
-      }, 120);
+      if (!this.rightNavDisabled) {
+        this.swipeTransition = "throw-left";
+        this.backFocused = true;
+        this.frontFocused = true;
+        window.setTimeout(() => {
+          this.nextCardAnimation();
+          this.switchCard(1);
+        }, 120);
+      }
     },
     previousCard: function() {
-      this.swipeTransition = "throw-right";
-      this.backFocused = true;
-      this.frontFocused = true;
-      window.setTimeout(() => {
-        this.previousCardAnimation();
-        this.switchCard(-1);
-      }, 120);
+      if (!this.leftNavDisabled) {
+        this.swipeTransition = "throw-right";
+        this.backFocused = true;
+        this.frontFocused = true;
+        window.setTimeout(() => {
+          this.previousCardAnimation();
+          this.switchCard(-1);
+        }, 120);
+      }
     },
     nextCardAnimation() {
       this.swipeTransition = "offscreen-right";
