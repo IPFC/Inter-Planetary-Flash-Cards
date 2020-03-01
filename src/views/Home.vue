@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid ref="homeBody">
+  <b-container fluid id="home-main" ref="homeBody">
     <alert-failed-sync />
     <alert-offline :display="alertOffline" />
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
@@ -381,9 +381,13 @@ export default {
 </script>
 
 <style scoped>
+#home-main{
+  padding: 55px 0;
+}
 #review-body {
   height: 100%;
   max-width: 600vw;
+  padding: 0;
 }
 #top-buttons-row {
   margin: auto;
