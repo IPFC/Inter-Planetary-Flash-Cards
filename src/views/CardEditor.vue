@@ -73,8 +73,7 @@
                 class="d-inline tag-input"
                 @keyup.enter.prevent="addNewTag()"
                 v-if="addingTag"
-                v
-                -model="newTagTitle"
+                v-model="newTagTitle"
               ></b-form-input>
             </b-button>
           </p>
@@ -153,21 +152,6 @@ var quillKeyBindings = {
         .__vue__.editorShiftEnter();
     }
   },
-  // custom2: {
-  //   key: ",",
-  //   ctrlKey: true,
-  //   handler: function() {
-  //     document.querySelector("#app-main > div.router-view").__vue__.previousCard();
-  //   }
-  // },
-  // custom3: {
-  //   key: ".",
-  //   ctrlKey: true,
-  //   handler: function() {
-  //     console.log('right called')
-  //     document.querySelector("#app-main > div.router-view").__vue__.nextCard();
-  //   }
-  // }  
 };
 
 export default {
