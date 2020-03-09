@@ -2,40 +2,37 @@
     "userCollection": {
         "schedule": {
             "edited": 1581758711258,
-            "list": [
-                
+            "list": [{
+                    "card_id": "6185906d-9c89-40d9-b301-0b1a76ffdb19",
+                    "due": 15,
+                    "lastInterval": 86400,
+                    "level": 0
+                },
                 {
-                "card_id": "6185906d-9c89-40d9-b301-0b1a76ffdb19",
-                "due": 15,
-                "lastInterval": 86400,
-                "level": 0
-            }, 
-            {
-                "card_id": "5de6a885-81e2-410c-9a08-4f5fb62fed20",
-                "due": 16,
-                "lastInterval": 86400,
-                "level": 0
-            }, 
-            {
-                "card_id": "e1e6d8e1-d836-4640-86c3-e0b83abc2ed8",
-                "due": 17,
-                "lastInterval": 86400,
-                "level": 0
-            }, 
-            {
-                "card_id": "0da68541-2545-4d4b-b9af-4e5d3149547f",
-                "due": 2,
-                "lastInterval": 86400,
-                "level": 0
-            }, 
-            {
-                "card_id": "c09cb5fc-f42d-4e73-bfb1-e8dd67d28ebc",
-                "due": 1,
-                "lastInterval": 86400,
-                "level": 0
-            }
-        
-        ]
+                    "card_id": "5de6a885-81e2-410c-9a08-4f5fb62fed20",
+                    "due": 16,
+                    "lastInterval": 86400,
+                    "level": 0
+                },
+                {
+                    "card_id": "e1e6d8e1-d836-4640-86c3-e0b83abc2ed8",
+                    "due": 17,
+                    "lastInterval": 86400,
+                    "level": 0
+                },
+                {
+                    "card_id": "0da68541-2545-4d4b-b9af-4e5d3149547f",
+                    "due": 2,
+                    "lastInterval": 86400,
+                    "level": 0
+                },
+                {
+                    "card_id": "c09cb5fc-f42d-4e73-bfb1-e8dd67d28ebc",
+                    "due": 1,
+                    "lastInterval": 86400,
+                    "level": 0
+                }
+            ]
         },
         "deck_ids": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"],
         "deleted_deck_ids": ["558d57aa-434b-4e9e-a5aa-d52b4fa33f72", "e9d6567b-0792-4035-ad8f-42d7cc477d5d", "3bd6ee6c-0796-4270-b142-9565684bf051", "f434e4d1-8c59-49b4-b165-061ad9e4b38c", "d6dfebea-1fc1-45e3-ac88-21d2ffbe37f1", "84cec7f0-b3c2-47bc-ad45-1147755d5c65", "30f12687-5471-4f92-b275-602f8065a4fa", "1f5834e6-dce1-4166-9873-ccd22762a7a9", "c36553db-11ef-4c85-8a9b-f01c1348f67f", "e6d0ef97-5ce2-42f2-84f9-0afa655ecbe6", "1e30d7e9-7c3f-4061-9401-4e97d26e978e", "7889aff458a14cdf9c9eee807c05cca6", "f67c3767-6c4e-4919-8833-3f7b770ee32a", "a6015966-77f8-421b-9db5-f9a90b185ea3", "96f0ef25-2132-464c-aded-bb8823f134de", "0fa9b35d-8d67-4a91-b0a1-2a4608ab947e", "1a344e40-6724-4142-a2d4-e75399dd5a28", "d3f18a96-49a9-4038-9804-92746899fc16", "20ead6d8-cee5-4b93-aa44-6fb71b3507e1", "877ad2b8-3718-4878-99fc-d8c8c31cb523", "2e14efcc-0089-4a54-9efe-48f030d04355", "002637ce-a867-4ae1-b63d-dee3bee489c0"],

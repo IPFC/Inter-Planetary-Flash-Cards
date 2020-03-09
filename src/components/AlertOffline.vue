@@ -15,23 +15,43 @@
 
 <script>
 // import { debounce } from 'lodash/core';
-const debounce = require("lodash/debounce");
+import { BAlert } from 'bootstrap-vue';
+import { mapActions, mapState } from 'vuex';
+const debounce = require('lodash/debounce');
 // import _ from 'lodash'
-import { BAlert } from "bootstrap-vue";
-import { mapActions, mapState } from "vuex";
 export default {
   components: {
-    BAlert
+    BAlert,
   },
-  props: ["display"],
+  props: { display: { type: Boolean } },
   data: () => ({
     online: navigator.onLine,
     dismissSecs: 5,
     dismissCountDown: 0,
     offlineWarningTxt: `Offline mode: 
         Please cloud sync before using app on another device to avoid data conflicts.
-        Media files might not load.`
+        Media files might not load.`,
   }),
+  computed: {
+    ...mapActions({
+      cloudSync: 'cloudSync',
+    }),
+    ...mapState(['initialSync']),
+  },
+  watch: {
+    display: function() {
+      this.showAlert();
+    },
+  },
+  mounted() {
+    window.addEventListener('online', this.connectivityChange);
+    window.addEventListener('offline', this.connectivityChange);
+    this.connectivityChange();
+  },
+  beforeDestroy() {
+    window.removeEventListener('online', this.connectivityChange);
+    window.removeEventListener('offline', this.connectivityChange);
+  },
   methods: {
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown;
@@ -41,8 +61,8 @@ export default {
     },
     connectivityChange() {
       this.online = navigator.onLine;
-      if (this.online != this.$store.state.online) {
-        this.$store.commit("updateOnline", this.online);
+      if (this.online !== this.$store.state.online) {
+        this.$store.commit('updateOnline', this.online);
         if (!this.online) {
           this.showAlert();
         } else if (this.initialSync > 1) {
@@ -53,29 +73,9 @@ export default {
       }
     },
     debouncedSync: debounce(function() {
-      this.cloudSync;
-    }, 10000)
+      this.cloudSync();
+    }, 10000),
   },
-  computed: {
-    ...mapActions({
-      cloudSync: "cloudSync"
-    }),
-    ...mapState(["initialSync"])
-  },
-  watch: {
-    display: function() {
-      this.showAlert();
-    }
-  },
-  mounted() {
-    window.addEventListener("online", this.connectivityChange);
-    window.addEventListener("offline", this.connectivityChange);
-    this.connectivityChange();
-  },
-  beforeDestroy() {
-    window.removeEventListener("online", this.connectivityChange);
-    window.removeEventListener("offline", this.connectivityChange);
-  }
 };
 </script>
 

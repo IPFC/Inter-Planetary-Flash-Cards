@@ -1,95 +1,93 @@
 <template>
-  <b-container
-    fluid
-    class="body scroller"
-    @keydown.ctrl.delete.prevent="deleteCard"
-  >
+  <b-container fluid class="body scroller" @keydown.ctrl.delete.prevent="deleteCard">
     <alert-failed-sync />
     <alert-offline />
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
-    <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
+    <alert-browser-rec :alert-browser-rec="alertBrowserRec" />
     <b-row id="main-row">
       <b-col id="main-col" :class="swipeTransition">
         <b-container class="card scroller" :class="frontFocusClass">
           <div
-            v-touch:swipe="swipeHandler"
-            class="preview"
             v-if="!frontFocused"
-            @click="focusInputFront()"
+            v-touch:swipe="swipeHandler"
             v-highlight
-            v-html="card.front_rich_text"
+            v-dompurify-html="card.front_rich_text"
+            class="preview"
+            @click="focusInputFront()"
           ></div>
           <quill-editor
             v-if="frontFocused"
-            v-model="card.front_rich_text"
-            class="quill"
             ref="myQuillEditorFront"
-            :options="editorOption"
+            v-model="card.front_rich_text"
             v-highlight
+            class="quill"
+            :options="editorOption"
           ></quill-editor>
         </b-container>
         <br />
         <b-container class="card scroller" :class="backFocusClass">
           <div
-            v-touch:swipe="swipeHandler"
-            class="preview"
             v-if="!backFocused"
-            @click="focusInputBack()"
+            v-touch:swipe="swipeHandler"
             v-highlight
-            v-html="card.back_rich_text"
+            v-dompurify-html="card.back_rich_text"
+            class="preview"
+            @click="focusInputBack()"
           ></div>
           <quill-editor
             v-if="backFocused"
-            v-model="card.back_rich_text"
-            class="quill"
             ref="myQuillEditorBack"
-            :options="editorOption"
+            v-model="card.back_rich_text"
             v-highlight
+            class="quill"
+            :options="editorOption"
           ></quill-editor>
         </b-container>
         <p id="counter" v-touch:swipe="swipeHandler">{{ cardNumberOutOfDeck }}</p>
         <br v-touch:swipe="swipeHandler" />
-        <b-container class="tag-chooser" id="tags-bottom" v-touch:swipe="swipeHandler">
+        <b-container id="tags-bottom" v-touch:swipe="swipeHandler" class="tag-chooser">
           <p class="d-inline tags-label">
             Tags:
             <b-button class="add-btn">
               <font-awesome-icon
                 v-if="!addingTag"
                 class="d-inline add-icon"
-                @click="toggleAddingTag()"
                 color="white"
                 size="1x"
                 icon="plus-circle"
+                @click="toggleAddingTag()"
               />
               <font-awesome-icon
                 v-if="addingTag"
                 class="d-inline add-icon"
-                @click="addNewTag()"
                 color="white"
                 size="1x"
                 icon="plus-circle"
+                @click="addNewTag()"
               />
               <b-form-input
-                class="d-inline tag-input"
-                @keyup.enter.prevent="addNewTag()"
                 v-if="addingTag"
                 v-model="newTagTitle"
+                class="d-inline tag-input"
+                @keyup.enter.prevent="addNewTag()"
               ></b-form-input>
             </b-button>
           </p>
           <b-button
-            @click="removeTagFromCard(tag)"
-            class="tag-style-button green-btn d-inline"
             v-for="tag in card.card_tags"
             :key="tag"
-          >{{ tag }}</b-button>
+            class="tag-style-button green-btn d-inline"
+            @click="removeTagFromCard(tag)"
+            >{{ tag }}</b-button
+          >
           <br />
           <b-button
-            @click="addTagToCard(tag)"
-            class="tag-style-button white-btn d-inline"
             v-for="tag in unincludedTags"
             :key="tag"
-          >{{ tag }}</b-button>
+            class="tag-style-button white-btn d-inline"
+            @click="addTagToCard(tag)"
+            >{{ tag }}</b-button
+          >
         </b-container>
       </b-col>
     </b-row>
@@ -131,67 +129,71 @@
 <script>
 /* eslint-disable vue/valid-v-on */
 
-import { BFormInput } from "bootstrap-vue";
-import { isEqual } from "lodash/core";
-const uuidv4 = require("uuid/v4");
-import { mapState } from "vuex";
-const axios = require("axios");
-const FormData = require("form-data");
+import { BFormInput } from 'bootstrap-vue';
+import { isEqual } from 'lodash/core';
+import { mapState } from 'vuex';
 
-import { Quill, quillEditor } from "vue-quill-editor";
-import "quill/dist/quill.snow.css";
-import imageUpload from "quill-plugin-image-upload";
-Quill.register("modules/imageUpload", imageUpload);
+import { Quill, quillEditor } from 'vue-quill-editor';
+import 'quill/dist/quill.snow.css';
+import imageUpload from 'quill-plugin-image-upload';
+const uuidv4 = require('uuid/v4');
+const axios = require('axios');
+const FormData = require('form-data');
+Quill.register('modules/imageUpload', imageUpload);
 var quillKeyBindings = {
   custom: {
-    key: "ENTER",
+    key: 'ENTER',
     shiftKey: true,
     handler: function() {
-      document
-        .querySelector("#app-main > div.router-view")
-        .__vue__.editorShiftEnter();
-    }
+      document.querySelector('#app-main > div.router-view').__vue__.editorShiftEnter();
+    },
   },
 };
 
 export default {
-  name: "card-editor",
+  name: 'CardEditor',
   components: { BFormInput, quillEditor },
+  props: {
+    newCardClicked: { type: Number, default: 0 },
+    comingToCardEditorFromReview: { type: Boolean },
+    newCardCommit: { type: Boolean },
+    alertBrowserRec: { type: Boolean },
+  },
   data() {
     return {
-      card: "",
+      card: '',
       frontFocused: true,
       backFocused: false,
-      frontFocusClass: "",
-      backFocusClass: "",
-      swipeTransition: "enter",
+      frontFocusClass: '',
+      backFocusClass: '',
+      swipeTransition: 'enter',
       initialDeckState: null,
       addingTag: false,
-      newTagTitle: "",
+      newTagTitle: '',
       editorOption: {
-        theme: "snow",
+        theme: 'snow',
         modules: {
           imageUpload: {
             upload: file => {
-              const gateway = "https://gateway.pinata.cloud/ipfs/";
+              const gateway = 'https://gateway.pinata.cloud/ipfs/';
               const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-              let data = new FormData();
-              data.append("file", file);
+              const data = new FormData();
+              data.append('file', file);
               const metadata = JSON.stringify({
-                name: "testname",
+                name: 'testname',
                 keyvalues: {
-                  exampleKey: "exampleValue"
-                }
+                  exampleKey: 'exampleValue',
+                },
               });
-              data.append("pinataMetadata", metadata);
+              data.append('pinataMetadata', metadata);
               return axios
                 .post(url, data, {
-                  maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
+                  maxContentLength: 'Infinity', // this is needed to prevent axios from erroring out with large files
                   headers: {
-                    "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
                     pinata_api_key: this.pinataKeys.pinata_api,
-                    pinata_secret_api_key: this.pinataKeys.pinata_key
-                  }
+                    pinata_secret_api_key: this.pinataKeys.pinata_key,
+                  },
                 })
                 .then(function(response) {
                   return gateway + response.data.IpfsHash;
@@ -199,48 +201,42 @@ export default {
                 .catch(function() {
                   // console.log(error)
                 });
-            }
+            },
           },
-          toolbar: this.$store.state.userCollection.webapp_settings
-            .textEditorSettings.editorOptions.toolbar,
+          toolbar: this.$store.state.userCollection.webapp_settings.textEditorSettings.editorOptions
+            .toolbar,
           syntax: {
-            highlight: text => window.hljs.highlightAuto(text).value
+            highlight: text => window.hljs.highlightAuto(text).value,
           },
           history: {
             delay: 2000,
             maxStack: 500,
-            userOnly: true
+            userOnly: true,
           },
           keyboard: {
-            bindings: quillKeyBindings
-          }
-        }
-      }
+            bindings: quillKeyBindings,
+          },
+        },
+      },
     };
   },
-  props: [
-    "newCardClicked",
-    "comingToCardEditorFromReview",
-    "newCardCommit",
-    "alertBrowserRec"
-  ],
 
   computed: {
     ...mapState({
-      userCollection: "userCollection",
-      cardToEditIndex: "cardToEditIndex",
-      decks: "decks",
-      jwt: "jwt",
-      pinataKeys: "pinataKeys"
+      userCollection: 'userCollection',
+      cardToEditIndex: 'cardToEditIndex',
+      decks: 'decks',
+      jwt: 'jwt',
+      pinataKeys: 'pinataKeys',
     }),
     currentDeck() {
       return this.$store.getters.currentDeck;
     },
     unincludedTags() {
       // this now rides on review deck in getters
-      let allTagsList = this.$store.getters.reviewDeck.allTags;
-      let unincludedTagsList = [];
-      for (let tag of allTagsList) {
+      const allTagsList = this.$store.getters.reviewDeck.allTags;
+      const unincludedTagsList = [];
+      for (const tag of allTagsList) {
         if (!this.card.card_tags.includes(tag)) {
           unincludedTagsList.push(tag);
         }
@@ -262,10 +258,10 @@ export default {
       }
     },
     unChanged() {
-      let card = this.card;
+      const card = this.card;
       let result = true;
       if (card !== null && this.initialDeckState !== null) {
-        for (let initialDeckCard of this.initialDeckState.cards) {
+        for (const initialDeckCard of this.initialDeckState.cards) {
           if (card.card_id === initialDeckCard.card_id) {
             if (!isEqual(initialDeckCard, card)) {
               result = false;
@@ -280,20 +276,36 @@ export default {
       return result;
     },
     cardNumberOutOfDeck() {
-      let totalCards = this.currentDeck.cards.length;
-      let currentCardNumber = this.cardToEditIndex + 1;
+      const totalCards = this.currentDeck.cards.length;
+      const currentCardNumber = this.cardToEditIndex + 1;
       let title = this.currentDeck.title;
       if (this.currentDeck.title === undefined) {
-        title = "Review Deck";
+        title = 'Review Deck';
       }
       return `Card ${currentCardNumber}/${totalCards} in: ${title}`;
-    }
+    },
+  },
+  watch: {
+    newCardClicked: function() {
+      this.newCardFirst();
+    },
+    newCardCommit: function() {
+      this.newCardThen();
+    },
+  },
+  created() {
+    this.setCard();
+    this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck));
+  },
+  mounted() {
+    this.focusInputFront();
+    this.$emit('homeLoad');
   },
   methods: {
     swipeHandler(direction) {
-      if (direction === "left" && !this.rightNavDisabled) {
+      if (direction === 'left' && !this.rightNavDisabled) {
         this.nextCard();
-      } else if (direction === "right" && !this.leftNavDisabled) {
+      } else if (direction === 'right' && !this.leftNavDisabled) {
         this.previousCard();
       }
     },
@@ -306,64 +318,62 @@ export default {
       }
     },
     PWAUpdate(bool) {
-      this.$emit("updatePWA", bool);
+      this.$emit('updatePWA', bool);
     },
     focusInputFront() {
       this.frontFocused = true;
       this.backFocused = false;
-      this.frontFocusClass = "focused";
-      this.backFocusClass = "unfocused";
+      this.frontFocusClass = 'focused';
+      this.backFocusClass = 'unfocused';
       this.$nextTick(() => {
-        let length = this.$refs.myQuillEditorFront.quill.getLength();
+        const length = this.$refs.myQuillEditorFront.quill.getLength();
         this.$refs.myQuillEditorFront.quill.setSelection(length);
       });
     },
     focusInputBack() {
       this.frontFocused = false;
       this.backFocused = true;
-      this.frontFocusClass = "unfocused";
-      this.backFocusClass = "focused";
+      this.frontFocusClass = 'unfocused';
+      this.backFocusClass = 'focused';
       this.$nextTick(() => {
-        let length = this.$refs.myQuillEditorBack.quill.getLength();
+        const length = this.$refs.myQuillEditorBack.quill.getLength();
         this.$refs.myQuillEditorBack.quill.setSelection(length);
       });
     },
     setCard() {
-      this.card = JSON.parse(
-        JSON.stringify(this.currentDeck.cards[this.cardToEditIndex])
-      );
+      this.card = JSON.parse(JSON.stringify(this.currentDeck.cards[this.cardToEditIndex]));
     },
     deleteCard: function() {
-      let card = JSON.parse(JSON.stringify(this.card));
-      let deck = JSON.parse(JSON.stringify(this.currentDeck));
+      const card = JSON.parse(JSON.stringify(this.card));
+      const deck = JSON.parse(JSON.stringify(this.currentDeck));
       let wasLastCard;
       if (this.rightNavDisabled) {
         wasLastCard = true;
       }
-      let deck_id = null;
-      if (deck.title === "Review Deck") {
-        deck_id = this.findCardsDeck(card.card_id);
+      let deckId = null;
+      if (deck.title === 'Review Deck') {
+        deckId = this.findCardsDeck(card.card_id);
       } else {
-        deck_id = deck.deck_id;
+        deckId = deck.deck_id;
       }
-      let deleteData = { deck_id: deck_id, card_id: card.card_id };
+      const deleteData = { deck_id: deckId, card_id: card.card_id };
       if (deck.cards.length === 1 || this.comingToCardEditorFromReview) {
         this.$router.go(-1);
-        this.$store.commit("deleteCard", deleteData);
-        this.$store.commit("deleteCardFromSchedule", card.card_id);
+        this.$store.commit('deleteCard', deleteData);
+        this.$store.commit('deleteCardFromSchedule', card.card_id);
       } else {
         if (wasLastCard) {
-          this.$store.commit("updateCardToEditIndex", this.cardToEditIndex - 1);
+          this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1);
         }
-        this.$store.commit("deleteCard", deleteData);
-        this.$store.commit("deleteCardFromSchedule", card.card_id);
+        this.$store.commit('deleteCard', deleteData);
+        this.$store.commit('deleteCardFromSchedule', card.card_id);
         this.setCard();
       }
     },
-    findCardsDeck: function(card_id) {
-      for (let deck of this.decks) {
-        for (let card of deck.cards) {
-          if (card.card_id === card_id) {
+    findCardsDeck: function(cardId) {
+      for (const deck of this.decks) {
+        for (const card of deck.cards) {
+          if (card.card_id === cardId) {
             return deck.deck_id;
           }
         }
@@ -371,7 +381,7 @@ export default {
     },
     nextCard: function() {
       if (!this.rightNavDisabled) {
-        this.swipeTransition = "throw-left";
+        this.swipeTransition = 'throw-left';
         this.backFocused = true;
         this.frontFocused = true;
         window.setTimeout(() => {
@@ -382,7 +392,7 @@ export default {
     },
     previousCard: function() {
       if (!this.leftNavDisabled) {
-        this.swipeTransition = "throw-right";
+        this.swipeTransition = 'throw-right';
         this.backFocused = true;
         this.frontFocused = true;
         window.setTimeout(() => {
@@ -392,44 +402,35 @@ export default {
       }
     },
     nextCardAnimation() {
-      this.swipeTransition = "offscreen-right";
+      this.swipeTransition = 'offscreen-right';
       window.setTimeout(() => {
-        this.returnCardAnimation();
+        this.swipeTransition = 'enter';
       }, 1);
     },
     previousCardAnimation() {
-      this.swipeTransition = "offscreen-left";
+      this.swipeTransition = 'offscreen-left';
       window.setTimeout(() => {
-        this.returnCardAnimation();
+        this.swipeTransition = 'enter';
       }, 1);
-    },
-    returnCardAnimation() {
-      this.swipeTransition = "enter";
     },
     switchCard(index) {
       const unChanged = JSON.parse(JSON.stringify(this.unChanged));
       if (!unChanged) {
-        let quill = JSON.parse(
+        const quill = JSON.parse(
           JSON.stringify({
             quillFrontDelta: this.$refs.myQuillEditorFront.quill.getContents(),
             frontGottenText: this.$refs.myQuillEditorFront.quill.getText(),
             quillBackDelta: this.$refs.myQuillEditorBack.quill.getContents(),
-            backGottenText: this.$refs.myQuillEditorBack.quill.getText()
+            backGottenText: this.$refs.myQuillEditorBack.quill.getText(),
           })
         );
         // don't know why this fails if you call submit step one. says Quill undefined,
         this.submitStep2(this.card, quill).then(() => {
-          this.$store.commit(
-            "updateCardToEditIndex",
-            this.cardToEditIndex + index
-          );
+          this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + index);
         });
         this.focusInputFront();
       } else {
-        this.$store.commit(
-          "updateCardToEditIndex",
-          this.cardToEditIndex + index
-        );
+        this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + index);
         this.setCard();
         this.focusInputFront();
       }
@@ -443,15 +444,15 @@ export default {
     getQuillData: function(cardInput, quill) {
       // copy image and plaintext
 
-      let card = JSON.parse(JSON.stringify(cardInput));
-      for (let line of quill.quillFrontDelta.ops) {
+      const card = JSON.parse(JSON.stringify(cardInput));
+      for (const line of quill.quillFrontDelta.ops) {
         if (line.insert.image) {
           card.front_image = line.insert.image;
           break;
         }
       }
       card.front_text = quill.frontGottenText;
-      for (let line of quill.quillBackDelta.ops) {
+      for (const line of quill.quillBackDelta.ops) {
         if (line.insert.image) {
           card.back_image = line.insert.image;
           break;
@@ -465,31 +466,31 @@ export default {
       this.backFocused = true;
       this.frontFocused = true;
       this.$nextTick(() => {
-        let quill = JSON.parse(
+        const quill = JSON.parse(
           JSON.stringify({
             quillFrontDelta: this.$refs.myQuillEditorFront.quill.getContents(),
             frontGottenText: this.$refs.myQuillEditorFront.quill.getText(),
             quillBackDelta: this.$refs.myQuillEditorBack.quill.getContents(),
-            backGottenText: this.$refs.myQuillEditorBack.quill.getText()
+            backGottenText: this.$refs.myQuillEditorBack.quill.getText(),
           })
         );
         this.submitStep2(card, quill);
       });
     },
     async submitStep2(cardInput, quill) {
-      let card = await this.getQuillData(cardInput, quill);
+      const card = await this.getQuillData(cardInput, quill);
       // remove empty card
-      if (card.front_text === "" && card.back_text === "") {
+      if (card.front_text === '' && card.back_text === '') {
         this.deleteCard();
       } else {
         let deckId = null;
-        if (this.currentDeck.title === "Review Deck") {
+        if (this.currentDeck.title === 'Review Deck') {
           deckId = this.findCardsDeck(card.card_id);
         } else {
           deckId = this.currentDeck.deck_id;
         }
-        let updateData = { deck_id: deckId, card: card };
-        this.$store.dispatch("updateCard", updateData);
+        const updateData = { deck_id: deckId, card: card };
+        this.$store.dispatch('updateCard', updateData);
       }
       this.focusInputFront();
       this.setCard();
@@ -497,19 +498,19 @@ export default {
     },
     // use later for dropdown menu, copy to other deck
     addCardToDeck: function(deckId) {
-      let card = JSON.parse(JSON.stringify(this.card));
-      let addData = { deck_id: deckId, card: card };
-      this.$store.commit("addCard", addData);
+      const card = JSON.parse(JSON.stringify(this.card));
+      const addData = { deck_id: deckId, card: card };
+      this.$store.commit('addCard', addData);
     },
     removeTagFromCard: function(tag) {
-      let card = JSON.parse(JSON.stringify(this.card));
+      const card = JSON.parse(JSON.stringify(this.card));
       card.card_tags.splice(card.card_tags.indexOf(tag), 1);
       this.submit(card);
     },
     addTagToCard: function(tag) {
-      let card = JSON.parse(JSON.stringify(this.card));
-      if (tag === "Daily Review") {
-        this.$store.commit("addCardToSchedule", card.card_id);
+      const card = JSON.parse(JSON.stringify(this.card));
+      if (tag === 'Daily Review') {
+        this.$store.commit('addCardToSchedule', card.card_id);
       }
       card.card_tags.unshift(tag);
       this.submit(card);
@@ -523,48 +524,48 @@ export default {
     duplicateCArd: function() {},
     // move this to deck selection page. keep here for option 'creat new deck', when selecting move/add to another deck
     addNewDeck: function() {
-      if (this.newDeckTitle === "" || this.newDeckTitle === " ") {
+      if (this.newDeckTitle === '' || this.newDeckTitle === ' ') {
         this.toggleAddingDeck();
       } else {
-        let emptyDeck = {
+        const emptyDeck = {
           cards: [this.card],
           created_by: this.userCollection.user_id,
           deck_id: uuidv4(),
           deck_tags: [],
           description: null,
-          editable_by: "only_me",
+          editable_by: 'only_me',
           edited: Math.round(new Date().getTime()),
-          lang_back: "en",
-          lang_front: "en",
+          lang_back: 'en',
+          lang_front: 'en',
           term_count: 1,
           title: this.newDeckTitle,
-          visibility: "public",
-          icon_color: this.generateRandomHslaColor()
+          visibility: 'public',
+          icon_color: this.generateRandomHslaColor(),
         };
-        this.$store.commit("addDeck", emptyDeck);
-        this.newDeckTitle = "";
+        this.$store.commit('addDeck', emptyDeck);
+        this.newDeckTitle = '';
       }
     },
     generateRandomHslaColor: function() {
       // round to an interval of 20, 0-360
-      let hue = Math.round((Math.random() * 360) / 20) * 20;
-      let color = `hsla(${hue}, 100%, 50%, 1)`;
+      const hue = Math.round((Math.random() * 360) / 20) * 20;
+      const color = `hsla(${hue}, 100%, 50%, 1)`;
       return color;
     },
     addNewTag: function() {
-      let card = JSON.parse(JSON.stringify(this.card));
-      let allTags = this.unincludedTags.concat(card.card_tags);
+      const card = JSON.parse(JSON.stringify(this.card));
+      const allTags = this.unincludedTags.concat(card.card_tags);
       if (
         allTags.includes(this.newTagTitle) ||
-        this.newTagTitle === "" ||
-        this.newTagTitle === " "
+        this.newTagTitle === '' ||
+        this.newTagTitle === ' '
       ) {
-        this.newTagTitle = "";
+        this.newTagTitle = '';
         this.toggleAddingTag();
       } else {
         card.card_tags.unshift(this.newTagTitle);
         this.submit(card);
-        this.newTagTitle = "";
+        this.newTagTitle = '';
         this.toggleAddingTag();
       }
     },
@@ -577,24 +578,8 @@ export default {
       this.setCard();
       this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck));
       this.focusInputFront();
-    }
-  },
-  created() {
-    this.setCard();
-    this.initialDeckState = JSON.parse(JSON.stringify(this.currentDeck));
-  },
-  watch: {
-    newCardClicked: function() {
-      this.newCardFirst();
     },
-    newCardCommit: function() {
-      this.newCardThen();
-    }
   },
-  mounted() {
-    this.focusInputFront();
-    this.$emit("homeLoad");
-  }
 };
 </script>
 

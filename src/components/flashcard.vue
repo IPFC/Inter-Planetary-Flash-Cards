@@ -1,116 +1,103 @@
 <template>
-    <div :class="flipped ? 'flip-container flipped': 'flip-container'">
+  <div :class="flipped ? 'flip-container flipped' : 'flip-container'">
     <div class="flipper">
-
-    <div :style="{ backgroundColor: colorFront}"
-    class="flashcard front">
-        <div class="card-content" v-highlight v-html="front"></div>
+      <div :style="{ backgroundColor: colorFront }" class="flashcard front">
+        <div v-highlight v-dompurify-html="front" class="card-content" />
+      </div>
+      <div :style="{ backgroundColor: colorBack }" class="flashcard back">
+        <div v-highlight v-dompurify-html="back" class="card-content" />
+      </div>
     </div>
-    <div :style="{backgroundColor: colorBack}"
-    class="flashcard back">
-        <div class="card-content" v-highlight v-html="back"></div>
-    </div>
-    </div>
-    </div>
+  </div>
 </template>
 <script>
 export default {
-    data () {
-        return {
-        }
+  props: {
+    front: {
+      type: String,
+      default: '',
     },
-    props: {
-        imgFront: {
-            type: String,
-            default: ''
-        },
-        imgBack: {
-            type: String,
-            default: ''
-        },
-        front: {
-            type: String,
-            default: ''
-        },
-        back: {
-            type: String,
-            default: ''
-        },
-        // Need to add a quill.js module for this
-        colorFront: {
-            type: String,
-            default: 'white'
-        },
-        colorBack: {
-            type: String,
-            default: 'white'
-        },
-        flipped: {
-            type: Boolean,
-            default: false,
-        },
-    }
-}
+    back: {
+      type: String,
+      default: '',
+    },
+    // Need to add a quill.js module for this
+    colorFront: {
+      type: String,
+      default: 'white',
+    },
+    colorBack: {
+      type: String,
+      default: 'white',
+    },
+    flipped: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {};
+  },
+};
 </script>
-
 
 <style scoped>
 .flashcard {
-    align-content: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 10px;
-    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
-    height: 100%;
-    margin: auto;
-    width: 100%;
-    padding: 0px 7px 0px 15px;
+  align-content: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
+  height: 100%;
+  margin: auto;
+  width: 100%;
+  padding: 0px 7px 0px 15px;
 }
 .flashcard:hover {
-    box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
 .card-content {
-    padding: 10px 8px 0px 0px;
-    margin: auto;
-    height: 100%;
-    overflow-y: auto;        
+  padding: 10px 8px 0px 0px;
+  margin: auto;
+  height: 100%;
+  overflow-y: auto;
 }
 .card-content::-webkit-scrollbar {
-    width: .5em;
+  width: 0.5em;
 }
 .card-content::-webkit-scrollbar-thumb {
-    background-color: rgba(162, 162, 162, 0.5);
-    border-radius: 0px;
+  background-color: rgba(162, 162, 162, 0.5);
+  border-radius: 0px;
 }
 /* use >>> to select nested elements inside a v-html */
 .card-content >>> img {
-    width: 100%;
-    margin: auto;
-    object-fit: fill;
+  width: 100%;
+  margin: auto;
+  object-fit: fill;
 }
 .card-content >>> .ql-align-center {
-    text-align: center;
+  text-align: center;
 }
 .card-content >>> .ql-align-right {
-    text-align: right;
+  text-align: right;
 }
 .card-content >>> .ql-align-left {
-    text-align: left;
+  text-align: left;
 }
 .card-content >>> .ql-align-justify {
-    text-align: justify;
+  text-align: justify;
 }
 .card-content >>> p {
-    font-size: 1.5em;
+  font-size: 1.5em;
 }
-.card-content >>> p .ql-size-small{
-    font-size: 0.75em;
+.card-content >>> p .ql-size-small {
+  font-size: 0.75em;
 }
-.card-content >>> p .ql-size-large{
-    font-size: 2em;
+.card-content >>> p .ql-size-large {
+  font-size: 2em;
 }
-.card-content >>> p .ql-size-huge{
-    font-size: 3.5em;
+.card-content >>> p .ql-size-huge {
+  font-size: 3.5em;
 }
 .flip-container {
   -webkit-perspective: 1000;

@@ -3,7 +3,7 @@
     <alert-failed-sync />
     <alert-offline />
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
-    <alert-browser-rec :alertBrowserRec="alertBrowserRec" />
+    <alert-browser-rec :alert-browser-rec="alertBrowserRec" />
     <b-row id="main-row">
       <b-col id="main-col">
         <b-row id="title-row">
@@ -15,11 +15,7 @@
             </div>
           </b-col>
           <b-col id="text-col">
-            <p
-              v-if="!editingDeckTitle"
-              class="text title"
-              @click="toggleEditDeckTitle()"
-            >
+            <p v-if="!editingDeckTitle" class="text title" @click="toggleEditDeckTitle()">
               {{ deck.title }}
             </p>
             <b-form-input
@@ -39,15 +35,10 @@
               <b-container style="padding: 0;">
                 <b-row>
                   <b-col v-if="card.front_image" cols="5">
-                    <b-img-lazy
-                      v-if="card.front_image"
-                      :src="card.front_image"
-                    ></b-img-lazy>
+                    <b-img-lazy v-if="card.front_image" :src="card.front_image"></b-img-lazy>
                   </b-col>
                   <b-col>
-                    <b-card-text class="font-weight-bold">{{
-                      card.front_text
-                    }}</b-card-text>
+                    <b-card-text class="font-weight-bold">{{ card.front_text }}</b-card-text>
                   </b-col>
                   <b-col cols="1">
                     <font-awesome-icon
@@ -79,21 +70,25 @@
 </template>
 
 <script>
-import { BCard, BImgLazy, BFormInput, BCardText } from "bootstrap-vue";
+import { BCard, BImgLazy, BFormInput, BCardText } from 'bootstrap-vue';
 export default {
-  name: "deck-editor",
+  name: 'DeckEditor',
   components: { BCard, BImgLazy, BFormInput, BCardText },
+  props: { alertBrowserRec: { type: Boolean } },
   data() {
     return {
       editingDeckTitle: false,
-      newDeckTitle: ""
+      newDeckTitle: '',
     };
   },
-  props: ["alertBrowserRec"],
+
   computed: {
     deck() {
       return this.$store.getters.currentDeck;
-    }
+    },
+  },
+  mounted() {
+    this.$emit('homeLoad');
   },
   methods: {
     toggleEditDeckTitle() {
@@ -103,29 +98,26 @@ export default {
     commitDeckTitle() {
       // check to make sure it was changed
       this.deck.title = this.newDeckTitle;
-      this.$store.commit("updateDeck", this.deck);
+      this.$store.commit('updateDeck', this.deck);
       this.toggleEditDeckTitle();
     },
     editCard(card) {
-      this.$store.commit(
-        "updateCardToEditIndex",
-        this.deck.cards.indexOf(card)
-      );
-      this.$router.push("/card-editor");
+      this.$store.commit('updateCardToEditIndex', this.deck.cards.indexOf(card));
+      this.$router.push('/card-editor');
     },
     cardOrCards(deckLength) {
       if (deckLength === 1) {
-        return "";
+        return '';
       } else {
-        return "s";
+        return 's';
       }
     },
     getTitleAbrev(title) {
       // There shouldn't be any empty title decks, but we can leave this validation here just in case
-      if (title === "") {
-        return "";
+      if (title === '') {
+        return '';
       } else {
-        let split = title.split(" ")[0];
+        const split = title.split(' ')[0];
         let abrev;
         if (split.length === 1) {
           abrev = split[0].charAt(0) + split[0].charAt(1);
@@ -136,12 +128,9 @@ export default {
       }
     },
     PWAUpdate(bool) {
-      this.$emit("updatePWA", bool);
-    }
+      this.$emit('updatePWA', bool);
+    },
   },
-  mounted() {
-    this.$emit("homeLoad");
-  }
 };
 </script>
 

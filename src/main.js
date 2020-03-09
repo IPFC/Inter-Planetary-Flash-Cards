@@ -1,56 +1,85 @@
-import Vue from 'vue'
-import router from './router'
-import store from './store'
+import Vue from 'vue';
+import router from './router';
+import store from './store';
 
-// import 'bootstrap/dist/css/bootstrap.css'
-// import 'bootstrap-vue/dist/bootstrap-vue.css'
-import "./assets/_custom.scss";
+import './assets/_custom.scss';
 
-import Vue2TouchEvents from 'vue2-touch-events'
-Vue.use(Vue2TouchEvents)
+import VueDOMPurifyHTML from 'vue-dompurify-html';
 
-import { LayoutPlugin } from 'bootstrap-vue'
-Vue.use(LayoutPlugin)
-import { BButton } from 'bootstrap-vue'
-Vue.component('b-button', BButton)
+import Vue2TouchEvents from 'vue2-touch-events';
 
-// import BootstrapVue from 'bootstrap-vue'
-// Vue.use(BootstrapVue)
+import { LayoutPlugin, BButton } from 'bootstrap-vue';
+import 'highlight.js/styles/monokai-sublime.css';
+import Highlight from './utils/highlight.js';
 
-import 'highlight.js/styles/monokai-sublime.css'
-import Highlight from './utils/highlight.js'
-Vue.use(Highlight)
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+  faMinusCircle,
+  faToggleOn,
+  faToggleOff,
+  faEllipsisH,
+  faPlusCircle,
+  faStepForward,
+  faStepBackward,
+  faEdit,
+  faUndo,
+  faTrashAlt,
+  faSearch,
+  faCloud,
+  faCheck,
+  faTimes,
+  faSync,
+  faSpinner,
+  faExclamation,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMinusCircle, faToggleOn, faToggleOff, faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
-  faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, 
-  faSpinner, faExclamation} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon, FontAwesomeLayers} from '@fortawesome/vue-fontawesome'
+import AlertUpdatePWA from './components/AlertUpdatePWA.vue';
 
-library.add( faMinusCircle, faToggleOn, faToggleOff, faEllipsisH, faPlusCircle, faStepForward, faStepBackward, 
-  faEdit, faUndo, faTrashAlt, faSearch, faCloud, faCheck, faTimes, faSync, 
-  faSpinner, faExclamation)
+import AlertOffline from './components/AlertOffline.vue';
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
-Vue.component('font-awesome-layers', FontAwesomeLayers)
+import AlertFailedSync from './components/AlertFailedSync.vue';
 
-import AlertUpdatePWA  from './components/AlertUpdatePWA.vue'
-Vue.component('alert-update-pwa', AlertUpdatePWA)
+import AlertBrowserRec from './components/AlertBrowserRec.vue';
 
-import AlertOffline  from './components/AlertOffline.vue'
-Vue.component('alert-offline', AlertOffline)
+import App from './App.vue';
+import './registerServiceWorker';
 
-import AlertFailedSync from './components/AlertFailedSync.vue'
-Vue.component('alert-failed-sync', AlertFailedSync)
+Vue.use(VueDOMPurifyHTML);
+Vue.use(Vue2TouchEvents);
+Vue.use(LayoutPlugin);
+Vue.component('b-button', BButton);
+Vue.use(Highlight);
 
-import AlertBrowserRec from './components/AlertBrowserRec.vue'
-Vue.component('alert-browser-rec', AlertBrowserRec)
+library.add(
+  faMinusCircle,
+  faToggleOn,
+  faToggleOff,
+  faEllipsisH,
+  faPlusCircle,
+  faStepForward,
+  faStepBackward,
+  faEdit,
+  faUndo,
+  faTrashAlt,
+  faSearch,
+  faCloud,
+  faCheck,
+  faTimes,
+  faSync,
+  faSpinner,
+  faExclamation
+);
 
-import App from './App.vue'
-import './registerServiceWorker'
-Vue.config.productionTip = false
+Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('font-awesome-layers', FontAwesomeLayers);
+Vue.component('alert-update-pwa', AlertUpdatePWA);
+Vue.component('alert-offline', AlertOffline);
+Vue.component('alert-failed-sync', AlertFailedSync);
+Vue.component('alert-browser-rec', AlertBrowserRec);
+Vue.config.productionTip = false;
 new Vue({
   router,
   store,
-  render: h => h(App)
-}).$mount('#app')
+  render: h => h(App),
+}).$mount('#app');
