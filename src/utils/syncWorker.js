@@ -1,6 +1,6 @@
+/* eslint-disable */
 import { isEqual } from 'lodash/core';
 const axios = require('axios');
-
 async function callAPI(data) {
   let result = null;
   const options = {
@@ -32,7 +32,6 @@ async function callAPI(data) {
     });
   return result;
 }
-
 async function cloudSync(data) {
   const decks = data.decks;
   const userCollection = data.userCollection;
@@ -364,7 +363,6 @@ async function cloudSync(data) {
     payload: false,
   });
 }
-
 onmessage = e => {
   cloudSync(e.data);
 };
