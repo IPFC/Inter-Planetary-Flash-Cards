@@ -28,7 +28,7 @@ const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   // Function that passes the state and returns the state with only the objects you want to store.
   reducer: state => ({
-    userCollection: state.userCollection,
+    user_collection: state.user_collection,
     decks: state.decks,
     currentDeckId: state.deck,
     lastSyncsData: state.lastSyncsData,
@@ -42,7 +42,7 @@ const store = new Vuex.Store({
     jwt: null,
     jwtValid: false,
     pinataKeys: null,
-    userCollection: null,
+    user_collection: null,
     decks: null,
     currentDeckId: null,
     cardToEditIndex: null,
@@ -77,27 +77,27 @@ const store = new Vuex.Store({
       state.online = bool;
     },
     updateUserCollection(state, data) {
-      state.userCollection = data;
+      state.user_collection = data;
     },
     updateSettings(state, data) {
-      state.userCollection.webapp_settings = data;
+      state.user_collection.webapp_settings = data;
     },
     updateSetting(state, data) {
       const settingSection = data.settingSection;
       const settingName = data.settingName;
       const settingData = data.setting;
-      state.userCollection.webapp_settings[settingSection][settingName] = settingData;
-      state.userCollection.webapp_settings.edited = new Date().getTime();
+      state.user_collection.webapp_settings[settingSection][settingName] = settingData;
+      state.user_collection.webapp_settings.edited = new Date().getTime();
     },
     updateSettingSection(state, data) {
       const settingSection = data.settingSection;
       const settingsData = data.settings;
-      state.userCollection.webapp_settings[settingSection] = settingsData;
-      state.userCollection.webapp_settings.edited = new Date().getTime();
+      state.user_collection.webapp_settings[settingSection] = settingsData;
+      state.user_collection.webapp_settings.edited = new Date().getTime();
     },
     addDeck(state, newDeck) {
       state.decks.unshift(newDeck);
-      state.userCollection.deck_ids.push(newDeck.deck_id);
+      state.user_collection.deck_ids.push(newDeck.deck_id);
     },
     updateDeck(state, data) {
       const newerDeck = data.deck;
@@ -118,11 +118,11 @@ const store = new Vuex.Store({
       state.decks = data;
     },
     deleteDeck(state, deckId) {
-      // add to usercollection deleted list
-      state.userCollection.deleted_deck_ids.push(deckId);
-      // remove from usercollection included list
-      const deckIdIndex = state.userCollection.deck_ids.indexOf(deckId);
-      state.userCollection.deck_ids.splice(deckIdIndex, 1);
+      // add to user_collection deleted list
+      state.user_collection.deleted_deck_ids.push(deckId);
+      // remove from user_collection included list
+      const deckIdIndex = state.user_collection.deck_ids.indexOf(deckId);
+      state.user_collection.deck_ids.splice(deckIdIndex, 1);
 
       // remove the deck from 'decks'
       let deckIndex;
@@ -228,37 +228,37 @@ const store = new Vuex.Store({
       state.syncFailed = bool;
     },
     updateSchedule(state, data) {
-      state.userCollection.schedule = data;
+      state.user_collection.schedule = data;
     },
     addCardToSchedule(state, cardId) {
       let dupCount = 0;
-      for (const scheduleItem of state.userCollection.schedule.list) {
+      for (const scheduleItem of state.user_collection.schedule.list) {
         if (scheduleItem.card_id === cardId) {
           dupCount++;
           break;
         }
       }
       if (dupCount === 0) {
-        state.userCollection.schedule.list.push({
+        state.user_collection.schedule.list.push({
           card_id: cardId,
           level: 0,
           due: new Date().getTime(),
-          lastInterval: null,
+          last_interval: null,
         });
-        state.userCollection.schedule.edited = new Date().getTime();
+        state.user_collection.schedule.edited = new Date().getTime();
       }
     },
     updateCardSchedule(state, data) {
       const cardId = data.card_id;
       const newLevel = data.level;
       const newDue = data.due;
-      const newLastInterval = data.lastInterval;
-      for (const scheduleItem of state.userCollection.schedule.list) {
+      const newLastInterval = data.last_interval;
+      for (const scheduleItem of state.user_collection.schedule.list) {
         if (scheduleItem.card_id === cardId) {
           scheduleItem.level = newLevel;
           scheduleItem.due = newDue;
-          scheduleItem.lastInterval = newLastInterval;
-          state.userCollection.schedule.edited = new Date().getTime();
+          scheduleItem.last_interval = newLastInterval;
+          state.user_collection.schedule.edited = new Date().getTime();
           break;
         }
       }
@@ -266,18 +266,18 @@ const store = new Vuex.Store({
     resetCardSchedule(state, cardId) {
       const newLevel = 0;
       const newDue = new Date().getTime();
-      for (const scheduleItem of state.userCollection.schedule.list) {
+      for (const scheduleItem of state.user_collection.schedule.list) {
         if (scheduleItem.card_id === cardId) {
           scheduleItem.level = newLevel;
           scheduleItem.due = newDue;
-          scheduleItem.lastInterval = null;
-          state.userCollection.schedule.edited = new Date().getTime();
+          scheduleItem.last_interval = null;
+          state.user_collection.schedule.edited = new Date().getTime();
           break;
         }
       }
     },
     deleteCardFromSchedule(state, cardId) {
-      const schedule = state.userCollection.schedule.list;
+      const schedule = state.user_collection.schedule.list;
       for (const scheduleItem of schedule) {
         if (scheduleItem.card_id === cardId) schedule.splice(schedule.indexOf(scheduleItem), 1);
         schedule.edited = new Date().getTime();
@@ -328,7 +328,7 @@ const store = new Vuex.Store({
     },
     levelUpCard(context, cardId) {
       let cardData = null;
-      for (const scheduleItem of context.state.userCollection.schedule.list) {
+      for (const scheduleItem of context.state.user_collection.schedule.list) {
         if (scheduleItem.card_id === cardId) {
           cardData = JSON.parse(JSON.stringify(scheduleItem));
           break;
@@ -336,12 +336,12 @@ const store = new Vuex.Store({
       }
       const newLevel = cardData.level + 1;
       let newDue = cardData.due;
-      let newLastInterval = cardData.lastInterval;
-      const settings = context.state.userCollection.webapp_settings.scheduleSettings;
-      if (newLevel <= settings.initialReviews.length) {
-        const max = settings.initialReviews[newLevel - 1] * 60000 * (1 + settings.randomizer);
-        const min = settings.initialReviews[newLevel - 1] * 60000 * (1 - settings.randomizer);
-        newDue += Math.random() * (max - min + 1) + min;
+      let newLastInterval = cardData.last_interval;
+      const settings = context.state.user_collection.webapp_settings.schedule;
+      if (newLevel <= settings.initial_reviews.length) {
+        const max = settings.initial_reviews[newLevel - 1] * 60000 * (1 + settings.randomizer);
+        const min = settings.initial_reviews[newLevel - 1] * 60000 * (1 - settings.randomizer);
+        newDue = new Date().getTime() + Math.random() * (max - min + 1) + min;
       } else {
         let max = 0;
         let min = 0;
@@ -350,11 +350,11 @@ const store = new Vuex.Store({
           max = newLastInterval * (1 + settings.randomizer);
           min = newLastInterval * (1 - settings.randomizer);
         } else {
-          newLastInterval *= settings.laterReviewsMultiplier;
+          newLastInterval *= settings.later_reviews_multiplier;
           max = newLastInterval * (1 + settings.randomizer);
           min = newLastInterval * (1 - settings.randomizer);
         }
-        newDue += Math.random() * (max - min + 1) + min;
+        newDue = new Date().getTime() + Math.random() * (max - min + 1) + min;
       }
       // console.log('    newLevel',newLevel)
       // console.log('    newDue', newDue -1581330417)
@@ -362,13 +362,13 @@ const store = new Vuex.Store({
         card_id: cardId,
         level: newLevel,
         due: newDue,
-        lastInterval: newLastInterval,
+        last_interval: newLastInterval,
       };
       context.commit('updateCardSchedule', updateData);
     },
     levelDownCard(context, cardId) {
       let cardData = null;
-      for (const scheduleItem of context.state.userCollection.schedule.list) {
+      for (const scheduleItem of context.state.user_collection.schedule.list) {
         if (scheduleItem.card_id === cardId) {
           cardData = JSON.parse(JSON.stringify(scheduleItem));
           break;
@@ -376,18 +376,18 @@ const store = new Vuex.Store({
       }
       let newLevel = cardData.level;
       let newDue = cardData.due;
-      let lastInterval = cardData.lastInterval;
-      const settings = context.state.userCollection.webapp_settings.scheduleSettings;
+      let lastInterval = cardData.last_interval;
+      const settings = context.state.user_collection.webapp_settings.schedule;
 
-      if (settings.failMode === 'reset') {
+      if (settings.fail_mode === 'reset') {
         newLevel = 0;
         newDue = new Date().getTime();
         lastInterval = null;
       } else {
-        newLevel -= settings.failMode;
+        newLevel -= settings.fail_mode;
         // this could be more perfected
-        for (let i = 0; i < settings.failMode; i++) {
-          lastInterval /= settings.laterReviewsMultiplier;
+        for (let i = 0; i < settings.fail_mode; i++) {
+          lastInterval /= settings.later_reviews_multiplier;
           newDue -= lastInterval;
         }
       }
@@ -395,23 +395,23 @@ const store = new Vuex.Store({
         card_id: cardId,
         level: newLevel,
         due: newDue,
-        lastInterval: lastInterval,
+        last_interval: lastInterval,
       };
       context.commit('updateCardSchedule', updateData);
     },
     refreshLastSyncsData(context) {
       const lastDecks = JSON.parse(JSON.stringify(context.state.decks));
-      const lastUserCollection = JSON.parse(JSON.stringify(context.state.userCollection));
+      const lastUserCollection = JSON.parse(JSON.stringify(context.state.user_collection));
       const lastSyncsData = {
         decks: lastDecks,
-        userCollection: lastUserCollection,
+        user_collection: lastUserCollection,
       };
       context.commit('updateLastSyncsData', lastSyncsData);
     },
     async cloudSync(context, skipSameCheck = false) {
       const data = {
         decks: context.state.decks,
-        userCollection: context.state.userCollection,
+        user_collection: context.state.user_collection,
         lastSyncsData: context.state.lastSyncsData,
         online: context.state.online,
         syncing: context.state.syncing,
@@ -461,9 +461,9 @@ const store = new Vuex.Store({
     navProgressCounter: state => state.navProgressCounter,
     reviewDeck(state) {
       if (
-        state.userCollection === null ||
+        state.user_collection === null ||
         state.decks === null ||
-        state.userCollection === undefined ||
+        state.user_collection === undefined ||
         state.decks === undefined
       ) {
         return {
@@ -496,9 +496,9 @@ const store = new Vuex.Store({
     },
     todaysDeck(state, getters) {
       if (
-        state.userCollection === null ||
+        state.user_collection === null ||
         state.decks === null ||
-        state.userCollection === undefined ||
+        state.user_collection === undefined ||
         state.decks === undefined
       ) {
         return {
@@ -507,7 +507,7 @@ const store = new Vuex.Store({
           title: 'Review Deck',
         };
       } else {
-        const schedule = state.userCollection.schedule.list;
+        const schedule = state.user_collection.schedule.list;
         const reviewDeck = getters.reviewDeck;
         const todaysDeck = {
           cards: [],

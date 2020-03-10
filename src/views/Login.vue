@@ -268,7 +268,7 @@ export default {
             this.$store.commit('updateJwt', data.token);
             this.$store.dispatch('checkJwt');
             this.$store.commit('updatePinataKeys', data.pinata_keys);
-            const userCollection = this.$store.state.userCollection;
+            const userCollection = this.$store.state.user_collection;
             userCollection.user_id = data.user_id;
             this.$store.commit('updateUserCollection', userCollection);
             this.$store.commit('updateInitialSync', 0);

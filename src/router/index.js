@@ -25,7 +25,7 @@ async function redirectIfNotAuth(to, from, next) {
 }
 
 function redirectIfNoUserCollection(to, from, next) {
-  if (store.state.userCollection !== null) {
+  if (store.state.user_collection !== null) {
     next();
   } else {
     next('home');

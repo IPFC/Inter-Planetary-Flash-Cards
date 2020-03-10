@@ -63,10 +63,10 @@ export default {
   },
   computed: {
     ...mapGetters(['decksMeta', 'currentDeck']),
-    ...mapState(['currentDeckId', 'decks', 'syncing', 'userCollection', 'initialSync']),
+    ...mapState(['currentDeckId', 'decks', 'syncing', 'user_collection', 'initialSync']),
   },
   watch: {
-    userCollection: {
+    user_collection: {
       handler: function() {
         // console.log(  'sync called from user collection change')
         this.debouncedSync();
@@ -148,7 +148,7 @@ export default {
       }
     },
     debouncedSync: debounce(function() {
-      if (!this.syncing && this.initialSync > 1 && this.userCollection.user_id !== 'tutorial') {
+      if (!this.syncing && this.initialSync > 1 && this.user_collection.user_id !== 'tutorial') {
         this.$store.dispatch('cloudSync');
       }
     }, 15000),

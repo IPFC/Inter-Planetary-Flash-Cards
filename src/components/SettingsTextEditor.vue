@@ -520,11 +520,8 @@ export default {
       };
     },
     toolbar() {
-      if (
-        this.$store.state.userCollection.webapp_settings.textEditorSettings.editorOptions.toolbar
-      ) {
-        return this.$store.state.userCollection.webapp_settings.textEditorSettings.editorOptions
-          .toolbar;
+      if (this.$store.state.user_collection.webapp_settings.text_editor.options.toolbar) {
+        return this.$store.state.user_collection.webapp_settings.text_editor.options.toolbar;
       } else {
         return ['bold'];
       }
@@ -710,8 +707,8 @@ export default {
       }
       const editorOptions = { toolbar: newToolbar };
       const settingData = {
-        settingSection: 'textEditorSettings',
-        settingName: 'editorOptions',
+        settingSection: 'text_editor',
+        settingName: 'options',
         setting: editorOptions,
       };
       this.$store.commit('updateSetting', settingData);

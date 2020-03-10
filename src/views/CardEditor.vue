@@ -203,8 +203,7 @@ export default {
                 });
             },
           },
-          toolbar: this.$store.state.userCollection.webapp_settings.textEditorSettings.editorOptions
-            .toolbar,
+          toolbar: this.$store.state.user_collection.webapp_settings.text_editor.options.toolbar,
           syntax: {
             highlight: text => window.hljs.highlightAuto(text).value,
           },
@@ -223,7 +222,7 @@ export default {
 
   computed: {
     ...mapState({
-      userCollection: 'userCollection',
+      user_collection: 'user_collection',
       cardToEditIndex: 'cardToEditIndex',
       decks: 'decks',
       jwt: 'jwt',
@@ -529,7 +528,7 @@ export default {
       } else {
         const emptyDeck = {
           cards: [this.card],
-          created_by: this.userCollection.user_id,
+          created_by: this.user_collection.user_id,
           deck_id: uuidv4(),
           deck_tags: [],
           description: null,

@@ -34,12 +34,12 @@ async function callAPI(data) {
 }
 async function cloudSync(data) {
   const decks = data.decks;
-  const userCollection = data.userCollection;
+  const userCollection = data.user_collection;
   const lastSyncsData = data.lastSyncsData;
   console.log('    sync called');
   if (!data.skipSameCheck) {
     if (
-      isEqual(lastSyncsData.userCollection, userCollection) &&
+      isEqual(lastSyncsData.user_collection, userCollection) &&
       isEqual(lastSyncsData.decks, decks)
     ) {
       console.log('equality with last syncs data');
@@ -99,9 +99,9 @@ async function cloudSync(data) {
     for (const serverDeletedDeckId of serverCollection.deleted_deck_ids) {
       // if server deleted, but local deleted isn't, delete locally
       if (!userCollection.deleted_deck_ids.includes(serverDeletedDeckId)) {
-        // add to local usercollection deleted list
+        // add to local user_collection deleted list
         userCollection.deleted_deck_ids.push(serverDeletedDeckId);
-        // remove from usercollection included list
+        // remove from user_collection included list
         const deckIdIndex = userCollection.deck_ids.indexOf(serverDeletedDeckId);
         // if its actually in local
         if (deckIdIndex !== -1) {
@@ -241,12 +241,12 @@ async function cloudSync(data) {
     // sync schedule changes
     if (serverCollection.schedule !== userCollection.schedule) {
       if (serverCollection.schedule.edited > userCollection.schedule.edited) {
-        postMessage({
-          mutation: 'updateSchedule',
-          payload: serverCollection.schedule,
-        });
-      }
-      if (serverCollection.schedule.edited < userCollection.schedule.edited) {
+          postMessage({
+            mutation: 'updateSchedule',
+            payload: serverCollection.schedule,
+          });
+        }
+        if (serverCollection.schedule.edited < userCollection.schedule.edited) {
         console.log('posting settings');
         const putSettingsData = {
           url: data.serverURL + '/put_user_collection',
@@ -351,12 +351,12 @@ async function cloudSync(data) {
     mutation: 'updateLastSyncsData',
     payload: {
       decks: decks,
-      userCollection: userCollection,
+      user_collection: userCollection,
     },
   });
   // console.log('    set last sync data',{
   //   decks: decks,
-  //   userCollection: userCollection
+  //   user_collection: userCollection
   // } )
   postMessage({
     mutation: 'toggleSyncing',

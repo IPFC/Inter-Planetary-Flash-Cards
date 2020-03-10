@@ -14,7 +14,7 @@
         >
           <b-form-input
             id="max-cards-input"
-            v-model="scheduleSettings.maxCards"
+            v-model="scheduleSettings.max_cards"
             type="number"
             required
           ></b-form-input>
@@ -33,36 +33,36 @@
               </b-button>
               <b-form-input
                 id="input-1-1"
-                v-model="scheduleSettings.initialReviews[0]"
+                v-model="scheduleSettings.initial_reviews[0]"
                 class="initial-schedule"
                 type="number"
                 required
               ></b-form-input>
               <b-form-input
-                v-if="scheduleSettings.initialReviews.length > 1"
+                v-if="scheduleSettings.initial_reviews.length > 1"
                 id="input-1-2"
-                v-model="scheduleSettings.initialReviews[1]"
+                v-model="scheduleSettings.initial_reviews[1]"
                 class="initial-schedule"
                 type="number"
               ></b-form-input>
               <b-form-input
-                v-if="scheduleSettings.initialReviews.length > 2"
+                v-if="scheduleSettings.initial_reviews.length > 2"
                 id="input-1-3"
-                v-model="scheduleSettings.initialReviews[2]"
+                v-model="scheduleSettings.initial_reviews[2]"
                 class="initial-schedule"
                 type="number"
               ></b-form-input>
               <b-form-input
-                v-if="scheduleSettings.initialReviews.length > 3"
+                v-if="scheduleSettings.initial_reviews.length > 3"
                 id="input-1-4"
-                v-model="scheduleSettings.initialReviews[3]"
+                v-model="scheduleSettings.initial_reviews[3]"
                 class="initial-schedule"
                 type="number"
               ></b-form-input>
               <b-form-input
-                v-if="scheduleSettings.initialReviews.length > 4"
+                v-if="scheduleSettings.initial_reviews.length > 4"
                 id="input-1-5"
-                v-model="scheduleSettings.initialReviews[4]"
+                v-model="scheduleSettings.initial_reviews[4]"
                 class="initial-schedule"
                 type="number"
               ></b-form-input>
@@ -81,7 +81,7 @@
           <b-container>
             <b-row>
               <b-form-input
-                v-model="scheduleSettings.laterReviewsMultiplier"
+                v-model="scheduleSettings.later_reviews_multiplier"
                 style="max-width: 70%"
                 type="range"
                 min="1"
@@ -89,7 +89,7 @@
                 step="0.05"
               ></b-form-input>
               <div class="ml-4" style="font-weight: bold">
-                {{ scheduleSettings.laterReviewsMultiplier }}x
+                {{ scheduleSettings.later_reviews_multiplier }}x
               </div>
             </b-row>
           </b-container>
@@ -161,15 +161,15 @@ export default {
   },
   data() {
     return {
-      selected: this.$store.state.userCollection.webapp_settings.scheduleSettings.failMode,
+      selected: this.$store.state.user_collection.webapp_settings.schedule.fail_mode,
       settingsOpen: false,
       scheduleSettings: {
         // just an example. these will be reset to store's values at opening
-        initialReviews: [1, 5, 20], // in minutes
-        laterReviewsMultiplier: 2, // how many x
-        failMode: 'reset', // if set to a number, is how many levels to subtract
+        initial_reviews: [1, 5, 20], // in minutes
+        later_reviews_multiplier: 2, // how many x
+        fail_mode: 'reset', // if set to a number, is how many levels to subtract
         randomizer: 0.1, // percent to randomize
-        maxCards: 50,
+        max_cards: 50,
       },
     };
   },
@@ -185,26 +185,26 @@ export default {
       this.settingsOpen = !this.settingsOpen;
     },
     setMenu() {
-      this.scheduleSettings = this.$store.state.userCollection.webapp_settings.scheduleSettings;
+      this.scheduleSettings = this.$store.state.user_collection.webapp_settings.schedule;
     },
     submit() {
       const submitData = {
-        settingSection: 'scheduleSettings',
+        settingSection: 'schedule',
         settings: this.scheduleSettings,
       };
       this.$store.commit('updateSettingSection', submitData);
     },
     addInitialReviewStep() {
-      this.scheduleSettings.initialReviews.push(0);
+      this.scheduleSettings.initial_reviews.push(0);
     },
     deleteInitialReviewStep() {
-      this.scheduleSettings.initialReviews.splice(-1, 1);
+      this.scheduleSettings.initial_reviews.splice(-1, 1);
     },
     failModeSelect(value) {
       if (value === 'reset') {
-        this.scheduleSettings.failMode = value;
+        this.scheduleSettings.fail_mode = value;
       } else {
-        this.scheduleSettings.failMode = parseInt(value);
+        this.scheduleSettings.fail_mode = parseInt(value);
       }
     },
   },
