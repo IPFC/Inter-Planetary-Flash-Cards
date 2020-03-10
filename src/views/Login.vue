@@ -94,7 +94,6 @@
           <b-button
             v-if="signingUp"
             id="sign-up-a"
-            :disabled="loginButtonDisable"
             type="submit"
             variant="secondary"
             @click="toggleSigningUp()"
@@ -103,7 +102,6 @@
           <b-button
             v-else
             id="sign-up-a"
-            :disabled="loginButtonDisable"
             type="submit"
             variant="secondary"
             @click="toggleSigningUp()"
@@ -117,6 +115,8 @@
 <script>
 import { mapState } from 'vuex';
 import { BForm, BFormInvalidFeedback, BFormInput, BAlert } from 'bootstrap-vue';
+const axios = require('axios');
+
 export default {
   name: 'Login',
   components: { BForm, BFormInvalidFeedback, BFormInput, BAlert },
@@ -248,39 +248,58 @@ export default {
     this.$emit('homeLoad');
   },
   methods: {
+    async callAPI(url, headers, method, callback = null, data = null) {
+      const that = this;
+      const options = {
+        url: url,
+        headers: headers,
+        method: method,
+      };
+      if (data !== null) {
+        options.data = data;
+      }
+      await axios(options)
+        .then(response => {
+          console.log(response);
+          data = response.data;
+          if (callback !== null) {
+            callback(data, that);
+          }
+          return data;
+        })
+        .catch(function(err) {
+          that.failedLogin = true;
+          that.apiErrorMsg = err;
+        });
+    },
     login() {
       this.loggingIn = true;
       this.failedLogin = false;
       const loginURL = this.serverURL + '/login';
-      const headers = new Headers();
       const username = this.input.email;
       const password = this.input.password;
-      headers.append('Content-Type', 'application/json');
-      headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
-      fetch(loginURL, { headers: headers })
-        .then(response => response.json())
-        .then(data => {
-          // console.log(data);
-          if (!data.token) {
-            this.failedLogin = true;
-            this.apiErrorMsg = data.error;
-          } else {
-            this.$store.commit('updateJwt', data.token);
-            this.$store.dispatch('checkJwt');
-            this.$store.commit('updatePinataKeys', data.pinata_keys);
-            const userCollection = this.$store.state.user_collection;
-            userCollection.user_id = data.user_id;
-            this.$store.commit('updateUserCollection', userCollection);
-            this.$store.commit('updateInitialSync', 0);
-            this.$router.push('home');
-          }
-          this.loggingIn = false;
-        })
-        .catch(function(err) {
-          // console.log(err);
-          // this.failedLogin = true    // this should be added to store, says this is undefined
-          this.apiErrorMsg = err;
-        });
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + btoa(username + ':' + password),
+      };
+      const loginCallback = function(data, that) {
+        console.log(data);
+        if (!data.token) {
+          that.failedLogin = true;
+          that.apiErrorMsg = data.error;
+        } else {
+          that.$store.commit('updateJwt', data.token);
+          that.$store.dispatch('checkJwt');
+          that.$store.commit('updatePinataKeys', data.pinata_keys);
+          const userCollection = that.$store.state.user_collection;
+          userCollection.user_id = data.user_id;
+          that.$store.commit('updateUserCollection', userCollection);
+          that.$store.commit('updateInitialSync', 0);
+          that.$router.push('home');
+        }
+        that.loggingIn = false;
+      };
+      this.callAPI(loginURL, headers, 'GET', loginCallback);
     },
     SignUp() {
       this.loggingIn = true;
@@ -292,27 +311,18 @@ export default {
         pinata_api: this.input.pinataApi,
         pinata_key: this.input.pinataSecret,
       };
-      fetch(signupURL, {
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-        method: 'POST',
-      })
-        .then(response => response.json())
-        .then(data => {
-          // console.log(data);
-          if (!data.message) {
-            this.failedLogin = true;
-            this.apiErrorMsg = data.error;
-          } else {
-            this.login();
-          }
-          this.loggingIn = false;
-        })
-        .catch(function(err) {
-          this.failedLogin = true;
-          this.apiErrorMsg = err;
-          // console.log(error);
-        });
+      const headers = { 'Content-Type': 'application/json' };
+      const signupCallback = function(data, that) {
+        console.log(data);
+        if (!data.message) {
+          that.failedLogin = true;
+          that.apiErrorMsg = data.error;
+        } else {
+          that.login();
+        }
+        that.loggingIn = false;
+      };
+      this.callAPI(signupURL, headers, 'POST', signupCallback, data);
     },
     toggleSigningUp() {
       this.signingUp = !this.signingUp;

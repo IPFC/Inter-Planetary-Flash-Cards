@@ -156,7 +156,7 @@ export default {
   props: {
     newCardClicked: { type: Number, default: 0 },
     comingToCardEditorFromReview: { type: Boolean },
-    newCardCommit: { type: Boolean },
+    newCardCommit: { type: Number, default: 0 },
     alertBrowserRec: { type: Boolean },
   },
   data() {
@@ -412,27 +412,17 @@ export default {
         this.swipeTransition = 'enter';
       }, 1);
     },
-    switchCard(index) {
+    async switchCard(index) {
       const unChanged = JSON.parse(JSON.stringify(this.unChanged));
       if (!unChanged) {
-        const quill = JSON.parse(
-          JSON.stringify({
-            quillFrontDelta: this.$refs.myQuillEditorFront.quill.getContents(),
-            frontGottenText: this.$refs.myQuillEditorFront.quill.getText(),
-            quillBackDelta: this.$refs.myQuillEditorBack.quill.getContents(),
-            backGottenText: this.$refs.myQuillEditorBack.quill.getText(),
-          })
-        );
-        // don't know why this fails if you call submit step one. says Quill undefined,
-        this.submitStep2(this.card, quill).then(() => {
-          this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + index);
-        });
+        await this.submit(this.card);
+        this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + index);
         this.focusInputFront();
       } else {
         this.$store.commit('updateCardToEditIndex', this.cardToEditIndex + index);
-        this.setCard();
-        this.focusInputFront();
       }
+      this.setCard();
+      this.focusInputFront();
     },
     doneCheck: function() {
       if (!this.unChanged) {
@@ -460,24 +450,24 @@ export default {
       card.back_text = quill.backGottenText;
       return card;
     },
-    submit(card) {
+    async submit(card) {
       // this focuses both sides so that quill is showing
       this.backFocused = true;
       this.frontFocused = true;
-      this.$nextTick(() => {
-        const quill = JSON.parse(
-          JSON.stringify({
-            quillFrontDelta: this.$refs.myQuillEditorFront.quill.getContents(),
-            frontGottenText: this.$refs.myQuillEditorFront.quill.getText(),
-            quillBackDelta: this.$refs.myQuillEditorBack.quill.getContents(),
-            backGottenText: this.$refs.myQuillEditorBack.quill.getText(),
-          })
-        );
-        this.submitStep2(card, quill);
-      });
+      await this.$nextTick(() => {});
+      const quill = JSON.parse(
+        JSON.stringify({
+          quillFrontDelta: this.$refs.myQuillEditorFront.quill.getContents(),
+          frontGottenText: this.$refs.myQuillEditorFront.quill.getText(),
+          quillBackDelta: this.$refs.myQuillEditorBack.quill.getContents(),
+          backGottenText: this.$refs.myQuillEditorBack.quill.getText(),
+        })
+      );
+      this.submitStep2(card, quill);
+      return true;
     },
-    async submitStep2(cardInput, quill) {
-      const card = await this.getQuillData(cardInput, quill);
+    submitStep2(cardInput, quill) {
+      const card = this.getQuillData(cardInput, quill);
       // remove empty card
       if (card.front_text === '' && card.back_text === '') {
         this.deleteCard();
@@ -490,9 +480,9 @@ export default {
         }
         const updateData = { deck_id: deckId, card: card };
         this.$store.dispatch('updateCard', updateData);
+        this.focusInputFront();
+        this.setCard();
       }
-      this.focusInputFront();
-      this.setCard();
       return true;
     },
     // use later for dropdown menu, copy to other deck
