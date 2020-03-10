@@ -117,8 +117,6 @@
 <script>
 import { mapState } from 'vuex';
 import { BForm, BFormInvalidFeedback, BFormInput, BAlert } from 'bootstrap-vue';
-const axios = require('axios');
-
 export default {
   name: 'Login',
   components: { BForm, BFormInvalidFeedback, BFormInput, BAlert },
@@ -250,53 +248,39 @@ export default {
     this.$emit('homeLoad');
   },
   methods: {
-    async callAPI(url, headers, method, data = null) {
-      const options = {
-        url: url,
-        headers: headers,
-        method: method,
-      };
-      if (data !== null) {
-        options.data = data;
-      }
-      await axios(options)
-        .then(response => {
-          console.log(response);
-          data = response.data;
-          return data;
-        })
-        .catch(function(err) {
-          this.failedLogin = true;
-          this.apiErrorMsg = err;
-        });
-    },
-    async login() {
+    login() {
       this.loggingIn = true;
       this.failedLogin = false;
       const loginURL = this.serverURL + '/login';
+      const headers = new Headers();
       const username = this.input.email;
       const password = this.input.password;
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization-token': 'Basic ' + btoa(username + ':' + password),
-      };
-      await this.callAPI(loginURL, headers, 'GET').then(data => {
-        console.log(data);
-        if (!data.token) {
-          this.failedLogin = true;
-          this.apiErrorMsg = data.error;
-        } else {
-          this.$store.commit('updateJwt', data.token);
-          this.$store.dispatch('checkJwt');
-          this.$store.commit('updatePinataKeys', data.pinata_keys);
-          const userCollection = this.$store.state.user_collection;
-          userCollection.user_id = data.user_id;
-          this.$store.commit('updateUserCollection', userCollection);
-          this.$store.commit('updateInitialSync', 0);
-          this.$router.push('home');
-        }
-        this.loggingIn = false;
-      });
+      headers.append('Content-Type', 'application/json');
+      headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
+      fetch(loginURL, { headers: headers })
+        .then(response => response.json())
+        .then(data => {
+          // console.log(data);
+          if (!data.token) {
+            this.failedLogin = true;
+            this.apiErrorMsg = data.error;
+          } else {
+            this.$store.commit('updateJwt', data.token);
+            this.$store.dispatch('checkJwt');
+            this.$store.commit('updatePinataKeys', data.pinata_keys);
+            const userCollection = this.$store.state.user_collection;
+            userCollection.user_id = data.user_id;
+            this.$store.commit('updateUserCollection', userCollection);
+            this.$store.commit('updateInitialSync', 0);
+            this.$router.push('home');
+          }
+          this.loggingIn = false;
+        })
+        .catch(function(err) {
+          // console.log(err);
+          // this.failedLogin = true    // this should be added to store, says this is undefined
+          this.apiErrorMsg = err;
+        });
     },
     SignUp() {
       this.loggingIn = true;
@@ -327,6 +311,7 @@ export default {
         .catch(function(err) {
           this.failedLogin = true;
           this.apiErrorMsg = err;
+          // console.log(error);
         });
     },
     toggleSigningUp() {
