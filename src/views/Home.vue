@@ -123,7 +123,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
 import defaultCollection from '../assets/defaultCollection.json';
-const vueFlashcard = () => import('../components/Flashcard');
+const vueFlashcard = () => import('../components/flashcard');
 
 export default {
   name: 'Home',
