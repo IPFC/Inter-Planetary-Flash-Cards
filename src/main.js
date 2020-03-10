@@ -10,7 +10,7 @@ import Vue2TouchEvents from 'vue2-touch-events';
 
 import { LayoutPlugin, BButton } from 'bootstrap-vue';
 import 'highlight.js/styles/monokai-sublime.css';
-import Highlight from './utils/highlight.js';
+import Highlight from './utils/syntaxHighlight.js';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
