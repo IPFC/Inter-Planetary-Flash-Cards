@@ -156,7 +156,6 @@ export default {
   props: {
     newCardClicked: { type: Number, default: 0 },
     comingToCardEditorFromReview: { type: Boolean },
-    newCardCommit: { type: Number, default: 0 },
     alertBrowserRec: { type: Boolean },
   },
   data() {
@@ -287,9 +286,6 @@ export default {
   watch: {
     newCardClicked: function() {
       this.newCardFirst();
-    },
-    newCardCommit: function() {
-      this.newCardThen();
     },
   },
   created() {

@@ -27,7 +27,6 @@
     <router-view
       class="router-view"
       :new-card-clicked="newCardClicked"
-      :new-card-commit="newCardCommit"
       :coming-to-card-editor-from-review="toCardEditorFromReview"
       :alert-browser-rec="alertBrowserRec"
       @homeLoad="homeLoaded()"
@@ -51,7 +50,6 @@ export default {
   data() {
     return {
       newCardClicked: 0,
-      newCardCommit: 0,
       toCardEditorFromReview: false,
       splashClass: 'splash',
       updatePWA: false,
@@ -138,7 +136,6 @@ export default {
         this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length - 1);
         this.$router.push('/card-editor');
       }
-      // this.newCardCommit++;
     },
     PWAUpdate(bool) {
       if (bool) {
