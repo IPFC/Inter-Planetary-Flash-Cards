@@ -260,7 +260,6 @@ export default {
       }
       await axios(options)
         .then(response => {
-          console.log(response);
           data = response.data;
           if (callback !== null) {
             callback(data, that);
@@ -283,7 +282,6 @@ export default {
         Authorization: 'Basic ' + btoa(username + ':' + password),
       };
       const loginCallback = function(data, that) {
-        console.log(data);
         if (!data.token) {
           that.failedLogin = true;
           that.apiErrorMsg = data.error;
@@ -313,7 +311,6 @@ export default {
       };
       const headers = { 'Content-Type': 'application/json' };
       const signupCallback = function(data, that) {
-        console.log(data);
         if (!data.message) {
           that.failedLogin = true;
           that.apiErrorMsg = data.error;
@@ -327,7 +324,6 @@ export default {
     toggleSigningUp() {
       this.signingUp = !this.signingUp;
     },
-
     OpenPinata() {
       window.open('https://pinata.cloud/signup', '_blank');
     },
