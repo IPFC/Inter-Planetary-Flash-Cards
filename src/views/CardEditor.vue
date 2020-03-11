@@ -560,7 +560,13 @@ export default {
     },
     newCardFirst() {
       if (!this.unChanged) {
-        this.submit(this.card);
+        this.submit(this.card).then(() => {
+          this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length - 1);
+          this.newCardThen();
+        });
+      } else {
+        this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length - 1);
+        this.newCardThen();
       }
     },
     newCardThen() {

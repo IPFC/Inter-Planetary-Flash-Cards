@@ -134,11 +134,11 @@ export default {
         this.$store.commit('updateCurrentDeckId', this.decksMeta[0].deck_id);
       }
       this.$store.dispatch('newCard', this.currentDeckId);
-      this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length - 1);
       if (this.$route.name !== 'card-editor') {
+        this.$store.commit('updateCardToEditIndex', this.currentDeck.cards.length - 1);
         this.$router.push('/card-editor');
       }
-      this.newCardCommit++;
+      // this.newCardCommit++;
     },
     PWAUpdate(bool) {
       if (bool) {
