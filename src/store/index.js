@@ -413,11 +413,9 @@ const store = new Vuex.Store({
       context.commit('updateLastSyncsData', lastSyncsData);
     },
     async cloudSync(context, skipSameCheck = false) {
-      const userCollection = context.state.user_collection;
-      userCollection.all_card_tags = context.getters.allTags;
       const data = {
         decks: context.state.decks,
-        user_collection: userCollection,
+        user_collection: context.state.user_collection,
         lastSyncsData: context.state.lastSyncsData,
         online: context.state.online,
         syncing: context.state.syncing,
