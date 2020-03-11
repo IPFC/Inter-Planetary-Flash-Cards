@@ -35,7 +35,7 @@
         <!-- <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback> -->
 
         <b-button
-          v-if="signingUp"
+          v-if="showSignUp"
           id="button-get-pinata"
           type="submit"
           variant="primary"
@@ -44,34 +44,34 @@
         >
         <br />
 
-        <label v-if="signingUp" for="feedback-pinata-api">Pinata API key</label>
+        <label v-if="showSignUp" for="feedback-pinata-api">Pinata API key</label>
         <b-form-input
-          v-if="signingUp"
+          v-if="showSignUp"
           id="feedback-pinata-api"
           v-model="input.pinataApi"
           :state="pinataApiValidation"
         ></b-form-input>
-        <b-form-invalid-feedback v-if="signingUp" :state="pinataApiValidation">{{
+        <b-form-invalid-feedback v-if="showSignUp" :state="pinataApiValidation">{{
           pinataApiValidationErrorMsg
         }}</b-form-invalid-feedback>
-        <!-- <b-form-valid-feedback v-if="signingUp" :state="pinataApiValidation">Looks Good.</b-form-valid-feedback> -->
+        <!-- <b-form-valid-feedback v-if="showSignUp" :state="pinataApiValidation">Looks Good.</b-form-valid-feedback> -->
 
-        <label v-if="signingUp" for="feedback-pinata-secret">Pinata secret API key</label>
+        <label v-if="showSignUp" for="feedback-pinata-secret">Pinata secret API key</label>
         <b-form-input
-          v-if="signingUp"
+          v-if="showSignUp"
           id="feedback-pinata-secret"
           v-model="input.pinataSecret"
           :state="pinataSecretValidation"
           type="password"
         ></b-form-input>
-        <b-form-invalid-feedback v-if="signingUp" :state="pinataSecretValidation">{{
+        <b-form-invalid-feedback v-if="showSignUp" :state="pinataSecretValidation">{{
           pinataSecretValidationErrorMsg
         }}</b-form-invalid-feedback>
-        <!-- <b-form-valid-feedback v-if="signingUp" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
+        <!-- <b-form-valid-feedback v-if="showSignUp" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
 
         <span id="login-signup-buttons">
           <b-button
-            v-if="signingUp"
+            v-if="showSignUp"
             :disabled="loginButtonDisable"
             type="submit"
             variant="primary"
@@ -92,11 +92,11 @@
           >
 
           <b-button
-            v-if="signingUp"
+            v-if="showSignUp"
             id="sign-up-a"
             type="submit"
             variant="secondary"
-            @click="toggleSigningUp()"
+            @click="toggleShowSignUp()"
             >Log in</b-button
           >
           <b-button
@@ -104,7 +104,7 @@
             id="sign-up-a"
             type="submit"
             variant="secondary"
-            @click="toggleSigningUp()"
+            @click="toggleShowSignUp()"
             >Sign up</b-button
           >
         </span>
@@ -133,7 +133,7 @@ export default {
       dismissSecs: 5,
       dismissCountDown: 0,
       loggingIn: false,
-      signingUp: false,
+      showSignUp: false,
     };
   },
   computed: {
@@ -244,9 +244,7 @@ export default {
       }
     },
   },
-  mounted() {
-    this.$emit('homeLoad');
-  },
+  mounted() {},
   methods: {
     async callAPI(url, headers, method, callback = null, data = null) {
       const that = this;
@@ -321,8 +319,8 @@ export default {
       };
       this.callAPI(signupURL, headers, 'POST', signupCallback, data);
     },
-    toggleSigningUp() {
-      this.signingUp = !this.signingUp;
+    toggleShowSignUp() {
+      this.showSignUp = !this.showSignUp;
     },
     OpenPinata() {
       window.open('https://pinata.cloud/signup', '_blank');

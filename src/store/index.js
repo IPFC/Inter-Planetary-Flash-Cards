@@ -194,6 +194,8 @@ const store = new Vuex.Store({
     updateCard(state, data) {
       const deckId = data.deck_id;
       const newCard = JSON.parse(JSON.stringify(data.card));
+      newCard.edited = new Date().getTime();
+
       let cardIndex;
       for (const deck of state.decks) {
         if (deck.deck_id === deckId) {
@@ -294,6 +296,8 @@ const store = new Vuex.Store({
         back_text: '',
         front_rich_text: '',
         back_rich_text: '',
+        created: new Date().getTime(),
+        edited: new Date().getTime(),
       };
       const data = {
         newCard: newCard,
