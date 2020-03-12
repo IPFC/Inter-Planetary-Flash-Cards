@@ -139,7 +139,6 @@ export default {
       this.addingDeck = !this.addingDeck;
     },
     addNewDeck: function() {
-      console.log('add new called');
       if (this.newDeckTitle === '' || this.newDeckTitle === ' ') {
         this.toggleAddingDeck();
       } else {

@@ -115,6 +115,7 @@
 <script>
 import { mapState } from 'vuex';
 import { BForm, BFormInvalidFeedback, BFormInput, BAlert } from 'bootstrap-vue';
+import defaultCollection from '../assets/defaultCollection.json';
 const axios = require('axios');
 
 export default {
@@ -306,6 +307,7 @@ export default {
         password: this.input.password,
         pinata_api: this.input.pinataApi,
         pinata_key: this.input.pinataSecret,
+        user_collection: defaultCollection.user_collection,
       };
       const headers = { 'Content-Type': 'application/json' };
       const signupCallback = function(data, that) {
