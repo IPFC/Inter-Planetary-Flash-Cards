@@ -34,10 +34,10 @@
             <b-card id="card" v-for="card in deck.cards" :key="card.card_id">
               <b-container style="padding: 0;">
                 <b-row>
-                  <b-col v-if="card.front_image" cols="5">
+                  <b-col class="card-content-col scroller" v-if="card.front_image" cols="5">
                     <b-img-lazy v-if="card.front_image" :src="card.front_image"></b-img-lazy>
                   </b-col>
-                  <b-col>
+                  <b-col class="card-content-col scroller">
                     <b-card-text class="font-weight-bold">{{ card.front_text }}</b-card-text>
                   </b-col>
                   <b-col cols="1">
@@ -53,10 +53,10 @@
                 </b-row>
                 <hr class="divider" />
                 <b-row>
-                  <b-col v-if="card.back_image">
+                  <b-col class="card-content-col scroller" v-if="card.back_image">
                     <b-img-lazy :src="card.back_image"></b-img-lazy>
                   </b-col>
-                  <b-col>
+                  <b-col class="card-content-col scroller">
                     <b-card-text> {{ card.back_text }} </b-card-text>
                   </b-col>
                 </b-row>
@@ -138,6 +138,18 @@ export default {
 #card {
   margin: 10px 10px;
   box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.1);
+}
+.card-content-col {
+  max-height: 5em;
+  overflow: auto;
+}
+.scroller::-webkit-scrollbar {
+  width: 8px;
+  padding-right: 5px;
+}
+.scroller::-webkit-scrollbar-thumb {
+  background-color: rgba(162, 162, 162, 0.5);
+  border-radius: 10px;
 }
 .edit {
   color: gray;
