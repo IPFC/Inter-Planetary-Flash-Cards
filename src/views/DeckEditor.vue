@@ -20,8 +20,8 @@
             </p>
             <b-form-input
               v-if="editingDeckTitle"
-              @keyup.enter="commitDeckTitle()"
               v-model="newDeckTitle"
+              @keyup.enter="commitDeckTitle()"
             ></b-form-input>
             <p class="text card-count">
               {{ deck.cards.length }} card{{ cardOrCards(deck.cards.length) }}
@@ -30,11 +30,11 @@
           </b-col>
         </b-row>
         <b-row id="cards-row">
-          <b-col cols="12" id="cards-col" style="padding: 0;">
-            <b-card id="card" v-for="card in deck.cards" :key="card.card_id">
+          <b-col id="cards-col" cols="12" style="padding: 0;">
+            <b-card v-for="card in deck.cards" id="card" :key="card.card_id">
               <b-container style="padding: 0;">
                 <b-row>
-                  <b-col class="card-content-col scroller" v-if="card.front_image" cols="5">
+                  <b-col v-if="card.front_image" class="card-content-col scroller" cols="5">
                     <b-img-lazy v-if="card.front_image" :src="card.front_image"></b-img-lazy>
                   </b-col>
                   <b-col class="card-content-col scroller">
@@ -53,7 +53,7 @@
                 </b-row>
                 <hr class="divider" />
                 <b-row>
-                  <b-col class="card-content-col scroller" v-if="card.back_image">
+                  <b-col v-if="card.back_image" class="card-content-col scroller">
                     <b-img-lazy :src="card.back_image"></b-img-lazy>
                   </b-col>
                   <b-col class="card-content-col scroller">
