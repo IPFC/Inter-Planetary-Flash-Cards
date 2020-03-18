@@ -117,12 +117,12 @@ export default {
       if (title === '') {
         return '';
       } else {
-        const split = title.split(' ')[0];
         let abrev;
-        if (split.length === 1) {
-          abrev = split[0].charAt(0) + split[0].charAt(1);
-        } else {
+        if (title.includes(' ')) {
+          const split = title.split(' ')[0];
           abrev = split[0].charAt(0) + split[1].charAt(0);
+        } else {
+          abrev = title.charAt(0) + title.charAt(1);
         }
         return abrev;
       }
