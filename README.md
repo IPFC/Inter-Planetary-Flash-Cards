@@ -59,7 +59,7 @@ Please stay tuned for more updates and detailed explanations for users and devel
 5. To get started with some flashcard decks, feel free to use the testing account:
 
 ```
-Username: hello@world.ipfc
+Username: dev@ipfc.tech
 Password: Password123
 ```
 
