@@ -128,9 +128,11 @@ export default {
 }
 .front-text {
   font-weight: bold;
+  margin-right: 5px;
 }
 .edit-btn-show-backs {
   margin-left: auto;
+  margin-right: 5px;
   color: grey;
 }
 .edit-btn-show-backs:hover {
