@@ -63,7 +63,7 @@
                 <b-col class="text-col" @click="openDeck(decksMeta[index].deck_id)">
                   <p class="text title">{{ deckMeta.title }}</p>
                   <p class="text card-count">
-                    {{ deckMeta.deck_length }} card{{ cardOrCards(deckMeta.deck_length) }}
+                    {{ deckMeta.card_count }} card{{ cardOrCards(deckMeta.card_count) }}
                   </p>
                 </b-col>
                 <b-col class="edit-col" cols="1">
@@ -144,15 +144,16 @@ export default {
       } else {
         const emptyDeck = {
           cards: [],
-          created_by: this.$store.state.user_collection.user_id,
+          user_id: this.$store.state.user_collection.user_id,
           deck_id: uuidv4(),
           deck_tags: [],
           description: null,
-          editable_by: 'only_0me',
+          editable_by: 'only_me',
           edited: Math.round(new Date().getTime()),
           created: Math.round(new Date().getTime()),
           lang_back: 'en',
           lang_front: 'en',
+          card_count: 0,
           title: this.newDeckTitle,
           visibility: 'public',
           icon_color: this.generateRandomHslaColor(),

@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 import VuexPersistence from 'vuex-persist';
 import Cookies from 'js-cookie';
 import { sortBy } from 'lodash/core';
+import { isEmpty } from 'lodash';
+const axios = require('axios');
 const uuidv4 = require('uuid/v4');
 // web workers in Vuex: https://logaretm.com/blog/2019-12-21-vuex-off-mainthread/
 const syncWorker = new Worker('../utils/syncWorker.js', {
@@ -52,7 +54,10 @@ const store = new Vuex.Store({
     syncFailed: false,
     initialSync: 0,
     online: false,
-    serverURL: 'https://ipfc-midware.herokuapp.com',
+    // dev server url
+    // serverUrl: 'http://127.0.0.1:5000',
+    // production server url
+    serverUrl: 'https://ipfc-midware.herokuapp.com',
   },
   mutations: {
     updateJwt(state, newJwt) {
@@ -117,25 +122,14 @@ const store = new Vuex.Store({
     updateDecks(state, data) {
       state.decks = data;
     },
-    deleteDeck(state, deckId) {
+    deleteDeck(state, deck) {
       // add to user_collection deleted list
-      state.user_collection.deleted_deck_ids.push(deckId);
+      state.user_collection.deleted_deck_ids.push(deck.deck_id);
       // remove from user_collection included list
-      const deckIdIndex = state.user_collection.deck_ids.indexOf(deckId);
+      const deckIdIndex = state.user_collection.deck_ids.indexOf(deck.deck_id);
       state.user_collection.deck_ids.splice(deckIdIndex, 1);
-
       // remove the deck from 'decks'
-      let deckIndex;
-      for (const deck of state.decks) {
-        if (deck.deck_id === deckId) {
-          deckIndex = state.decks.indexOf(deck);
-          break;
-        }
-      }
-      if (deckIndex !== -1) {
-        // just in case its alraady not there
-        state.decks.splice(deckIndex, 1);
-      }
+      state.decks.splice(state.decks.indexOf(deck), 1);
     },
     newCard(state, data) {
       // new blank card
@@ -144,6 +138,7 @@ const store = new Vuex.Store({
       for (const deck of state.decks) {
         if (deck.deck_id === deckId) {
           deck.cards.push(newCard);
+          deck.card_count = deck.cards.length;
           deck.edited = new Date().getTime();
           break;
         }
@@ -164,6 +159,7 @@ const store = new Vuex.Store({
           }
           if (sameCount === 0) {
             deck.cards.push(card);
+            deck.card_count = deck.cards.length;
             deck.edited = new Date().getTime();
           }
           break;
@@ -182,6 +178,7 @@ const store = new Vuex.Store({
               if (cardIndex !== -1) {
                 // just in case its alraady not there
                 deck.cards.splice(cardIndex, 1);
+                deck.card_count = deck.cards.length;
                 deck.edited = new Date().getTime();
                 break;
               }
@@ -286,6 +283,9 @@ const store = new Vuex.Store({
         break;
       }
     },
+    updateAllCardTags(state, tags) {
+      state.user_collection.all_card_tags = tags;
+    },
   },
   actions: {
     newCard(context, deckId) {
@@ -308,6 +308,116 @@ const store = new Vuex.Store({
     },
     updateCard(context, data) {
       context.commit('updateCard', data);
+    },
+    deleteCard(context, data) {
+      context.commit('deleteCard', data);
+      const deckId = data.deck_id;
+      const cardId = data.card_id;
+      context.commit('deleteCardFromSchedule', cardId);
+      // remove from highlights
+      let cardIndex;
+      for (const deck of context.state.decks) {
+        if (deck.deck_id === deckId) {
+          for (const card of deck.cards) {
+            if (card.card_id === cardId) {
+              cardIndex = deck.cards.indexOf(card);
+              if (cardIndex !== -1) {
+                if (!isEmpty(card.highlight_id) || !isEmpty(card.highlight_url)) {
+                  if (context.state.user_collection.highlight_urls.includes(cardId)) {
+                    context.dispatch('removeCardFromHighlights', card);
+                  }
+                  break;
+                }
+              }
+            }
+            break;
+          }
+        }
+      }
+    },
+    async removeCardFromHighlights(context, card) {
+      const getWebsiteCall = {
+        url: context.state.serverUrl + '/get_website',
+        jwt: context.state.jwt,
+        method: 'POST',
+        data: {
+          url: card.highlight_url,
+        },
+      };
+      let getWebsiteResults;
+      await context.dispatch('callAPI', getWebsiteCall).then(data => {
+        getWebsiteResults = data;
+      });
+      console.log('    get Website, Results ', getWebsiteResults);
+      if (!getWebsiteResults) {
+        throw new Error('error in get_websites_selected_content');
+      }
+      const website = getWebsiteResults.website;
+      for (const wCard of website.cards) {
+        if (wCard.card_id === card.card_id) {
+          website.cards.splice(website.cards.indexOf(wCard), 1);
+          website.deleted.push(card.card_id);
+          break;
+        }
+      }
+      const postWebsitesCall = {
+        url: context.state.serverUrl + '/post_websites',
+        jwt: context.state.jwt,
+        method: 'POST',
+        data: {
+          websites: {
+            [card.highlight_url]: website,
+          },
+        },
+      };
+      let postWebsitesResult = null;
+      await context.dispatch('callAPI', postWebsitesCall).then(data => {
+        postWebsitesResult = data;
+      });
+      console.log('          post Websites Result', postWebsitesResult);
+      if (!postWebsitesResult) {
+        throw new Error('error posting websites');
+      }
+    },
+    async callAPI(data) {
+      let result = null;
+      const options = {
+        url: data.url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': data.jwt,
+        },
+        method: data.method,
+      };
+      if (data.data) {
+        options.data = data.data;
+      }
+      await axios(options)
+        .then(response => {
+          result = response.data;
+          // console.log(result);
+        })
+        .catch(function(err) {
+          throw new Error(err);
+          // sendMesageToAllTabs({ syncing: true, value: false });
+        });
+      return result;
+    },
+    deleteDeck(context, deckId) {
+      for (const deck of context.state.decks) {
+        if (deck.deck_id === deckId) {
+          context.commit('deleteDeck', deck);
+          for (const card of deck.cards) {
+            if (!isEmpty(card.highlight_id) || !isEmpty(card.highlight_url)) {
+              if (context.state.user_collection.highlight_urls.includes(card.highlight_url)) {
+                context.dispatch('removeCardFromHighlights', card);
+              }
+              break;
+            }
+          }
+          break;
+        }
+      }
     },
     navProgress(context, data) {
       const outputString = data.completed + ' / ' + data.totalCards;
@@ -420,7 +530,7 @@ const store = new Vuex.Store({
         online: context.state.online,
         syncing: context.state.syncing,
         syncFailed: context.state.syncFailed,
-        serverURL: context.state.serverURL,
+        serverUrl: context.state.serverUrl,
         jwt: context.state.jwt,
         decksMeta: JSON.parse(JSON.stringify(context.getters.decksMeta)),
         skipSameCheck: skipSameCheck,
@@ -438,7 +548,7 @@ const store = new Vuex.Store({
           deck_id: deck.deck_id,
           edited: deck.edited,
           title: deck.title,
-          deck_length: deck.cards.length,
+          card_count: deck.cards.length,
           icon_color: deck.icon_color,
         };
         newDecksMeta.push(deckMeta);

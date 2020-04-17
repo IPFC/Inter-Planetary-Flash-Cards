@@ -139,7 +139,7 @@ export default {
   },
   computed: {
     ...mapState({
-      serverURL: 'serverURL',
+      serverUrl: 'serverUrl',
     }),
     emailValidation() {
       const email = this.input.email;
@@ -273,7 +273,7 @@ export default {
     login() {
       this.loggingIn = true;
       this.failedLogin = false;
-      const loginURL = this.serverURL + '/login';
+      const loginURL = this.serverUrl + '/login';
       const username = this.input.email;
       const password = this.input.password;
       const headers = {
@@ -301,7 +301,7 @@ export default {
     SignUp() {
       this.loggingIn = true;
       this.failedLogin = false;
-      const signupURL = this.serverURL + '/sign_up';
+      const signupURL = this.serverUrl + '/sign_up';
       const data = {
         email: this.input.email,
         password: this.input.password,

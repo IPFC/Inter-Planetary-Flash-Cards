@@ -59,8 +59,16 @@
             },
             "edited": 1581758711258
         },
+        "extension_settings": {},
         "all_deck_cids": [],
-        "user_id": "tutorial"
+        "user_id": "tutorial",
+        "highlight_urls": {
+            "edited": 1581758711258,
+            "list": []
+        },
+        "all_card_tags": ["Daily Review"],
+        "all_deck_tags": []
+
     },
     "decks": [{
         "cards": [{
@@ -107,7 +115,7 @@
             "front_text": "Welcome to \n🚀\nInter Planetary \nFlash Cards\n🚀\nflip me!\n",
             "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"]
         }],
-        "created_by": "642a264a-00a2-4517-9d95-64a29174c4bd",
+        "user_id": "642a264a-00a2-4517-9d95-64a29174c4bd",
         "deck_id": "ea2c0b5b-18e0-4885-bd1b-dcae462a0a49",
         "deck_tags": [],
         "description": null,
@@ -118,7 +126,7 @@
         "icon_color": "hsla(0, 100%, 50%, 1)",
         "lang_back": "en",
         "lang_front": "en",
-        "term_count": 1,
+        "card_count": 1,
         "title": "Tutorial",
         "visibility": "public"
     }]

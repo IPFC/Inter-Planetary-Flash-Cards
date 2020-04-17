@@ -80,7 +80,7 @@ async function cloudSync(data) {
   const localDecksMeta = data.decksMeta;
   let serverDecksMeta = null;
   const getMetaDataCall = {
-    url: data.serverURL + '/get_meta_and_collection',
+    url: data.serverUrl + '/get_decks_meta_and_collection',
     jwt: data.jwt,
     method: 'GET',
   };
@@ -132,7 +132,7 @@ async function cloudSync(data) {
     } // call delete decks (server will update it's deleted decks list on its end)
     if (decksToDeleteOnServer.length > 0) {
       const deleteCallData = {
-        url: data.serverURL + '/delete_decks',
+        url: data.serverUrl + '/delete_decks',
         jwt: data.jwt,
         method: 'DELETE',
         data: {
@@ -157,7 +157,7 @@ async function cloudSync(data) {
     }
     if (decksToDownload.length > 0) {
       const downloadCallData = {
-        url: data.serverURL + '/get_decks',
+        url: data.serverUrl + '/get_decks',
         jwt: data.jwt,
         method: 'POST',
         data: decksToDownload,
@@ -196,7 +196,7 @@ async function cloudSync(data) {
     if (decksToPost.length > 0) {
       console.log('    posting decks ', decksToPost);
       const postCallData = {
-        url: data.serverURL + '/post_decks',
+        url: data.serverUrl + '/post_decks',
         jwt: data.jwt,
         method: 'POST',
         data: decksToPost,
@@ -221,7 +221,7 @@ async function cloudSync(data) {
       if (serverCollection.webapp_settings.edited < userCollection.webapp_settings.edited) {
         console.log('posting settings');
         const putSettingsData = {
-          url: data.serverURL + '/put_user_collection',
+          url: data.serverUrl + '/put_user_collection',
           jwt: data.jwt,
           method: 'PUT',
           data: {
@@ -249,7 +249,7 @@ async function cloudSync(data) {
         if (serverCollection.schedule.edited < userCollection.schedule.edited) {
         console.log('posting settings');
         const putSettingsData = {
-          url: data.serverURL + '/put_user_collection',
+          url: data.serverUrl + '/put_user_collection',
           jwt: data.jwt,
           method: 'PUT',
           data: {
@@ -296,7 +296,7 @@ async function cloudSync(data) {
   if (decksToPut.length > 0) {
     console.log('     PUTing decks', decksToPut);
     const putDecksData = {
-      url: data.serverURL + '/put_decks',
+      url: data.serverUrl + '/put_decks',
       jwt: data.jwt,
       method: 'PUT',
       data: decksToPut,
@@ -314,7 +314,7 @@ async function cloudSync(data) {
   if (decksToUpdateLocally.length > 0) {
     console.log('     GETing decks', decksToPut);
     const getDecksData = {
-      url: data.serverURL + '/get_decks',
+      url: data.serverUrl + '/get_decks',
       jwt: data.jwt,
       method: 'POST',
       data: decksToUpdateLocally,

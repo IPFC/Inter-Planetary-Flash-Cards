@@ -29,9 +29,25 @@
             <div id="underline"></div>
           </b-col>
         </b-row>
+        <b-row id="options-row" class="mt-3 ml-3">
+          <toggle-button
+            v-model="showCardBacks"
+            :width="130"
+            :labels="{ checked: 'show card backs', unchecked: 'hide card backs' }"
+          ></toggle-button>
+        </b-row>
         <b-row id="cards-row">
-          <b-col id="cards-col" cols="12" style="padding: 0;">
-            <b-card v-for="card in deck.cards" id="card" :key="card.card_id">
+          <b-col :key="refreshCardsKey" id="cards-col" cols="12">
+            <flashcard-viewer
+              v-for="card in deck.cards"
+              :key="card.card_id"
+              class="flashcard-outer"
+              :show-card-backs="showCardBacks"
+              :card="card"
+              @edit-clicked="editCard(card)"
+            ></flashcard-viewer>
+
+            <!-- <b-card v-for="card in deck.cards" :key="card.card_id" class="card">
               <b-container style="padding: 0;">
                 <b-row>
                   <b-col v-if="card.front_image" class="card-content-col scroller" cols="5">
@@ -51,8 +67,8 @@
                     />
                   </b-col>
                 </b-row>
-                <hr class="divider" />
-                <b-row>
+                <hr v-if="showCardBacks" class="divider" />
+                <b-row v-if="showCardBacks">
                   <b-col v-if="card.back_image" class="card-content-col scroller">
                     <b-img-lazy :src="card.back_image"></b-img-lazy>
                   </b-col>
@@ -61,7 +77,7 @@
                   </b-col>
                 </b-row>
               </b-container>
-            </b-card>
+            </b-card> -->
           </b-col>
         </b-row>
       </b-col>
@@ -70,15 +86,20 @@
 </template>
 
 <script>
-import { BCard, BImgLazy, BFormInput, BCardText } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
+// https://github.com/euvl/vue-js-toggle-button/
+import { ToggleButton } from 'vue-js-toggle-button';
+import FlashcardViewer from '../components/FlashcardViewer.vue';
 export default {
   name: 'DeckEditor',
-  components: { BCard, BImgLazy, BFormInput, BCardText },
+  components: { BFormInput, ToggleButton, FlashcardViewer },
   props: { alertBrowserRec: { type: Boolean } },
   data() {
     return {
       editingDeckTitle: false,
       newDeckTitle: '',
+      showCardBacks: false,
+      refreshCardsKey: 0,
     };
   },
 
@@ -89,6 +110,11 @@ export default {
   },
   mounted() {
     this.$emit('homeLoad');
+  },
+  watch: {
+    showCardBacks() {
+      this.refreshCardsKey++;
+    },
   },
   methods: {
     toggleEditDeckTitle() {
@@ -102,6 +128,7 @@ export default {
       this.toggleEditDeckTitle();
     },
     editCard(card) {
+      this.$emit('edit-clicked');
       this.$store.commit('updateCardToEditIndex', this.deck.cards.indexOf(card));
       this.$router.push('/card-editor');
     },
@@ -135,9 +162,9 @@ export default {
 </script>
 
 <style scoped>
-#card {
-  margin: 10px 10px;
-  box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.1);
+.flashcard-outer {
+  margin: 10px;
+  width: 95%;
 }
 .card-content-col {
   max-height: 5em;
@@ -160,6 +187,8 @@ export default {
 }
 .deck-editor-main {
   overflow-y: auto;
+  padding-left: 0;
+  padding-right: 0;
 }
 .deck-editor-main::-webkit-scrollbar {
   width: 0em;
@@ -171,10 +200,11 @@ export default {
 #main-col {
   margin: auto;
   max-width: 600px;
-  padding: 15;
+  padding: 0;
 }
 #title-row {
   width: 100%;
+  padding-left: 30px;
 }
 #text-col {
   padding: 0px 0px 10px 20px;
@@ -217,6 +247,12 @@ export default {
 }
 .text:hover {
   cursor: pointer;
+}
+#cards-col {
+  padding: 0 0 0 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .card-count {
   font-size: 0.8em;

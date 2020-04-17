@@ -153,8 +153,9 @@ export default {
   padding-left: 15px;
 }
 .dropdown-item:hover {
-  color: primary;
+  background-color: #ff7b29;
 }
+
 #sync-layers {
   margin-top: 3px;
 }

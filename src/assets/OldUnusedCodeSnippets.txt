@@ -199,7 +199,7 @@ export default {
             let decks = JSON.parse(JSON.stringify(context.state.decks)) //reload decks, cause they might be changed by above user collection section
             let userCollection = JSON.parse(JSON.stringify(context.state.userCollection))
             let serverDecksMeta = null
-            let getMetaAndCollectionURL = context.state.serverURL + '/get_meta_and_collection' 
+            let getMetaAndCollectionURL = context.state.serverURL + '/get_decks_meta_and_collection' 
             await fetch(getMetaAndCollectionURL, {
               headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
               method: 'GET',

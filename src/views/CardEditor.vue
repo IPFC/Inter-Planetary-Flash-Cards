@@ -233,6 +233,7 @@ export default {
     unincludedTags() {
       // this now rides on review deck in getters
       const allTagsList = this.$store.getters.reviewDeck.allTags;
+      this.$store.commit('updateAllCardTags', allTagsList);
       const unincludedTagsList = [];
       for (const tag of allTagsList) {
         if (!this.card.card_tags.includes(tag)) {
@@ -354,14 +355,12 @@ export default {
       const deleteData = { deck_id: deckId, card_id: card.card_id };
       if (deck.cards.length === 1 || this.comingToCardEditorFromReview) {
         this.$router.go(-1);
-        this.$store.commit('deleteCard', deleteData);
-        this.$store.commit('deleteCardFromSchedule', card.card_id);
+        this.$store.dispatch('deleteCard', deleteData);
       } else {
         if (wasLastCard) {
           this.$store.commit('updateCardToEditIndex', this.cardToEditIndex - 1);
         }
-        this.$store.commit('deleteCard', deleteData);
-        this.$store.commit('deleteCardFromSchedule', card.card_id);
+        this.$store.dispatch('deleteCard', deleteData);
         this.setCard();
       }
     },
@@ -514,7 +513,7 @@ export default {
       } else {
         const emptyDeck = {
           cards: [this.card],
-          created_by: this.user_collection.user_id,
+          user_id: this.user_collection.user_id,
           deck_id: uuidv4(),
           deck_tags: [],
           description: null,
@@ -522,7 +521,7 @@ export default {
           edited: Math.round(new Date().getTime()),
           lang_back: 'en',
           lang_front: 'en',
-          term_count: 1,
+          card_count: 1,
           title: this.newDeckTitle,
           visibility: 'public',
           icon_color: this.generateRandomHslaColor(),
