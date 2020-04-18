@@ -37,7 +37,7 @@
           ></toggle-button>
         </b-row>
         <b-row id="cards-row">
-          <b-col :key="refreshCardsKey" id="cards-col" cols="12">
+          <b-col id="cards-col" :key="refreshCardsKey" cols="12">
             <flashcard-viewer
               v-for="card in deck.cards"
               :key="card.card_id"
@@ -108,13 +108,13 @@ export default {
       return this.$store.getters.currentDeck;
     },
   },
-  mounted() {
-    this.$emit('homeLoad');
-  },
   watch: {
     showCardBacks() {
       this.refreshCardsKey++;
     },
+  },
+  mounted() {
+    this.$emit('homeLoad');
   },
   methods: {
     toggleEditDeckTitle() {
