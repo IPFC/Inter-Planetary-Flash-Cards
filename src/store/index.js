@@ -348,7 +348,7 @@ const store = new Vuex.Store({
       await context.dispatch('callAPI', getWebsiteCall).then(data => {
         getWebsiteResults = data;
       });
-      console.log('    get Website, Results ', getWebsiteResults);
+      // console.log('    get Website, Results ', getWebsiteResults);
       if (!getWebsiteResults) {
         throw new Error('error in get_websites_selected_content');
       }
@@ -374,7 +374,7 @@ const store = new Vuex.Store({
       await context.dispatch('callAPI', postWebsitesCall).then(data => {
         postWebsitesResult = data;
       });
-      console.log('          post Websites Result', postWebsitesResult);
+      // console.log('          post Websites Result', postWebsitesResult);
       if (!postWebsitesResult) {
         throw new Error('error posting websites');
       }

@@ -57,12 +57,10 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$refs.flashcardBack.clientHeight);
+    // console.log(this.$refs.flashcardBack.clientHeight);
     const backHeight = this.$refs.flashcardBack.clientHeight;
     const joined = backHeight + 'px';
-    console.log(joined);
     this.frontStyle.height = joined;
-    console.log(this.frontStyle.height);
   },
   methods: {
     flipCard() {
