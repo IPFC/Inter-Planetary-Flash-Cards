@@ -282,6 +282,7 @@ export default {
       };
       const loginCallback = function(data, that) {
         if (!data.token) {
+          that.loggingIn = false;
           that.failedLogin = true;
           that.apiErrorMsg = data.error;
         } else {

@@ -72,6 +72,7 @@ export default {
       }
     },
     debouncedSync: debounce(function() {
+      // console.log('sync called from alert offline');
       this.cloudSync();
     }, 10000),
   },

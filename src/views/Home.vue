@@ -35,6 +35,7 @@
               id="main-card"
               ref="card"
               :key="reDrawCardKey"
+              v-highlight
               v-touch:tap="flipCard"
               class="first-card"
               :flipped="cardFlipToggle"

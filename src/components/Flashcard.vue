@@ -4,7 +4,7 @@
       <div :style="{ backgroundColor: colorFront }" class="flashcard front">
         <div v-highlight v-dompurify-html="front" class="card-content" />
       </div>
-      <div :style="{ backgroundColor: colorBack }" class="flashcard back">
+      <div v-if="back" :style="{ backgroundColor: colorBack }" class="flashcard back">
         <div v-highlight v-dompurify-html="back" class="card-content" />
       </div>
     </div>

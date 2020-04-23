@@ -139,6 +139,7 @@ export default {
   methods: {
     callSync() {
       if (this.$store.getters.isAuthenticated) {
+        // console.log('sync called from navbar');
         this.$store.dispatch('cloudSync', true);
       } else {
         this.$router.push('/login');

@@ -412,7 +412,6 @@
             :key="quillReRenderKey"
             ref="myQuillEditor"
             v-model="editorText"
-            v-highlight
             class="quill"
             :options="editorOptions"
           ></quill-editor>
@@ -425,6 +424,7 @@
 <script>
 import { BListGroup, BListGroupItem } from 'bootstrap-vue';
 import { isEqual } from 'lodash/core';
+import { highlighter } from '../utils/syntaxHighlight.js';
 import { Quill, quillEditor } from 'vue-quill-editor';
 import 'quill/dist/quill.snow.css';
 import imageUpload from 'quill-plugin-image-upload';
@@ -509,7 +509,7 @@ export default {
           },
           toolbar: this.toolbar,
           syntax: {
-            highlight: text => window.hljs.highlightAuto(text).value,
+            highlight: text => highlighter.highlightAuto(text).value,
           },
           history: {
             delay: 2000,

@@ -226,9 +226,6 @@ const store = new Vuex.Store({
     toggleSyncFailed(state, bool) {
       state.syncFailed = bool;
     },
-    updateSchedule(state, data) {
-      state.user_collection.schedule = data;
-    },
     addCardToSchedule(state, cardId) {
       let dupCount = 0;
       for (const scheduleItem of state.user_collection.schedule.list) {
@@ -283,8 +280,17 @@ const store = new Vuex.Store({
         break;
       }
     },
-    updateAllCardTags(state, tags) {
-      state.user_collection.all_card_tags = tags;
+    updateWebappSettings(state, data) {
+      state.user_collection.webapp_settings = data;
+    },
+    updateSchedule(state, data) {
+      state.user_collection.schedule = data;
+    },
+    updateAllCardTags(state, data) {
+      state.user_collection.all_card_tags = data;
+    },
+    updateHighlightUrls(state, data) {
+      state.user_collection.highlight_urls = data;
     },
   },
   actions: {

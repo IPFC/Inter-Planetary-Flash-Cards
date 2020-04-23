@@ -146,6 +146,7 @@ export default {
     },
     debouncedSync: debounce(function() {
       if (!this.syncing && this.initialSync > 1 && this.user_collection.user_id !== 'tutorial') {
+        // console.log('sync called from  app.vue');
         this.$store.dispatch('cloudSync');
       }
     }, 15000),

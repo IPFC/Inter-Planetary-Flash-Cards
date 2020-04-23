@@ -29,11 +29,12 @@
             <div id="underline"></div>
           </b-col>
         </b-row>
-        <b-row id="options-row" class="mt-3 ml-3">
+        <b-row id="options-row" class="mt-2  ml-3">
+          <p class="mr-2 mb-0 text-muted">card backs</p>
           <toggle-button
             v-model="showCardBacks"
-            :width="130"
-            :labels="{ checked: 'show card backs', unchecked: 'hide card backs' }"
+            :width="60"
+            :labels="{ checked: 'show', unchecked: 'hide' }"
           ></toggle-button>
         </b-row>
         <b-row id="cards-row">

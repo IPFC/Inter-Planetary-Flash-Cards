@@ -75,7 +75,7 @@ export default {
   align-content: center;
   justify-content: center;
   border-radius: 10px;
-  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0px 7px rgba(0, 0, 0, 0.4);
   margin: auto;
   width: 100%;
   padding: 0px 15px 0px 15px;
@@ -83,7 +83,7 @@ export default {
   visibility: visible;
 }
 .flashcard:hover {
-  box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.7);
 }
 .card-content {
   margin: 0px 10px 0 0;
@@ -130,7 +130,7 @@ export default {
 }
 .edit-btn-show-backs {
   margin-left: auto;
-  margin-right: 5px;
+  margin-right: 0px;
   color: grey;
 }
 .edit-btn-show-backs:hover {
@@ -139,8 +139,8 @@ export default {
 }
 .edit-btn {
   position: fixed;
-  top: 3px;
-  right: 3px;
+  top: 5px;
+  right: 5px;
   color: grey;
 }
 .edit-btn:hover {

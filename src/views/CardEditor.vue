@@ -10,8 +10,8 @@
           <div
             v-if="!frontFocused"
             v-touch:swipe="swipeHandler"
-            v-highlight
             v-dompurify-html="card.front_rich_text"
+            v-highlight
             class="preview"
             @click="focusInputFront()"
           ></div>
@@ -19,9 +19,9 @@
             v-if="frontFocused"
             ref="myQuillEditorFront"
             v-model="card.front_rich_text"
-            v-highlight
             class="quill"
             :options="editorOption"
+            @change="onFrontCardEditorChange($event)"
           ></quill-editor>
         </b-container>
         <br />
@@ -29,8 +29,8 @@
           <div
             v-if="!backFocused"
             v-touch:swipe="swipeHandler"
-            v-highlight
             v-dompurify-html="card.back_rich_text"
+            v-highlight
             class="preview"
             @click="focusInputBack()"
           ></div>
@@ -38,7 +38,6 @@
             v-if="backFocused"
             ref="myQuillEditorBack"
             v-model="card.back_rich_text"
-            v-highlight
             class="quill"
             :options="editorOption"
           ></quill-editor>
@@ -136,6 +135,7 @@ import { mapState } from 'vuex';
 import { Quill, quillEditor } from 'vue-quill-editor';
 import 'quill/dist/quill.snow.css';
 import imageUpload from 'quill-plugin-image-upload';
+import { highlighter } from '../utils/syntaxHighlight.js';
 const uuidv4 = require('uuid/v4');
 const axios = require('axios');
 const FormData = require('form-data');
@@ -204,7 +204,7 @@ export default {
           },
           toolbar: this.$store.state.user_collection.webapp_settings.text_editor.options.toolbar,
           syntax: {
-            highlight: text => window.hljs.highlightAuto(text).value,
+            highlight: text => highlighter.highlightAuto(text).value,
           },
           history: {
             delay: 2000,
@@ -233,7 +233,13 @@ export default {
     unincludedTags() {
       // this now rides on review deck in getters
       const allTagsList = this.$store.getters.reviewDeck.allTags;
-      this.$store.commit('updateAllCardTags', allTagsList);
+      if (!isEqual(allTagsList, this.user_collection.all_card_tags.list)) {
+        console.log('tag list unequal', allTagsList, this.user_collection.all_card_tags.list);
+        this.$store.commit('updateAllCardTags', {
+          list: allTagsList,
+          edited: new Date().getTime(),
+        });
+      }
       const unincludedTagsList = [];
       for (const tag of allTagsList) {
         if (!this.card.card_tags.includes(tag)) {
@@ -298,6 +304,13 @@ export default {
     this.$emit('homeLoad');
   },
   methods: {
+    onFrontCardEditorChange(event) {
+      console.log('front editor change!', event);
+
+      const justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
+      console.log(justHtml);
+      return null;
+    },
     swipeHandler(direction) {
       if (direction === 'left' && !this.rightNavDisabled) {
         this.nextCard();
@@ -599,7 +612,6 @@ export default {
   top: 15px;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 1.5em;
   padding: 0px 5px 0px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.51);
   text-align: left;
@@ -755,16 +767,16 @@ export default {
   text-align: justify;
 }
 .preview >>> p {
-  font-size: 1em;
+  font-size: 1rem;
 }
 .preview >>> p .ql-size-small {
-  font-size: 0.65em;
+  font-size: 0.75rem;
 }
 .preview >>> p .ql-size-large {
-  font-size: 1.5em;
+  font-size: 1.5rem;
 }
 .preview >>> p .ql-size-huge {
-  font-size: 2.5em;
+  font-size: 2.5rem;
 }
 .quill >>> .ql-container.ql-snow {
   border: 0px;
@@ -775,15 +787,15 @@ export default {
   border-bottom: 1px solid #ccc;
 }
 .quill >>> p {
-  font-size: 1.5em;
+  font-size: 1rem;
 }
 .quill >>> p .ql-size-small {
-  font-size: 0.75em;
+  font-size: 0.75rem;
 }
 .quill >>> p .ql-size-large {
-  font-size: 2em;
+  font-size: 1.5rem;
 }
 .quill >>> p .ql-size-huge {
-  font-size: 3.5em;
+  font-size: 2.5rem;
 }
 </style>
