@@ -39,14 +39,14 @@
         </b-row>
         <b-row id="cards-row">
           <b-col id="cards-col" :key="refreshCardsKey" cols="12">
-            <flashcard-viewer
+            <flashcard-preview
               v-for="card in deck.cards"
               :key="card.card_id"
               class="flashcard-outer"
               :show-card-backs="showCardBacks"
               :card="card"
               @edit-clicked="editCard(card)"
-            ></flashcard-viewer>
+            ></flashcard-preview>
 
             <!-- <b-card v-for="card in deck.cards" :key="card.card_id" class="card">
               <b-container style="padding: 0;">
@@ -90,10 +90,10 @@
 import { BFormInput } from 'bootstrap-vue';
 // https://github.com/euvl/vue-js-toggle-button/
 import { ToggleButton } from 'vue-js-toggle-button';
-import FlashcardViewer from '../components/FlashcardViewer.vue';
+import FlashcardPreview from '../components/FlashcardPreview.vue';
 export default {
   name: 'DeckEditor',
-  components: { BFormInput, ToggleButton, FlashcardViewer },
+  components: { BFormInput, ToggleButton, FlashcardPreview },
   props: { alertBrowserRec: { type: Boolean } },
   data() {
     return {

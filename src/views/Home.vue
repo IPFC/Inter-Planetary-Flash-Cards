@@ -31,7 +31,7 @@
                 : ''
             "
           >
-            <vue-flashcard
+            <flashcard-review
               id="main-card"
               ref="card"
               :key="reDrawCardKey"
@@ -41,36 +41,36 @@
               :flipped="cardFlipToggle"
               :front="currentCard.front_rich_text"
               :back="currentCard.back_rich_text"
-            ></vue-flashcard>
+            ></flashcard-review>
           </span>
           <div id="next-card-padding" class="card-padding">
-            <vue-flashcard
+            <flashcard-review
               v-if="todaysDeck.cards.length > 1"
               id="next-card"
               :class="switchCardSequence ? 'switch-crd-seq-next-crd' : 'next-card'"
               :front="nextCard.front_rich_text"
               :back="' '"
-            ></vue-flashcard>
+            ></flashcard-review>
           </div>
           <div id="third-card-padding" class="card-padding">
-            <vue-flashcard
+            <flashcard-review
               v-if="todaysDeck.cards.length > 2"
               id="third-card"
               :class="switchCardSequence ? 'switch-crd-seq-third-crd' : 'third-card'"
               class="card"
               front="   /n hahaha! you'll never see me /n   "
               back="   /n /n /n   "
-            ></vue-flashcard>
+            ></flashcard-review>
           </div>
           <div id="fourth-card-padding" class="card-padding">
-            <vue-flashcard
+            <flashcard-review
               v-if="todaysDeck.cards.length > 2"
               id="fourth-card"
               :class="switchCardSequence ? 'switch-crd-seq-fourth-crd' : 'fourth-card'"
               class="card"
               front="   /n hahaha! you'll never see me /n   "
               back="   /n /n /n   "
-            ></vue-flashcard>
+            ></flashcard-review>
           </div>
         </b-col>
         <b-col v-else id="spinner-col">
@@ -123,11 +123,11 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
 import defaultCollection from '../assets/defaultCollection.json';
-const vueFlashcard = () => import('../components/Flashcard');
+const flashcardReview = () => import('../components/FlashcardReview.vue');
 
 export default {
   name: 'Home',
-  components: { vueFlashcard },
+  components: { flashcardReview },
   props: { alertBrowserRec: { type: Boolean } },
   data() {
     return {
