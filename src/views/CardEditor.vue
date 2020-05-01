@@ -234,7 +234,7 @@ export default {
       // this now rides on review deck in getters
       const allTagsList = this.$store.getters.reviewDeck.allTags;
       if (!isEqual(allTagsList, this.user_collection.all_card_tags.list)) {
-        console.log('tag list unequal', allTagsList, this.user_collection.all_card_tags.list);
+        // console.log('tag list unequal', allTagsList, this.user_collection.all_card_tags.list);
         this.$store.commit('updateAllCardTags', {
           list: allTagsList,
           edited: new Date().getTime(),
@@ -305,10 +305,10 @@ export default {
   },
   methods: {
     onFrontCardEditorChange(event) {
-      console.log('front editor change!', event);
+      // console.log('front editor change!', event);
 
-      const justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
-      console.log(justHtml);
+      // const justHtml = this.$refs.myQuillEditorFront.quill.root.innerHTML;
+      // console.log(justHtml);
       return null;
     },
     swipeHandler(direction) {
