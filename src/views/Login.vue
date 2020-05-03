@@ -316,7 +316,7 @@ export default {
         .post(pinataSignupEndpoint, params)
         .then(response => {
           const data = response.data;
-          console.log('APICall data', data);
+          // console.log('APICall data', data);
           const signupUrl = this.serverUrl + '/sign_up';
           const signUpData = {
             email: email,
@@ -338,7 +338,7 @@ export default {
           that.callAPI(signupUrl, headers, 'POST', signUpData, signupCallback);
         })
         .catch(function(err) {
-          console.log(err.response);
+          // console.log(err.response);
           that.loggingIn = false;
           that.failedLogin = true;
           that.apiErrorMsg = err.response.data.error || err.response;
