@@ -197,7 +197,7 @@ export default {
       }
     },
     deleteDeck(id) {
-      this.$store.commit('deleteDeck', id);
+      this.$store.dispatch('deleteDeck', id);
     },
     PWAUpdate(bool) {
       this.$emit('updatePWA', bool);

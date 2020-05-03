@@ -328,8 +328,8 @@ const store = new Vuex.Store({
             if (card.card_id === cardId) {
               cardIndex = deck.cards.indexOf(card);
               if (cardIndex !== -1) {
-                if (!isEmpty(card.highlight_id) || !isEmpty(card.highlight_url)) {
-                  if (context.state.user_collection.highlight_urls.includes(cardId)) {
+                if (!isEmpty(card.highlight_url)) {
+                  if (context.state.user_collection.highlight_urls.includes(card.highlight_url)) {
                     context.dispatch('removeCardFromHighlights', card);
                   }
                   break;
@@ -354,7 +354,7 @@ const store = new Vuex.Store({
       await context.dispatch('callAPI', getWebsiteCall).then(data => {
         getWebsiteResults = data;
       });
-      // console.log('    get Website, Results ', getWebsiteResults);
+      console.log('    get Website, Results ', getWebsiteResults);
       if (!getWebsiteResults) {
         throw new Error('error in get_websites_selected_content');
       }
@@ -380,12 +380,12 @@ const store = new Vuex.Store({
       await context.dispatch('callAPI', postWebsitesCall).then(data => {
         postWebsitesResult = data;
       });
-      // console.log('          post Websites Result', postWebsitesResult);
+      console.log('          post Websites Result', postWebsitesResult);
       if (!postWebsitesResult) {
         throw new Error('error posting websites');
       }
     },
-    async callAPI(data) {
+    async callAPI(context, data) {
       let result = null;
       const options = {
         url: data.url,
@@ -398,6 +398,7 @@ const store = new Vuex.Store({
       if (data.data) {
         options.data = data.data;
       }
+      console.log('options', options);
       await axios(options)
         .then(response => {
           result = response.data;
@@ -405,22 +406,28 @@ const store = new Vuex.Store({
         })
         .catch(function(err) {
           throw new Error(err);
-          // sendMesageToAllTabs({ syncing: true, value: false });
         });
       return result;
     },
     deleteDeck(context, deckId) {
       for (const deck of context.state.decks) {
         if (deck.deck_id === deckId) {
-          context.commit('deleteDeck', deck);
+          console.log('deleting deck', deckId);
+
+          console.log(deck.cards);
           for (const card of deck.cards) {
-            if (!isEmpty(card.highlight_id) || !isEmpty(card.highlight_url)) {
-              if (context.state.user_collection.highlight_urls.includes(card.highlight_url)) {
-                context.dispatch('removeCardFromHighlights', card);
-              }
+            if (!isEmpty(card.highlight_url)) {
+              console.log('card', card);
+              console.log(
+                'context.state.user_collection.highlight_urls.list',
+                context.state.user_collection.highlight_urls.list
+              );
+              context.dispatch('removeCardFromHighlights', card);
+
               break;
             }
           }
+          context.commit('deleteDeck', deck);
           break;
         }
       }

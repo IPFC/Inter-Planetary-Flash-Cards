@@ -106,7 +106,21 @@ export default {
 
   computed: {
     deck() {
-      return this.$store.getters.currentDeck;
+      const deckRaw = JSON.parse(JSON.stringify(this.$store.getters.currentDeck));
+      console.log(deckRaw);
+      const cardIds = [];
+      const cards = [];
+      for (const card of deckRaw.cards) {
+        if (!cardIds.includes(card.card_id)) {
+          cards.push(card);
+          cardIds.push(card.card_id);
+        }
+      }
+      deckRaw.cards = cards;
+      console.log(JSON.stringify(cards));
+      console.log(cards.length);
+      return deckRaw;
+      // return this.$store.getters.currentDeck;
     },
   },
   watch: {
