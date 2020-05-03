@@ -34,8 +34,8 @@
         }}</b-form-invalid-feedback>
         <!-- <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback> -->
 
-        <b-button
-          v-if="showSignUp"
+        <!-- <b-button
+          v-if="showSignup"
           id="button-get-pinata"
           type="submit"
           variant="primary"
@@ -44,38 +44,41 @@
         >
         <br />
 
-        <label v-if="showSignUp" for="feedback-pinata-api">Pinata API key</label>
+        <label v-if="showSignup" for="feedback-pinata-api">Pinata API key</label>
         <b-form-input
-          v-if="showSignUp"
+          v-if="showSignup"
           id="feedback-pinata-api"
           v-model="input.pinataApi"
           :state="pinataApiValidation"
         ></b-form-input>
-        <b-form-invalid-feedback v-if="showSignUp" :state="pinataApiValidation">{{
+        <b-form-invalid-feedback v-if="showSignup" :state="pinataApiValidation">{{
           pinataApiValidationErrorMsg
-        }}</b-form-invalid-feedback>
-        <!-- <b-form-valid-feedback v-if="showSignUp" :state="pinataApiValidation">Looks Good.</b-form-valid-feedback> -->
+        }}</b-form-invalid-feedback> -->
+        <!-- <b-form-valid-feedback v-if="showSignup" :state="pinataApiValidation">Looks Good.</b-form-valid-feedback> -->
 
-        <label v-if="showSignUp" for="feedback-pinata-secret">Pinata secret API key</label>
+        <!-- <label v-if="showSignup" for="feedback-pinata-secret">Pinata secret API key</label>
         <b-form-input
-          v-if="showSignUp"
+          v-if="showSignup"
           id="feedback-pinata-secret"
           v-model="input.pinataSecret"
           :state="pinataSecretValidation"
           type="password"
         ></b-form-input>
-        <b-form-invalid-feedback v-if="showSignUp" :state="pinataSecretValidation">{{
+        <b-form-invalid-feedback v-if="showSignup" :state="pinataSecretValidation">{{
           pinataSecretValidationErrorMsg
-        }}</b-form-invalid-feedback>
-        <!-- <b-form-valid-feedback v-if="showSignUp" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
-
+        }}</b-form-invalid-feedback> -->
+        <!-- <b-form-valid-feedback v-if="showSignup" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
+        <p v-if="showSignup" class="mt-1">
+          Signing up with IPFC, you will recieve a Pinata.cloud account with 1GB of free storage.
+          Check your email for activation.
+        </p>
         <span id="login-signup-buttons">
           <b-button
-            v-if="showSignUp"
+            v-if="showSignup"
             :disabled="loginButtonDisable"
             type="submit"
             variant="primary"
-            @click="SignUp()"
+            @click="signup()"
           >
             <font-awesome-icon v-show="loggingIn" icon="spinner" spin />
             Sign up</b-button
@@ -92,11 +95,11 @@
           >
 
           <b-button
-            v-if="showSignUp"
+            v-if="showSignup"
             id="sign-up-a"
             type="submit"
             variant="secondary"
-            @click="toggleShowSignUp()"
+            @click="toggleShowSignup()"
             >Log in</b-button
           >
           <b-button
@@ -104,7 +107,7 @@
             id="sign-up-a"
             type="submit"
             variant="secondary"
-            @click="toggleShowSignUp()"
+            @click="toggleShowSignup()"
             >Sign up</b-button
           >
         </span>
@@ -134,7 +137,7 @@ export default {
       dismissSecs: 5,
       dismissCountDown: 0,
       loggingIn: false,
-      showSignUp: false,
+      showSignup: false,
     };
   },
   computed: {
@@ -211,7 +214,7 @@ export default {
         return null;
       }
     },
-    invalidSignUp() {
+    invalidSignup() {
       if (
         !this.emailValidation ||
         !this.passwordValidation ||
@@ -299,31 +302,50 @@ export default {
       };
       this.callAPI(loginURL, headers, 'GET', loginCallback);
     },
-    SignUp() {
+    signup() {
       this.loggingIn = true;
       this.failedLogin = false;
-      const signupURL = this.serverUrl + '/sign_up';
-      const data = {
-        email: this.input.email,
-        password: this.input.password,
-        pinata_api: this.input.pinataApi,
-        pinata_key: this.input.pinataSecret,
-        user_collection: defaultCollection.user_collection,
-      };
-      const headers = { 'Content-Type': 'application/json' };
-      const signupCallback = function(data, that) {
-        if (!data.message) {
+      const that = this;
+      const email = this.input.email;
+      const password = this.input.password;
+      const pinataSignupEndpoint = 'https://api.pinata.cloud/users/signUpNewUser';
+      const params = new URLSearchParams();
+      params.append('username', email);
+      params.append('password', password);
+      axios
+        .post(pinataSignupEndpoint, params)
+        .then(response => {
+          const data = response.data;
+          console.log('APICall data', data);
+          const signupUrl = this.serverUrl + '/sign_up';
+          const signUpData = {
+            email: email,
+            password: password,
+            user_collection: defaultCollection.user_collection,
+            pinata_api: data.userInformation.api_key,
+            pinata_key: data.userInformation.api_secret,
+          };
+          const headers = { 'Content-Type': 'application/json' };
+          const signupCallback = function(data) {
+            if (!data.message) {
+              that.loggingIn = false;
+              that.failedLogin = true;
+              that.apiErrorMsg = data.error;
+            } else {
+              that.login(email, password);
+            }
+          };
+          that.callAPI(signupUrl, headers, 'POST', signUpData, signupCallback);
+        })
+        .catch(function(err) {
+          console.log(err.response);
+          that.loggingIn = false;
           that.failedLogin = true;
-          that.apiErrorMsg = data.error;
-        } else {
-          that.login();
-        }
-        that.loggingIn = false;
-      };
-      this.callAPI(signupURL, headers, 'POST', signupCallback, data);
+          that.apiErrorMsg = err.response.data.error || err.response;
+        });
     },
-    toggleShowSignUp() {
-      this.showSignUp = !this.showSignUp;
+    toggleShowSignup() {
+      this.showSignup = !this.showSignup;
     },
     OpenPinata() {
       window.open('https://pinata.cloud/signup', '_blank');
