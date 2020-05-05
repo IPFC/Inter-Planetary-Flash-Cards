@@ -354,7 +354,7 @@ const store = new Vuex.Store({
       await context.dispatch('callAPI', getWebsiteCall).then(data => {
         getWebsiteResults = data;
       });
-      console.log('    get Website, Results ', getWebsiteResults);
+      // console.log('    get Website, Results ', getWebsiteResults);
       if (!getWebsiteResults) {
         throw new Error('error in get_websites_selected_content');
       }
@@ -380,7 +380,7 @@ const store = new Vuex.Store({
       await context.dispatch('callAPI', postWebsitesCall).then(data => {
         postWebsitesResult = data;
       });
-      console.log('          post Websites Result', postWebsitesResult);
+      // console.log('          post Websites Result', postWebsitesResult);
       if (!postWebsitesResult) {
         throw new Error('error posting websites');
       }
@@ -398,7 +398,7 @@ const store = new Vuex.Store({
       if (data.data) {
         options.data = data.data;
       }
-      console.log('options', options);
+      // console.log('options', options);
       await axios(options)
         .then(response => {
           result = response.data;
@@ -412,16 +412,16 @@ const store = new Vuex.Store({
     deleteDeck(context, deckId) {
       for (const deck of context.state.decks) {
         if (deck.deck_id === deckId) {
-          console.log('deleting deck', deckId);
+          // console.log('deleting deck', deckId);
 
-          console.log(deck.cards);
+          // console.log(deck.cards);
           for (const card of deck.cards) {
             if (!isEmpty(card.highlight_url)) {
-              console.log('card', card);
-              console.log(
-                'context.state.user_collection.highlight_urls.list',
-                context.state.user_collection.highlight_urls.list
-              );
+              // console.log('card', card);
+              // console.log(
+              //   'context.state.user_collection.highlight_urls.list',
+              //   context.state.user_collection.highlight_urls.list
+              // );
               context.dispatch('removeCardFromHighlights', card);
 
               break;

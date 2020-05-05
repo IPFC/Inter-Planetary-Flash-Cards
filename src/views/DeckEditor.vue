@@ -107,7 +107,7 @@ export default {
   computed: {
     deck() {
       const deckRaw = JSON.parse(JSON.stringify(this.$store.getters.currentDeck));
-      console.log(deckRaw);
+      // console.log(deckRaw);
       const cardIds = [];
       const cards = [];
       for (const card of deckRaw.cards) {
@@ -117,8 +117,8 @@ export default {
         }
       }
       deckRaw.cards = cards;
-      console.log(JSON.stringify(cards));
-      console.log(cards.length);
+      // console.log(JSON.stringify(cards));
+      // console.log(cards.length);
       return deckRaw;
       // return this.$store.getters.currentDeck;
     },
