@@ -228,8 +228,7 @@ async function cloudSync(data) {
           return deckToCheck.deck_id === clientDeckId;
         });
         if (!isEmpty(deckToPostLst)) {
-          const deckToPost = deckToPostLst[0];
-          decksToPost.push(deckToPost);
+          decksToPost.push(deckToPostLst[0]);
         }
       }
     }
