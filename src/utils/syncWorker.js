@@ -227,7 +227,7 @@ async function cloudSync(data) {
         const deckToPostLst = decks.filter(function (deckToCheck) {
           return deckToCheck.deck_id === clientDeckId;
         });
-        if (!isEmpty(decksToPost)) {
+        if (!isEmpty(deckToPostLst)) {
           const deckToPost = deckToPostLst[0];
           decksToPost.push(deckToPost);
         }
