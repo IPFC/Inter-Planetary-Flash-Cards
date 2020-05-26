@@ -8,8 +8,10 @@
 
           <b-row class="info-row">
             <p class="mx-2 my-0 align-self-center">{{ deckTitle }}</p>
-            <div class="ml-auto d-flex">
-              <p v-for="(tag, index) in tags" :key="index" class="tag-style-button">{{ tag }}</p>
+            <div v-if="tagsFiltered.length > 0" class="ml-auto d-flex">
+              <div v-for="(tag, index) in tagsFiltered" :key="index" class="tag-style-button">
+                {{ tag }}
+              </div>
             </div>
           </b-row>
         </div>
@@ -20,10 +22,14 @@
           <b-row class="divider-row"> <hr class="divider" /> </b-row>
           <b-row class="info-row py-1">
             <p class="ml-2 mr-0 my-0 align-self-center">level</p>
-            <p class="tag-style-button">{{ level }}</p>
-            <p class="mx-2 my-0 align-self-center">due: {{ dueConverter(due) }}</p>
+            <p class="level-badge">{{ level }}</p>
+            <!-- <p class="mx-2 my-0 align-self-center">due: {{ dueConverter(due) }}</p> -->
             <p class="my-0 align-self-center ml-auto mr-0">next review</p>
-            <p class="tag-style-button mr-2">{{ timeConverter(interval) }}</p>
+            <span class="tag-style-button mr-2"
+              ><p class="time-to-next-p">{{ timeConverterFront(interval) }}</p>
+              <p class="time-pipe time-to-next-p">|</p>
+              <p class="time-to-next-p">{{ timeConverterEnd(interval) }}</p></span
+            >
           </b-row>
         </div>
       </div>
@@ -33,6 +39,13 @@
 <script>
 import { convertDuration } from '../utils/dataProcessing';
 export default {
+  computed: {
+    tagsFiltered() {
+      return this.tags.filter(tag => {
+        return tag !== 'Daily Review';
+      });
+    },
+  },
   props: {
     deckTitle: { type: String, default: '' },
     level: { type: Number, default: 0 },
@@ -73,10 +86,17 @@ export default {
   methods: {
     dueConverter(num) {
       const now = new Date().getTime();
-      return this.timeConverter(-num + now) + ' ago';
+      return convertDuration(-num + now) + ' ago';
     },
-    timeConverter(num) {
-      return convertDuration(num);
+    timeConverterFront(num) {
+      const converted = convertDuration(num);
+      const convertedSplit = converted.split(' ');
+      return convertedSplit[0];
+    },
+    timeConverterEnd(num) {
+      const converted = convertDuration(num);
+      const convertedSplit = converted.split(' ');
+      return convertedSplit[1];
     },
   },
 };
@@ -111,9 +131,31 @@ export default {
   color: black;
   background-color: #f2f2f2;
   padding: 0.1rem 0.7rem;
+  display: flex;
+  align-items: center;
+}
+.level-badge {
+  border-radius: 1.1rem;
+  height: 2.2rem;
+  width: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px 10px;
+  background: #ffffff;
+  border: 3px solid #f2f2f2;
+  padding: 0.1rem 0.7rem;
+}
+.time-to-next-p {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .info-row {
   margin: 0 -7px;
+}
+.time-pipe {
+  color: grey;
+  margin: 0 3px 0 3px;
 }
 .card-content {
   padding: 10px 8px 0px 0px;
