@@ -20,7 +20,7 @@
         <b-form-invalid-feedback v-if="input.email" :state="emailValidation">{{
           emailValidationErrorMsg
         }}</b-form-invalid-feedback>
-        <!-- <b-form-valid-feedback :state="emailValidation">Looks Good.</b-form-valid-feedback> -->
+        <b-form-valid-feedback :state="emailValidation">Looks Good.</b-form-valid-feedback>
 
         <label for="feedback-password">Password</label>
         <b-form-input
@@ -32,42 +32,7 @@
         <b-form-invalid-feedback v-if="input.password" :state="passwordValidation">{{
           passwordValidationErrorMsg
         }}</b-form-invalid-feedback>
-        <!-- <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback> -->
-
-        <!-- <b-button
-          v-if="showSignup"
-          id="button-get-pinata"
-          type="submit"
-          variant="primary"
-          @click="OpenPinata()"
-          >Get Pinata</b-button
-        >
-        <br />
-
-        <label v-if="showSignup" for="feedback-pinata-api">Pinata API key</label>
-        <b-form-input
-          v-if="showSignup"
-          id="feedback-pinata-api"
-          v-model="input.pinataApi"
-          :state="pinataApiValidation"
-        ></b-form-input>
-        <b-form-invalid-feedback v-if="showSignup" :state="pinataApiValidation">{{
-          pinataApiValidationErrorMsg
-        }}</b-form-invalid-feedback> -->
-        <!-- <b-form-valid-feedback v-if="showSignup" :state="pinataApiValidation">Looks Good.</b-form-valid-feedback> -->
-
-        <!-- <label v-if="showSignup" for="feedback-pinata-secret">Pinata secret API key</label>
-        <b-form-input
-          v-if="showSignup"
-          id="feedback-pinata-secret"
-          v-model="input.pinataSecret"
-          :state="pinataSecretValidation"
-          type="password"
-        ></b-form-input>
-        <b-form-invalid-feedback v-if="showSignup" :state="pinataSecretValidation">{{
-          pinataSecretValidationErrorMsg
-        }}</b-form-invalid-feedback> -->
-        <!-- <b-form-valid-feedback v-if="showSignup" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
+        <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback>
         <p v-if="showSignup" class="mt-1">
           Signing up with IPFC, you will recieve a Pinata.cloud account with 1GB of free storage.
           Check your email for activation.
@@ -78,7 +43,7 @@
             :disabled="loginButtonDisable"
             type="submit"
             variant="primary"
-            @click="signup()"
+            @click="signup(serverUrl)"
           >
             <font-awesome-icon v-show="loggingIn" icon="spinner" spin />
             Sign up</b-button
@@ -146,7 +111,7 @@ export default {
     }),
     emailValidation() {
       const email = this.input.email;
-      if (email.length < 4 || email.length > 25) {
+      if (email.length <= 5 || email.length >= 64) {
         return false;
       }
       if (!email.includes('@') || !email.includes('.')) {
@@ -157,8 +122,8 @@ export default {
     },
     emailValidationErrorMsg() {
       const email = this.input.email;
-      if (email.length < 4 || email.length > 25) {
-        return 'Email must be 5-25 characters long';
+      if (email.length <= 5 || email.length >= 64) {
+        return 'Email must be 5-64 characters long';
       }
       if (!email.includes('@') || !email.includes('.')) {
         return 'Invalid email';
@@ -168,7 +133,7 @@ export default {
     },
     passwordValidation() {
       const password = this.input.password;
-      if (password.length < 8 || password.length > 20) {
+      if (password.length < 8 || password.length >= 64) {
         return false;
       } else {
         return true;
@@ -176,44 +141,13 @@ export default {
     },
     passwordValidationErrorMsg() {
       const password = this.input.password;
-      if (password.length < 8 || password.length > 20) {
-        return 'Password must be 8-20 characters long';
+      if (password.length < 8 || password.length >= 64) {
+        return 'Password must be 8-64 characters long';
       } else {
         return null;
       }
     },
-    pinataApiValidation() {
-      const pinataApi = this.input.pinataApi;
-      if (pinataApi.length < 20 || pinataApi.length > 20) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    pinataApiValidationErrorMsg() {
-      const pinataApi = this.input.pinataApi;
-      if (pinataApi.length < 20 || pinataApi.length > 20) {
-        return "Invalid pinata api key. In pinata, click the profile icon, then 'account'";
-      } else {
-        return null;
-      }
-    },
-    pinataSecretValidation() {
-      const pinataSecret = this.input.pinataSecret;
-      if (pinataSecret.length < 64 || pinataSecret.password > 64) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    pinataSecretValidationErrorMsg() {
-      const pinataSecret = this.input.pinataSecret;
-      if (pinataSecret.length < 64 || pinataSecret.length > 64) {
-        return "Invalid pinata api secret key. In pinata, click the profile icon, then 'account'";
-      } else {
-        return null;
-      }
-    },
+
     invalidSignup() {
       if (
         !this.emailValidation ||
@@ -260,6 +194,7 @@ export default {
       if (data !== null) {
         options.data = data;
       }
+      // console.log('calling API, options', options);
       await axios(options)
         .then(response => {
           data = response.data;
@@ -302,7 +237,7 @@ export default {
       };
       this.callAPI(loginURL, headers, 'GET', loginCallback);
     },
-    signup() {
+    signup(serverUrl) {
       this.loggingIn = true;
       this.failedLogin = false;
       const that = this;
@@ -315,15 +250,15 @@ export default {
       axios
         .post(pinataSignupEndpoint, params)
         .then(response => {
-          const data = response.data;
+          const responseData = response.data;
           // console.log('APICall data', data);
-          const signupUrl = this.serverUrl + '/sign_up';
+          const signupUrl = serverUrl + '/sign_up';
           const signUpData = {
             email: email,
             password: password,
             user_collection: defaultCollection.user_collection,
-            pinata_api: data.userInformation.api_key,
-            pinata_key: data.userInformation.api_secret,
+            pinata_api: responseData.userInformation.api_key,
+            pinata_key: responseData.userInformation.api_secret,
           };
           const headers = { 'Content-Type': 'application/json' };
           const signupCallback = function(data) {
@@ -335,7 +270,7 @@ export default {
               that.login(email, password);
             }
           };
-          that.callAPI(signupUrl, headers, 'POST', signUpData, signupCallback);
+          that.callAPI(signupUrl, headers, 'POST', signupCallback, signUpData);
         })
         .catch(function(err) {
           // console.log(err.response);
