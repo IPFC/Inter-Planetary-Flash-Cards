@@ -33,12 +33,8 @@ const Highlight = Vue => {
           highlighter.highlightBlock(block);
         });
       }
-    }
-  })
-}
-
-
-export {
-  Highlight,
-  highlighter
+    },
+  });
 };
+
+export { Highlight, highlighter };
