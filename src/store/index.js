@@ -4,6 +4,7 @@ import VuexPersistence from 'vuex-persist';
 import Cookies from 'js-cookie';
 import { sortBy } from 'lodash/core';
 import { isEmpty } from 'lodash';
+import { cardLevelUp } from '../utils/dataProcessing';
 const axios = require('axios');
 const uuidv4 = require('uuid/v4');
 // web workers in Vuex: https://logaretm.com/blog/2019-12-21-vuex-off-mainthread/
@@ -54,10 +55,7 @@ const store = new Vuex.Store({
     syncFailed: false,
     initialSync: 0,
     online: false,
-    // dev server url
-    // serverUrl: 'http://127.0.0.1:5000',
-    // production server url
-    serverUrl: 'https://ipfc-midware.herokuapp.com',
+    serverUrl: process.env.VUE_APP_API_URL,
   },
   mutations: {
     updateJwt(state, newJwt) {
@@ -461,37 +459,8 @@ const store = new Vuex.Store({
           break;
         }
       }
-      const newLevel = cardData.level + 1;
-      let newDue = cardData.due;
-      let newLastInterval = cardData.last_interval;
       const settings = context.state.user_collection.webapp_settings.schedule;
-      if (newLevel <= settings.initial_reviews.length) {
-        const max = settings.initial_reviews[newLevel - 1] * 60000 * (1 + settings.randomizer);
-        const min = settings.initial_reviews[newLevel - 1] * 60000 * (1 - settings.randomizer);
-        newDue = new Date().getTime() + Math.random() * (max - min + 1) + min;
-      } else {
-        let max = 0;
-        let min = 0;
-        if (newLastInterval === null) {
-          newLastInterval = 86400; // 1 day in seconds
-          max = newLastInterval * (1 + settings.randomizer);
-          min = newLastInterval * (1 - settings.randomizer);
-        } else {
-          newLastInterval *= settings.later_reviews_multiplier;
-          max = newLastInterval * (1 + settings.randomizer);
-          min = newLastInterval * (1 - settings.randomizer);
-        }
-        newDue = new Date().getTime() + Math.random() * (max - min + 1) + min;
-      }
-      // console.log('    newLevel',newLevel)
-      // console.log('    newDue', newDue -1581330417)
-      const updateData = {
-        card_id: cardId,
-        level: newLevel,
-        due: newDue,
-        last_interval: newLastInterval,
-      };
-      context.commit('updateCardSchedule', updateData);
+      context.commit('updateCardSchedule', cardLevelUp(cardId, cardData, settings));
     },
     levelDownCard(context, cardId) {
       let cardData = null;
@@ -501,17 +470,17 @@ const store = new Vuex.Store({
           break;
         }
       }
-      let newLevel = cardData.level;
+      let level = cardData.level;
       let newDue = cardData.due;
       let lastInterval = cardData.last_interval;
       const settings = context.state.user_collection.webapp_settings.schedule;
 
       if (settings.fail_mode === 'reset') {
-        newLevel = 0;
+        level = 0;
         newDue = new Date().getTime();
         lastInterval = null;
       } else {
-        newLevel -= settings.fail_mode;
+        level -= settings.fail_mode;
         // this could be more perfected
         for (let i = 0; i < settings.fail_mode; i++) {
           lastInterval /= settings.later_reviews_multiplier;
@@ -520,7 +489,7 @@ const store = new Vuex.Store({
       }
       const updateData = {
         card_id: cardId,
-        level: newLevel,
+        level: level,
         due: newDue,
         last_interval: lastInterval,
       };
