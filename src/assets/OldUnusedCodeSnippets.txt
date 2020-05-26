@@ -512,3 +512,74 @@ export default {
     //     return false
     //   }
     // }
+
+    // pinata info validation
+
+
+        <!-- <b-button
+          v-if="showSignup"
+          id="button-get-pinata"
+          type="submit"
+          variant="primary"
+          @click="OpenPinata()"
+          >Get Pinata</b-button
+        >
+        <br />
+
+        <label v-if="showSignup" for="feedback-pinata-api">Pinata API key</label>
+        <b-form-input
+          v-if="showSignup"
+          id="feedback-pinata-api"
+          v-model="input.pinataApi"
+          :state="pinataApiValidation"
+        ></b-form-input>
+        <b-form-invalid-feedback v-if="showSignup" :state="pinataApiValidation">{{
+          pinataApiValidationErrorMsg
+        }}</b-form-invalid-feedback> -->
+        <!-- <b-form-valid-feedback v-if="showSignup" :state="pinataApiValidation">Looks Good.</b-form-valid-feedback> -->
+
+        <!-- <label v-if="showSignup" for="feedback-pinata-secret">Pinata secret API key</label>
+        <b-form-input
+          v-if="showSignup"
+          id="feedback-pinata-secret"
+          v-model="input.pinataSecret"
+          :state="pinataSecretValidation"
+          type="password"
+        ></b-form-input>
+        <b-form-invalid-feedback v-if="showSignup" :state="pinataSecretValidation">{{
+          pinataSecretValidationErrorMsg
+        }}</b-form-invalid-feedback> -->
+        <!-- <b-form-valid-feedback v-if="showSignup" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
+     
+        pinataApiValidation() {
+      const pinataApi = this.input.pinataApi;
+      if (pinataApi.length < 20 || pinataApi.length > 20) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    pinataApiValidationErrorMsg() {
+      const pinataApi = this.input.pinataApi;
+      if (pinataApi.length < 20 || pinataApi.length > 20) {
+        return "Invalid pinata api key. In pinata, click the profile icon, then 'account'";
+      } else {
+        return null;
+      }
+    },
+    pinataSecretValidation() {
+      const pinataSecret = this.input.pinataSecret;
+      if (pinataSecret.length < 64 || pinataSecret.password > 64) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    pinataSecretValidationErrorMsg() {
+      const pinataSecret = this.input.pinataSecret;
+      if (pinataSecret.length < 64 || pinataSecret.length > 64) {
+        return "Invalid pinata api secret key. In pinata, click the profile icon, then 'account'";
+      } else {
+        return null;
+      }
+    },

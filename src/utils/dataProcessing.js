@@ -1,19 +1,19 @@
 const cardLevelUp = (cardId, cardData, settings) => {
-  console.log('cardData', cardData);
+  // console.log('cardData', cardData);
   // console.log('settings', settings);
-  console.log('settings.randomizer', settings.randomizer);
+  // console.log('settings.randomizer', settings.randomizer);
   const initialreviews = settings.initial_reviews;
   const randomizer = Number(settings.randomizer);
   const now = new Date().getTime();
   const newLevel = cardData.level + 1;
   let due;
   let lastInterval = cardData.last_interval;
-  console.log('newLevel, initialreviews.length', newLevel, initialreviews.length);
+  // console.log('newLevel, initialreviews.length', newLevel, initialreviews.length);
   if (newLevel <= initialreviews.length) {
     const max = initialreviews[newLevel - 1] * 60000 * (1 + randomizer);
     const min = initialreviews[newLevel - 1] * 60000 * (1 - randomizer);
     due = now + Math.random() * (max - min + 1) + min;
-    console.log('under initial, new due', due);
+    // console.log('under initial, new due', due);
   } else {
     let max = 0;
     let min = 0;
@@ -21,22 +21,22 @@ const cardLevelUp = (cardId, cardData, settings) => {
     if (lastInterval === null) {
       lastInterval = 86400000; // 1 day in milliseconds
       max = lastInterval * (1 + randomizer);
-      console.log(lastInterval, 1 + randomizer);
+      // console.log(lastInterval, 1 + randomizer);
       min = lastInterval * (1 - randomizer);
-      console.log('first over initial');
+      // console.log('first over initial');
     } else {
       lastInterval *= settings.later_reviews_multiplier;
       max = lastInterval * (1 + randomizer);
       min = lastInterval * (1 - randomizer);
-      console.log('2nd+ over initial');
+      // console.log('2nd+ over initial');
     }
-    console.log('max, min', max, min, convertDuration(max), convertDuration(min));
+    // console.log('max, min', max, min, convertDuration(max), convertDuration(min));
     due = now + Math.random() * (max - min + 1) + min;
-    console.log('new due', due);
+    // console.log('new due', due);
   }
 
-  console.log('next due, due - now', convertDuration(due - now), due - now);
-  console.log('lastInterval', convertDuration(lastInterval), lastInterval);
+  // console.log('next due, due - now', convertDuration(due - now), due - now);
+  // console.log('lastInterval', convertDuration(lastInterval), lastInterval);
 
   return {
     card_id: cardId,

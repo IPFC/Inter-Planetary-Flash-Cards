@@ -205,7 +205,7 @@ export default {
     },
   },
   created() {
-    console.log('process.env', process.env);
+    // console.log('process.env', process.env);
   },
   mounted() {
     if (!this.online && this.initialSync === 0) {
