@@ -2,17 +2,49 @@
   <div :class="flipped ? 'flip-container flipped' : 'flip-container'">
     <div class="flipper">
       <div :style="{ backgroundColor: colorFront }" class="flashcard front">
-        <div v-highlight v-dompurify-html="front" class="card-content" />
+        <div class="d-flex flex-column h-100">
+          <b-row v-highlight v-dompurify-html="front" class="card-content d-block" />
+          <b-row class="divider-row"> <hr class="divider" /> </b-row>
+
+          <b-row class="info-row">
+            <p class="mx-2 my-0 align-self-center">{{ deckTitle }}</p>
+            <div class="ml-auto d-flex">
+              <p v-for="(tag, index) in tags" :key="index" class="tag-style-button">{{ tag }}</p>
+            </div>
+          </b-row>
+        </div>
       </div>
       <div v-if="back" :style="{ backgroundColor: colorBack }" class="flashcard back">
-        <div v-highlight v-dompurify-html="back" class="card-content" />
+        <div class="d-flex flex-column h-100">
+          <b-row v-highlight v-dompurify-html="back" class="card-content d-block"> </b-row>
+          <b-row class="divider-row"> <hr class="divider" /> </b-row>
+          <b-row class="info-row py-1">
+            <p class="ml-2 mr-0 my-0 align-self-center">level</p>
+            <p class="tag-style-button">{{ level }}</p>
+            <p class="mx-2 my-0 align-self-center">due: {{ dueConverter(due) }}</p>
+            <p class="my-0 align-self-center ml-auto mr-0">next review</p>
+            <p class="tag-style-button mr-2">{{ timeConverter(interval) }}</p>
+          </b-row>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { convertDuration } from '../utils/dataProcessing';
 export default {
   props: {
+    deckTitle: { type: String, default: '' },
+    level: { type: Number, default: 0 },
+    due: { type: Number, default: 0 },
+    interval: { type: Number, default: 0 },
+    tags: {
+      type: Array,
+      default: function() {
+        return [];
+      },
+    },
+
     front: {
       type: String,
       default: '',
@@ -38,6 +70,15 @@ export default {
   data() {
     return {};
   },
+  methods: {
+    dueConverter(num) {
+      const now = new Date().getTime();
+      return this.timeConverter(-num + now) + ' ago';
+    },
+    timeConverter(num) {
+      return convertDuration(num);
+    },
+  },
 };
 </script>
 
@@ -56,11 +97,31 @@ export default {
 .flashcard:hover {
   box-shadow: 0 0px 25px rgba(0, 0, 0, 0.8);
 }
+.divider {
+  width: 90%;
+  margin: 0px auto;
+}
+.divider-row {
+  padding-right: 8px;
+}
+.tag-style-button {
+  border-radius: 10px;
+  margin: 5px 10px;
+  border-width: 0px;
+  color: black;
+  background-color: #f2f2f2;
+  padding: 0.1rem 0.7rem;
+}
+.info-row {
+  margin: 0 -7px;
+}
 .card-content {
   padding: 10px 8px 0px 0px;
   margin: auto;
   height: 100%;
   overflow-y: auto;
+  flex-direction: column;
+  width: 100%;
 }
 .card-content::-webkit-scrollbar {
   width: 0.5em;

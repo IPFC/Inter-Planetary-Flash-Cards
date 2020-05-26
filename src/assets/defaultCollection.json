@@ -10,31 +10,31 @@
             "list": [{
                     "card_id": "6185906d-9c89-40d9-b301-0b1a76ffdb19",
                     "due": 15,
-                    "last_interval": 86400,
+                    "last_interval": null,
                     "level": 0
                 },
                 {
                     "card_id": "5de6a885-81e2-410c-9a08-4f5fb62fed20",
                     "due": 16,
-                    "last_interval": 86400,
+                    "last_interval": null,
                     "level": 0
                 },
                 {
                     "card_id": "e1e6d8e1-d836-4640-86c3-e0b83abc2ed8",
                     "due": 17,
-                    "last_interval": 86400,
+                    "last_interval": null,
                     "level": 0
                 },
                 {
                     "card_id": "0da68541-2545-4d4b-b9af-4e5d3149547f",
                     "due": 2,
-                    "last_interval": 86400,
+                    "last_interval": null,
                     "level": 0
                 },
                 {
                     "card_id": "c09cb5fc-f42d-4e73-bfb1-e8dd67d28ebc",
                     "due": 1,
-                    "last_interval": 86400,
+                    "last_interval": null,
                     "level": 0
                 }
             ]
@@ -57,10 +57,10 @@
                 }
             },
             "schedule": {
-                "initial_reviews": [1, 5, 20, 60],
+                "initial_reviews": [0.5],
                 "later_reviews_multiplier": 2,
                 "fail_mode": "reset",
-                "randomizer": 0.1,
+                "randomizer": 0.2,
                 "max_cards": 50
             },
             "edited": 1581758711258

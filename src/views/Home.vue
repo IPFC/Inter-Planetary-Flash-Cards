@@ -38,6 +38,11 @@
               v-highlight
               v-touch:tap="flipCard"
               class="first-card"
+              :interval="findCardsNextLevel(currentCard.card_id, user_collection).last_interval"
+              :level="findCardsSchedule(currentCard.card_id, user_collection).level"
+              :due="findCardsSchedule(currentCard.card_id, user_collection).due"
+              :tags="currentCard.card_tags"
+              :deck-title="findCardsDeck(currentCard.card_id, decks)"
               :flipped="cardFlipToggle"
               :front="currentCard.front_rich_text"
               :back="currentCard.back_rich_text"
@@ -122,6 +127,8 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
+import { cardLevelUp } from '../utils/dataProcessing';
+
 import defaultCollection from '../assets/defaultCollection.json';
 const flashcardReview = () => import('../components/FlashcardReview.vue');
 
@@ -197,7 +204,9 @@ export default {
       }
     },
   },
-  created() {},
+  created() {
+    console.log('process.env', process.env);
+  },
   mounted() {
     if (!this.online && this.initialSync === 0) {
       this.alertOffline = !this.alertOffline;
@@ -263,6 +272,34 @@ export default {
     window.removeEventListener('keydown', this.onKeyPress);
   },
   methods: {
+    findCardsNextLevel: function(cardId, userCollection) {
+      let cardData;
+      for (const scheduleItem of userCollection.schedule.list) {
+        if (scheduleItem.card_id === cardId) {
+          cardData = JSON.parse(JSON.stringify(scheduleItem));
+          break;
+        }
+      }
+      const settings = userCollection.webapp_settings.schedule;
+      return cardLevelUp(cardId, cardData, settings);
+    },
+    findCardsDeck: (cardId, decks) => {
+      for (const deck of decks) {
+        for (const card of deck.cards) {
+          if (card.card_id === cardId) {
+            return deck.title;
+          }
+        }
+      }
+    },
+    findCardsSchedule: function(cardId, userCollection) {
+      for (const item of userCollection.schedule.list) {
+        if (item.card_id === cardId) {
+          // console.log('schedule', item);
+          return item;
+        }
+      }
+    },
     swipeHandler(direction) {
       if (direction === 'left') {
         this.incorrect();
