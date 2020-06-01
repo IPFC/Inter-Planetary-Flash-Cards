@@ -20,7 +20,7 @@
         <b-form-invalid-feedback v-if="input.email" :state="emailValidation">{{
           emailValidationErrorMsg
         }}</b-form-invalid-feedback>
-        <b-form-valid-feedback :state="emailValidation">Looks Good.</b-form-valid-feedback>
+        <!-- <b-form-valid-feedback :state="emailValidation">Looks Good.</b-form-valid-feedback> -->
 
         <label for="feedback-password">Password</label>
         <b-form-input
@@ -32,7 +32,7 @@
         <b-form-invalid-feedback v-if="input.password" :state="passwordValidation">{{
           passwordValidationErrorMsg
         }}</b-form-invalid-feedback>
-        <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback>
+        <!-- <b-form-valid-feedback :state="passwordValidation">Looks Good.</b-form-valid-feedback> -->
         <p v-if="showSignup" class="mt-1">
           Signing up with IPFC, you will recieve a Pinata.cloud account with 1GB of free storage.
           Check your email for activation.
