@@ -155,19 +155,14 @@ export default {
       }
     },
     getTitleAbrev(title) {
-      // There shouldn't be any empty title decks, but we can leave this validation here just in case
-      if (title === '') {
-        return '';
+      const split = title.split(' ')[0];
+      let abrev;
+      if (split.length === 1) {
+        abrev = split[0].charAt(0) + split[0].charAt(1);
       } else {
-        let abrev;
-        if (title.includes(' ')) {
-          const split = title.split(' ')[0];
-          abrev = split[0].charAt(0) + split[1].charAt(0);
-        } else {
-          abrev = title.charAt(0) + title.charAt(1);
-        }
-        return abrev;
+        abrev = split[0].charAt(0) + split[1].charAt(0);
       }
+      return abrev;
     },
     PWAUpdate(bool) {
       this.$emit('updatePWA', bool);

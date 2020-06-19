@@ -139,7 +139,8 @@ export default {
       this.addingDeck = !this.addingDeck;
     },
     addNewDeck: function() {
-      if (this.newDeckTitle === '' || this.newDeckTitle === ' ') {
+      const title = this.newDeckTitle.trim();
+      if (title === '') {
         this.toggleAddingDeck();
       } else {
         const emptyDeck = {
@@ -154,7 +155,7 @@ export default {
           lang_back: 'en',
           lang_front: 'en',
           card_count: 0,
-          title: this.newDeckTitle,
+          title: title,
           visibility: 'public',
           icon_color: this.generateRandomHslaColor(),
         };
@@ -182,19 +183,14 @@ export default {
       }
     },
     getTitleAbrev(title) {
-      // There shouldn't be any empty title decks, but we can leave this validation here just in case
-      if (title === '') {
-        return '';
+      const split = title.split(' ')[0];
+      let abrev;
+      if (split.length === 1) {
+        abrev = split[0].charAt(0) + split[0].charAt(1);
       } else {
-        const split = title.split(' ')[0];
-        let abrev;
-        if (split.length === 1) {
-          abrev = split[0].charAt(0) + split[0].charAt(1);
-        } else {
-          abrev = split[0].charAt(0) + split[1].charAt(0);
-        }
-        return abrev;
+        abrev = split[0].charAt(0) + split[1].charAt(0);
       }
+      return abrev;
     },
     deleteDeck(id) {
       this.$store.dispatch('deleteDeck', id);
