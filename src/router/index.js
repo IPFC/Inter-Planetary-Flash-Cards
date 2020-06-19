@@ -32,7 +32,7 @@ function redirectIfNoUserCollection(to, from, next) {
   }
 }
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -84,3 +84,12 @@ export default new Router({
     },
   ],
 });
+
+const waitForStorageToBeReady = async (to, from, next) => {
+  // undocumented bug in vuex-persist with localforage. Hacky fix from issues forum
+  await store.restored;
+  next();
+};
+router.beforeEach(waitForStorageToBeReady);
+
+export default router;

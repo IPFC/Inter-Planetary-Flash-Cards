@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VuexPersistence from 'vuex-persist';
+import localForage from 'localforage';
+
 import Cookies from 'js-cookie';
 import { sortBy } from 'lodash/core';
 import { isEmpty } from 'lodash';
@@ -26,18 +28,30 @@ const vuexCookie = new VuexPersistence({
   }),
 });
 
-const vuexLocal = new VuexPersistence({
-  key: 'vuex', // The key to store the state on in the storage provider.
-  storage: window.localStorage,
-  // Function that passes the state and returns the state with only the objects you want to store.
+// const vuexLocal = new VuexPersistence({
+//   key: 'vuex', // The key to store the state on in the storage provider.
+//   storage: window.localStorage,
+//   // Function that passes the state and returns the state with only the objects you want to store.
+//   reducer: state => ({
+//     user_collection: state.user_collection,
+//     decks: state.decks,
+//     currentDeckId: state.deck,
+//     lastSyncsData: state.lastSyncsData,
+//   }),
+//   // Function that passes a mutation and lets you decide if it should update the state in localStorage.
+//   // filter: mutation => (true)
+// });
+const vuexLocalForage = new VuexPersistence({
+  key: process.env.VUE_APP_STORAGE_KEY,
+  storage: localForage,
   reducer: state => ({
     user_collection: state.user_collection,
     decks: state.decks,
     currentDeckId: state.deck,
     lastSyncsData: state.lastSyncsData,
-  }),
-  // Function that passes a mutation and lets you decide if it should update the state in localStorage.
-  // filter: mutation => (true)
+  }), // only save decks module
+  // undocumented bug in vuex-persist with localforage. Hacky fix from issues forum
+  asyncStorage: true,
 });
 
 const store = new Vuex.Store({
@@ -637,7 +651,7 @@ const store = new Vuex.Store({
       }
     },
   },
-  plugins: [vuexCookie.plugin, vuexLocal.plugin],
+  plugins: [vuexCookie.plugin, vuexLocalForage.plugin],
 });
 
 syncWorker.onmessage = e => {
