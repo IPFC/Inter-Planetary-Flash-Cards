@@ -39,13 +39,6 @@
 <script>
 import { convertDuration } from '../utils/dataProcessing';
 export default {
-  computed: {
-    tagsFiltered() {
-      return this.tags.filter(tag => {
-        return tag !== 'Daily Review';
-      });
-    },
-  },
   props: {
     deckTitle: { type: String, default: '' },
     level: { type: Number, default: 0 },
@@ -82,6 +75,13 @@ export default {
   },
   data() {
     return {};
+  },
+  computed: {
+    tagsFiltered() {
+      return this.tags.filter(tag => {
+        return tag !== 'Daily Review';
+      });
+    },
   },
   methods: {
     dueConverter(num) {

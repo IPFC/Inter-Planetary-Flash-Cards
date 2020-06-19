@@ -25,7 +25,7 @@ const cardLevelUp = (cardId, cardData, settings) => {
       min = lastInterval * (1 - randomizer);
       // console.log('first over initial');
     } else {
-      lastInterval *= settings.later_reviews_multiplier;
+      lastInterval *= settings.later_reviews_multiplier; // default times 2
       max = lastInterval * (1 + randomizer);
       min = lastInterval * (1 - randomizer);
       // console.log('2nd+ over initial');

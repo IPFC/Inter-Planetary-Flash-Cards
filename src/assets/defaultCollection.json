@@ -4,18 +4,17 @@
         "deck_ids": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"],
         "all_deck_cids": [],
         "deleted_deck_ids": ["558d57aa-434b-4e9e-a5aa-d52b4fa33f72", "e9d6567b-0792-4035-ad8f-42d7cc477d5d", "3bd6ee6c-0796-4270-b142-9565684bf051", "f434e4d1-8c59-49b4-b165-061ad9e4b38c", "d6dfebea-1fc1-45e3-ac88-21d2ffbe37f1", "84cec7f0-b3c2-47bc-ad45-1147755d5c65", "30f12687-5471-4f92-b275-602f8065a4fa", "1f5834e6-dce1-4166-9873-ccd22762a7a9", "c36553db-11ef-4c85-8a9b-f01c1348f67f", "e6d0ef97-5ce2-42f2-84f9-0afa655ecbe6", "1e30d7e9-7c3f-4061-9401-4e97d26e978e", "7889aff458a14cdf9c9eee807c05cca6", "f67c3767-6c4e-4919-8833-3f7b770ee32a", "a6015966-77f8-421b-9db5-f9a90b185ea3", "96f0ef25-2132-464c-aded-bb8823f134de", "0fa9b35d-8d67-4a91-b0a1-2a4608ab947e", "1a344e40-6724-4142-a2d4-e75399dd5a28", "d3f18a96-49a9-4038-9804-92746899fc16", "20ead6d8-cee5-4b93-aa44-6fb71b3507e1", "877ad2b8-3718-4878-99fc-d8c8c31cb523", "2e14efcc-0089-4a54-9efe-48f030d04355", "002637ce-a867-4ae1-b63d-dee3bee489c0"],
-
         "schedule": {
             "edited": 1581758711258,
             "list": [{
                     "card_id": "6185906d-9c89-40d9-b301-0b1a76ffdb19",
-                    "due": 15,
+                    "due": 1581758711258,
                     "last_interval": null,
                     "level": 0
                 },
                 {
                     "card_id": "5de6a885-81e2-410c-9a08-4f5fb62fed20",
-                    "due": 16,
+                    "due": 1581758711258,
                     "last_interval": null,
                     "level": 0
                 },
@@ -57,7 +56,7 @@
                 }
             },
             "schedule": {
-                "initial_reviews": [0.5],
+                "initial_reviews": [1, 5, 20],
                 "later_reviews_multiplier": 2,
                 "fail_mode": "reset",
                 "randomizer": 0.2,
@@ -87,8 +86,7 @@
             "card_id": "6185906d-9c89-40d9-b301-0b1a76ffdb19",
             "card_tags": ["Daily Review"],
             "front_rich_text": "<p class=\"ql-align-center\">What <strong>parts of the brain</strong> are involved with</p><p class=\"ql-align-center\"><span class=\"ql-size-large\">memory?</span></p>",
-            "front_text": "What parts of the brain are involved with\nmemory?\n",
-            "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"]
+            "front_text": "What parts of the brain are involved with\nmemory?\n"
         }, {
             "back_rich_text": "<p class=\"ql-align-center\"><span class=\"ql-size-large\">Hippocampus</span></p><p class=\"ql-align-center\">The hippocampus is associated with <strong>declarative</strong> and <strong>episodic</strong> memory as well as <strong>recognition</strong> memory.&nbsp;</p>",
             "back_text": "Hippocampus\nThe hippocampus is associated with declarative and episodic memory as well as recognition memory. \n",
@@ -96,8 +94,7 @@
             "card_tags": [],
             "front_image": "https://gateway.pinata.cloud/ipfs/QmcrNDPVN7qGGxNZZbHHjHLpwamFT23DqcofuEbzXW9zbP",
             "front_rich_text": "<p class=\"ql-align-center\"><span style=\"color: rgb(136, 136, 136);\">Whoa whoa whoa! Too Much Info! We should break it up like this:</span></p><p class=\"ql-align-center\">Parts of the brain used for memory:</p><p class=\"ql-align-center\"><strong>Prefrontal Cortex</strong>, <strong>Amygdala</strong>, <strong>Cerebellum</strong> and __________?</p><p class=\"ql-align-center\"><img src=\"https://gateway.pinata.cloud/ipfs/QmcrNDPVN7qGGxNZZbHHjHLpwamFT23DqcofuEbzXW9zbP\"></p>",
-            "front_text": "Whoa whoa whoa! Too Much Info! We should break it up like this:\nParts of the brain used for memory:\nPrefrontal Cortex, Amygdala, Cerebellum and __________?\n\n",
-            "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"]
+            "front_text": "Whoa whoa whoa! Too Much Info! We should break it up like this:\nParts of the brain used for memory:\nPrefrontal Cortex, Amygdala, Cerebellum and __________?\n\n"
         }, {
             "back_rich_text": "<p class=\"ql-align-center\"><span class=\"ql-size-large\">Cerebellum</span></p><p class=\"ql-align-center\">The cerebellum plays a role in processing procedural memories, such as how to play the piano.</p>",
             "back_text": "Cerebellum\nThe cerebellum plays a role in processing procedural memories, such as how to play the piano.\n",
@@ -105,24 +102,21 @@
             "card_tags": ["Daily Review"],
             "front_image": "https://gateway.pinata.cloud/ipfs/QmWiH6QopDKTNPseTjJBajapZkXcp7jMi1KaY3zTs1DKgS",
             "front_rich_text": "<p class=\"ql-align-center\">Parts of the brain used for memory:</p><p class=\"ql-align-center\"><strong>Prefrontal Cortex</strong>, <strong>Amygdala</strong>, <strong>Hippocampus</strong> and __________?</p><p class=\"ql-align-center\"><img src=\"https://gateway.pinata.cloud/ipfs/QmWiH6QopDKTNPseTjJBajapZkXcp7jMi1KaY3zTs1DKgS\"></p>",
-            "front_text": "Parts of the brain used for memory:\nPrefrontal Cortex, Amygdala, Hippocampus and __________?\n\n",
-            "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49", "2f9d2b4a-a7be-4589-807e-0c47e3b1a336"]
+            "front_text": "Parts of the brain used for memory:\nPrefrontal Cortex, Amygdala, Hippocampus and __________?\n\n"
         }, {
             "back_rich_text": "<p class=\"ql-align-center\"><span class=\"ql-size-large\">8 minutes</span></p><p class=\"ql-align-center\">so when you are making a card, think about if it's worth it.</p><p class=\"ql-align-center\"><span class=\"ql-size-small\">If looking it up would take 2 minutes and you'll use it more than 4 times, its worth it.</span></p>",
             "back_text": "8 minutes\nso when you are making a card, think about if it's worth it.\nIf looking it up would take 2 minutes and you'll use it more than 4 times, its worth it.\n",
             "card_id": "0da68541-2545-4d4b-b9af-4e5d3149547f",
             "card_tags": ["Daily Review"],
             "front_rich_text": "<p class=\"ql-align-center\">Using a spaced repetition software app like this,</p><p class=\"ql-align-center\">how much time does it take overall to</p><p class=\"ql-align-center\"><strong class=\"ql-size-large\">memorize </strong></p><p class=\"ql-align-center\">1 card's<strong> </strong>content, for the <u>rest of your life</u>?</p>",
-            "front_text": "Using a spaced repetition software app like this,\nhow much time does it take overall to\nmemorize \n1 card's content, for the rest of your life?\n",
-            "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"]
+            "front_text": "Using a spaced repetition software app like this,\nhow much time does it take overall to\nmemorize \n1 card's content, for the rest of your life?\n"
         }, {
             "back_rich_text": "<p class=\"ql-align-center\"><span class=\"ql-size-small\" style=\"color: rgb(187, 187, 187);\">Before flipping, think of your answer.</span></p><p class=\"ql-align-center\">If you were <span style=\"background-color: rgb(0, 138, 0);\"> </span><span style=\"background-color: rgb(0, 138, 0); color: rgb(255, 255, 255);\">right</span><span style=\"background-color: rgb(0, 138, 0);\"> </span> hit the <span style=\"background-color: initial;\">✔️</span></p><p class=\"ql-align-center\">If you were <span style=\"background-color: rgb(230, 0, 0); color: rgb(255, 255, 255);\"> wrong </span> hit the  <span style=\"background-color: initial;\">❌</span></p><p class=\"ql-align-center\"><br></p><p class=\"ql-align-center\">Cards you remembered will be shown <span style=\"color: rgb(0, 138, 0);\">less often</span></p><p class=\"ql-align-center\">Cards you forgot will be shown <span style=\"color: rgb(230, 0, 0);\">more often</span></p>",
             "back_text": "Before flipping, think of your answer.\nIf you were  right  hit the ✔️\nIf you were  wrong  hit the  ❌\n\nCards you remembered will be shown less often\nCards you forgot will be shown more often\n",
             "card_id": "c09cb5fc-f42d-4e73-bfb1-e8dd67d28ebc",
             "card_tags": ["Daily Review"],
             "front_rich_text": "<p class=\"ql-align-center\">Welcome to </p><h1 class=\"ql-align-center\"><span style=\"background-color: initial;\">🚀</span></h1><p class=\"ql-align-center\"><strong class=\"ql-size-large\" style=\"color: rgb(0, 102, 204);\">Inter Planetary </strong></p><p class=\"ql-align-center\"><strong class=\"ql-size-large\" style=\"color: rgb(0, 102, 204);\">Flash Cards</strong></p><h1 class=\"ql-align-center\"><span style=\"background-color: initial;\">🚀</span></h1><p class=\"ql-align-center\"><strong class=\"ql-size-small\" style=\"color: rgb(187, 187, 187);\">flip me!</strong></p>",
-            "front_text": "Welcome to \n🚀\nInter Planetary \nFlash Cards\n🚀\nflip me!\n",
-            "included_decks": ["ea2c0b5b-18e0-4885-bd1b-dcae462a0a49"]
+            "front_text": "Welcome to \n🚀\nInter Planetary \nFlash Cards\n🚀\nflip me!\n"
         }],
         "user_id": "642a264a-00a2-4517-9d95-64a29174c4bd",
         "deck_id": "ea2c0b5b-18e0-4885-bd1b-dcae462a0a49",
