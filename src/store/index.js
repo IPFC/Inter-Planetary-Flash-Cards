@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import { sortBy } from 'lodash/core';
 import { isEmpty } from 'lodash';
 import { cardLevelUp } from '../utils/dataProcessing';
+import defaultCollection from '../assets/defaultCollection.json';
 const axios = require('axios');
 const uuidv4 = require('uuid/v4');
 // web workers in Vuex: https://logaretm.com/blog/2019-12-21-vuex-off-mainthread/
@@ -72,6 +73,9 @@ const store = new Vuex.Store({
     serverUrl: process.env.VUE_APP_API_URL,
   },
   mutations: {
+    clearState(state) {
+      state = {};
+    },
     updateJwt(state, newJwt) {
       state.jwt = newJwt;
     },
@@ -449,8 +453,11 @@ const store = new Vuex.Store({
       context.commit('updateProgressCounter', outputString);
     },
     logout(context) {
-      context.commit('deleteJwt');
-      context.commit('toggleJwtValid', false);
+      context.commit('updateJwt', null);
+      context.commit('clearState');
+      // localForage.clear();
+      context.commit('updateUserCollection', defaultCollection.user_collection);
+      context.commit('updateDecks', defaultCollection.decks);
     },
     checkJwt(context) {
       const jwt = context.state.jwt;
