@@ -296,6 +296,18 @@ const store = new Vuex.Store({
         break;
       }
     },
+    updateLastReviewDay(state, day) {
+      state.user_collection.schedule.lastReviewDay = day;
+      state.user_collection.schedule.edited = new Date().getTime();
+    },
+    addCardToTodaysCardReviews(state, cardId) {
+      if (!state.user_collection.schedule.todaysReviewCardIds)
+        state.user_collection.schedule.todaysReviewCardIds = [];
+      state.user_collection.schedule.todaysReviewCardIds.push(cardId);
+    },
+    resetTodaysCardReviews(state) {
+      state.user_collection.schedule.todaysReviewCardIds = [];
+    },
     updateWebappSettings(state, data) {
       state.user_collection.webapp_settings = data;
     },

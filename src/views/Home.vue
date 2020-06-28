@@ -142,9 +142,9 @@ export default {
       cardFlipToggle: false,
       cardsCompleted: 0,
       cardsTotal: 0,
-      todaysDeckCardIds: [],
       switchCardSequence: false,
       reDrawCardKey: 0,
+      day: null,
       correctAnswer: false,
       maxCardsUnset: false,
       alertOffline: false,
@@ -173,10 +173,15 @@ export default {
         return false;
       }
     },
+    todaysReviewCardIds() {
+      if (this.user_collection.schedule.todaysReviewCardIds)
+        return this.user_collection.schedule.todaysReviewCardIds;
+      else return [];
+    },
     todaysDeck() {
       const cards = [];
       for (const card of this.todaysDeckFull.cards) {
-        if (this.todaysDeckCardIds.includes(card.card_id)) {
+        if (this.todaysReviewCardIds.includes(card.card_id)) {
           cards.push(card);
         }
       }
@@ -200,11 +205,16 @@ export default {
     syncing: function() {
       this.$store.commit('updateInitialSync', this.initialSync + 1);
       if (this.initialSync === 2 && this.maxCardsUnset) {
-        this.setTodaysMaxCards();
+        this.setOrResetTodaysMaxCards();
       }
+    },
+    todaysDeckFull: function() {
+      this.setOrResetTodaysMaxCards();
     },
   },
   created() {
+    this.setOrResetTodaysMaxCards();
+
     // console.log('process.env', process.env);
   },
   mounted() {
@@ -256,12 +266,11 @@ export default {
     // this.currentCardIndex = 0 // this was before using store. Return to it for speed?
 
     // set todaysDeck to maximum length as per settings, but if syncing, do after sync. Hence the watcher
-    this.setTodaysMaxCards();
     if (this.syncing) {
       this.maxCardsUnset = true;
     }
     this.$store.dispatch('navProgress', {
-      totalCards: this.todaysDeckCardIds.length,
+      totalCards: this.todaysReviewCardIds.length,
       completed: 0,
     });
     this.setKeys();
@@ -343,8 +352,8 @@ export default {
       this.switchCardSequence = false;
     },
     NavbarProgess() {
-      const totalCards = this.todaysDeckCardIds.length;
-      const completed = this.todaysDeckCardIds.length - this.todaysDeck.cards.length;
+      const totalCards = this.todaysReviewCardIds.length;
+      const completed = this.todaysReviewCardIds.length - this.todaysDeck.cards.length;
       const updateData = { totalCards: totalCards, completed: completed };
       this.$store.dispatch('navProgress', updateData);
     },
@@ -352,14 +361,29 @@ export default {
       this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card));
       this.$router.push('/card-editor');
     },
+    setOrResetTodaysMaxCards: function() {
+      const today = new Date().getDay();
+      if (!this.user_collection.schedule.lastReviewDay)
+        this.$store.commit('updateLastReviewDay', today);
+      if (this.user_collection.schedule.lastReviewDay < today) {
+        this.$store.commit('updateLastReviewDay', today);
+        this.$store.commit('resetTodaysCardReviews');
+      }
+      this.setTodaysMaxCards();
+    },
     setTodaysMaxCards() {
+      const maxReviewLength = this.user_collection.webapp_settings.schedule.max_cards;
+      // for debugging
+      // if (this.todaysReviewCardIds.length >= maxReviewLength)
+      //   this.$store.commit('resetTodaysCardReviews');
+
       for (const card of this.todaysDeckFull.cards) {
-        const maxReviewLength = this.user_collection.webapp_settings.schedule.max_cards;
-        if (this.todaysDeckFull.cards.length >= maxReviewLength) {
+        console.log(this.todaysReviewCardIds.length, maxReviewLength);
+        if (this.todaysReviewCardIds.length >= maxReviewLength) {
           break;
         } else {
-          if (!this.todaysDeckCardIds.includes(card)) {
-            this.todaysDeckCardIds.push(card.card_id);
+          if (!this.todaysReviewCardIds.includes(card.card_id)) {
+            this.$store.commit('addCardToTodaysCardReviews', card.card_id);
           }
         }
       }
