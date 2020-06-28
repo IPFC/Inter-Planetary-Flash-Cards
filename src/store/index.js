@@ -454,6 +454,9 @@ const store = new Vuex.Store({
     },
     logout(context) {
       context.commit('updateJwt', null);
+    },
+    logoutDeleteCache(context) {
+      context.commit('updateJwt', null);
       context.commit('clearState');
       // localForage.clear();
       context.commit('updateUserCollection', defaultCollection.user_collection);

@@ -5,9 +5,7 @@
     <alert-update-pwa @updatePWA="PWAUpdate(bool)" />
     <alert-browser-rec :alert-browser-rec="alertBrowserRec" />
     <b-list-group id="top-layer-settings">
-      <b-list-group-item id="logout" button @click="logout()">
-        Logout
-      </b-list-group-item>
+      <logout-settings class="settings-component" />
       <text-editor-settings class="settings-component" />
       <review-schedule-settings class="settings-component" />
     </b-list-group>
@@ -15,13 +13,19 @@
 </template>
 
 <script>
+import logoutSettings from '../components/SettingsLogout.vue';
 import textEditorSettings from '../components/SettingsTextEditor.vue';
 import reviewScheduleSettings from '../components/SettingsReviewSchedule.vue';
-import { BListGroup, BListGroupItem } from 'bootstrap-vue';
+import { BListGroup } from 'bootstrap-vue';
 
 export default {
   name: 'Settings',
-  components: { textEditorSettings, reviewScheduleSettings, BListGroup, BListGroupItem },
+  components: {
+    textEditorSettings,
+    reviewScheduleSettings,
+    logoutSettings,
+    BListGroup,
+  },
   props: { alertBrowserRec: { type: Boolean } },
   data() {
     return {};
@@ -30,10 +34,6 @@ export default {
     this.$emit('homeLoad');
   },
   methods: {
-    logout() {
-      this.$store.dispatch('logout');
-      this.$router.push('/login');
-    },
     PWAUpdate(bool) {
       this.$emit('updatePWA', bool);
     },
