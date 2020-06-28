@@ -378,7 +378,6 @@ export default {
       //   this.$store.commit('resetTodaysCardReviews');
 
       for (const card of this.todaysDeckFull.cards) {
-        console.log(this.todaysReviewCardIds.length, maxReviewLength);
         if (this.todaysReviewCardIds.length >= maxReviewLength) {
           break;
         } else {
