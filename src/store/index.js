@@ -647,19 +647,13 @@ const store = new Vuex.Store({
         };
         const now = new Date().getTime();
         const cutOff = now + 3600 * 23; // cards due within 23 hours
-        // console.log('cutoff', cutOff-1581318652)
         const todaysScheduleItems = [];
         for (const scheduleItem of schedule) {
-          // console.log('scheduleItem.due', scheduleItem.due-1581318652)
-
           if (scheduleItem.due <= cutOff) {
             todaysScheduleItems.push(scheduleItem);
           }
         }
         const todaysScheduleItemsSorted = sortBy(todaysScheduleItems, 'due');
-        // console.log('todaysScheduleItemsSorted', todaysScheduleItemsSorted)
-
-        // need to figure out how to limit the list to 50 cards, but if its a getter, it will auto reset...
         for (const scheduleItem of todaysScheduleItemsSorted) {
           // this could get expensive later
           for (const card of reviewDeck.cards) {
@@ -668,6 +662,8 @@ const store = new Vuex.Store({
               break;
             }
           }
+          if (todaysDeck.cards.length > state.user_collection.webapp_settings.schedule.max_cards)
+            break;
         }
         return todaysDeck;
       }
