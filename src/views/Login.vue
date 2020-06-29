@@ -229,6 +229,9 @@ export default {
           that.$store.commit('updatePinataKeys', data.pinata_keys);
           const userCollection = that.$store.state.user_collection;
           userCollection.user_id = data.user_id;
+          // this will make sure that using the tutorial before login won't overwrite the user's schedule upon sync
+          userCollection.schedule.edited = 0;
+          userCollection.webapp_settings.edited = 0;
           that.$store.commit('updateUserCollection', userCollection);
           that.$store.commit('updateInitialSync', 0);
           that.$router.push('home');
