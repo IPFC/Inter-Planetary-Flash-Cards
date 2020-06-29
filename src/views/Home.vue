@@ -325,7 +325,7 @@ export default {
       if (!flag) {
         setTimeout(() => {
           this.$store.dispatch('levelDownCard', this.currentCard.card_id);
-          this.NavbarProgess();
+          this.navbarProgess();
           this.incorrect(true);
         }, 305);
         return;
@@ -341,7 +341,7 @@ export default {
       if (!flag) {
         setTimeout(() => {
           this.$store.dispatch('levelUpCard', this.currentCard.card_id);
-          this.NavbarProgess();
+          this.navbarProgess();
           this.correct(true);
         }, 305);
         return;
@@ -351,7 +351,7 @@ export default {
       // this.currentCardIndex ++
       this.switchCardSequence = false;
     },
-    NavbarProgess() {
+    navbarProgess() {
       const totalCards = this.todaysReviewCardIds.length;
       const completed = this.todaysReviewCardIds.length - this.todaysDeck.cards.length;
       const updateData = { totalCards: totalCards, completed: completed };
@@ -386,6 +386,7 @@ export default {
           }
         }
       }
+      this.navbarProgess();
     },
     PWAUpdate(bool) {
       this.$emit('updatePWA', bool);
