@@ -181,7 +181,7 @@ export default {
   watch: {},
   methods: {
     openSettings() {
-      // this.setMenu()
+      this.setMenu();
       this.settingsOpen = !this.settingsOpen;
     },
     setMenu() {
