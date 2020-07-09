@@ -8,7 +8,7 @@ const DeckSelection = () => import('../views/DeckSelection.vue');
 const DeckEditor = () => import('../views/DeckEditor.vue');
 const Settings = () => import('../views/Settings.vue');
 const CardEditor = () => import('../views/CardEditor.vue');
-
+const PrivacyAgreement = () => import('../components/PrivacyAgreement.vue');
 Vue.use(Router);
 
 async function redirectIfNotAuth(to, from, next) {
@@ -81,6 +81,11 @@ const router = new Router({
       name: 'card-editor',
       component: CardEditor,
       props: true,
+    },
+    {
+      path: '/privacy-agreement',
+      name: 'PrivacyAgreement',
+      component: PrivacyAgreement,
     },
   ],
 });

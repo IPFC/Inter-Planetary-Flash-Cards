@@ -1,6 +1,10 @@
 <template>
   <div id="app-main" ref="appMain">
-    <div v-if="!updatePWA" id="splash" :class="splashClass"></div>
+    <div
+      v-if="!updatePWA && !routeName === 'privacy-agreement'"
+      id="splash"
+      :class="splashClass"
+    ></div>
     <div v-if="appleInstallPrompt" id="apple-install-prompt-greyout">
       <div id="apple-install-prompt-padding">
         <div id="apple-install-prompt">
@@ -62,6 +66,9 @@ export default {
   computed: {
     ...mapGetters(['decksMeta', 'currentDeck']),
     ...mapState(['currentDeckId', 'decks', 'syncing', 'user_collection', 'initialSync']),
+    routeName() {
+      return this.$route.name;
+    },
   },
   watch: {
     user_collection: {
