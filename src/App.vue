@@ -22,7 +22,7 @@
         </div>
       </div>
     </div>
-    <Navbar
+    <the-navbar
       id="navbar"
       ref="navbar"
       :chrome-install-prompt="chromeInstallPrompt"
@@ -42,14 +42,14 @@
 </template>
 
 <script>
-import Navbar from './components/Navbar';
+import TheNavbar from './components/TheNavbar';
 import { mapGetters, mapState } from 'vuex';
 const debounce = require('lodash/debounce');
 
 export default {
   name: 'App',
   components: {
-    Navbar,
+    TheNavbar,
   },
   data() {
     return {

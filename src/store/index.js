@@ -580,7 +580,6 @@ const store = new Vuex.Store({
         }
       }
     },
-    // redundant?
     isAuthenticated: state => {
       const jwt = state.jwt;
       if (jwt === null) {

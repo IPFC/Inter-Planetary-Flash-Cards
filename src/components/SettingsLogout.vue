@@ -1,6 +1,9 @@
 <template>
   <b-container id="main" fluid>
-    <b-list-group-item id="logout" button @click="settingsOpen = !settingsOpen">
+    <b-list-group-item v-if="!isAuthenticated" id="logout" button @click="$router.push('/login')">
+      Login
+    </b-list-group-item>
+    <b-list-group-item v-else id="logout" button @click="settingsOpen = !settingsOpen">
       Logout
     </b-list-group-item>
     <b-list-group v-if="settingsOpen" class="second-layer-settings">
@@ -16,7 +19,7 @@
 
 <script>
 import { BListGroup, BListGroupItem } from 'bootstrap-vue';
-
+import { mapGetters } from 'vuex';
 export default {
   name: 'ReviewScheduleSettings',
   components: {
@@ -27,6 +30,9 @@ export default {
     return {
       settingsOpen: false,
     };
+  },
+  computed: {
+    ...mapGetters(['isAuthenticated']),
   },
   methods: {
     logout() {

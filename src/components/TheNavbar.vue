@@ -12,7 +12,13 @@
         <img src="/img/icons/add card logo.svg" alt="add" />
       </b-link>
       <b-link id="sync-link" aria-label="sync status" @click="callSync()">
-        <font-awesome-layers id="sync-layers" class="fa-lg">
+        <font-awesome-icon
+          v-if="!isAuthenticated"
+          style="color: white;"
+          class="fa-lg"
+          icon="sign-in-alt"
+        />
+        <font-awesome-layers v-else id="sync-layers" class="fa-lg">
           <font-awesome-icon id="cloud" style="color: white;" class="fa-lg" icon="cloud" />
           <font-awesome-icon
             v-if="syncing"
@@ -82,7 +88,7 @@ import {
   BNavItem,
   BCollapse,
 } from 'bootstrap-vue';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 export default {
   name: 'Navbar',
   components: {
@@ -109,6 +115,7 @@ export default {
       return this.$store.getters.navProgressCounter;
     },
     ...mapState(['syncing', 'syncFailed', 'online']),
+    ...mapGetters(['isAuthenticated']),
   },
   watch: {
     chromeInstallPrompt() {

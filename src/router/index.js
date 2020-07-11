@@ -11,13 +11,13 @@ const CardEditor = () => import('../views/CardEditor.vue');
 const PrivacyAgreement = () => import('../components/PrivacyAgreement.vue');
 Vue.use(Router);
 
-async function redirectIfNotAuth(to, from, next) {
-  if (store.getters.isAuthenticated) {
-    next();
-  } else {
-    next('/login');
-  }
-}
+// async function redirectIfNotAuth(to, from, next) {
+//   if (store.getters.isAuthenticated) {
+//     next();
+//   } else {
+//     next('/login');
+//   }
+// }
 
 function redirectIfNoUserCollection(to, from, next) {
   if (store.state.user_collection !== null) {
@@ -57,19 +57,17 @@ const router = new Router({
       path: '/deck-selection',
       name: 'deck-selection',
       component: DeckSelection,
-      beforeEnter: redirectIfNotAuth,
+      // beforeEnter: redirectIfNotAuth,
     },
     {
       path: '/deck-editor',
       name: 'deck-editor',
       component: DeckEditor,
-      beforeEnter: redirectIfNotAuth,
     },
     {
       path: '/settings',
       name: 'settings',
       component: Settings,
-      beforeEnter: redirectIfNotAuth,
     },
     {
       path: '/card-editor',
