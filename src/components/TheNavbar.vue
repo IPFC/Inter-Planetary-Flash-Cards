@@ -133,14 +133,11 @@ export default {
     };
   },
   computed: {
-    navProgressCounter() {
-      return this.$store.getters.navProgressCounter;
-    },
     fireFoxUser() {
       return window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     },
     ...mapState(['syncing', 'syncFailed', 'online']),
-    ...mapGetters(['isAuthenticated']),
+    ...mapGetters(['isAuthenticated', 'navProgressCounter']),
   },
   watch: {
     chromeInstallPrompt() {

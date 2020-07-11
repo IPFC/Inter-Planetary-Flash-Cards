@@ -32,9 +32,7 @@ export default {
         Media files might not load.`,
   }),
   computed: {
-    ...mapActions({
-      cloudSync: 'cloudSync',
-    }),
+    ...mapActions(['cloudSync']),
     ...mapState(['initialSync']),
   },
   watch: {

@@ -40,7 +40,6 @@ export default {
       this.$router.push('/login');
     },
     async logoutDeleteCache() {
-      console.log('logoutDeleteCache');
       await this.$store.dispatch('logoutDeleteCache');
       this.$router.push('/login');
     },

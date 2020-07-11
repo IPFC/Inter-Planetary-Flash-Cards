@@ -64,7 +64,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['decksMeta', 'currentDeck']),
+    ...mapGetters(['decksMeta', 'currentDeck', 'todaysDeckFull']),
     ...mapState(['currentDeckId', 'decks', 'syncing', 'user_collection', 'initialSync']),
     routeName() {
       return this.$route.name;
@@ -89,6 +89,9 @@ export default {
       // in case there were changes made during sync, try again after each sync
       // console.log(  'sync called from syncing change')
       this.debouncedSync();
+    },
+    todaysDeckFull: function() {
+      this.$store.dispatch('setOrResetTodaysMaxCards');
     },
   },
   created: function() {

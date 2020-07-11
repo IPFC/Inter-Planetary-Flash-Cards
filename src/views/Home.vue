@@ -151,11 +151,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      reviewDeck: 'reviewDeck',
-      todaysDeckFull: 'todaysDeck',
-      isAuthenticated: 'isAuthenticated',
-    }),
+    ...mapGetters(['reviewDeck', 'todaysDeck', 'todaysDeckFull', 'isAuthenticated']),
     ...mapState([
       'user_collection',
       'decks',
@@ -178,15 +174,7 @@ export default {
         return this.user_collection.schedule.todaysReviewCardIds;
       else return [];
     },
-    todaysDeck() {
-      const cards = [];
-      for (const card of this.todaysDeckFull.cards) {
-        if (this.todaysReviewCardIds.includes(card.card_id)) {
-          cards.push(card);
-        }
-      }
-      return { cards: cards };
-    },
+
     currentCard() {
       return this.todaysDeck.cards[0];
     },
@@ -205,17 +193,12 @@ export default {
     syncing: function() {
       this.$store.commit('updateInitialSync', this.initialSync + 1);
       if (this.initialSync === 2 && this.maxCardsUnset) {
-        this.setOrResetTodaysMaxCards();
+        this.$store.dispatch('setOrResetTodaysMaxCards');
       }
-    },
-    todaysDeckFull: function() {
-      this.setOrResetTodaysMaxCards();
     },
   },
   created() {
-    this.setOrResetTodaysMaxCards();
-
-    // console.log('process.env', process.env);
+    this.$store.dispatch('setOrResetTodaysMaxCards');
   },
   mounted() {
     if (!this.online && this.initialSync === 0) {
@@ -268,10 +251,6 @@ export default {
     if (this.syncing) {
       this.maxCardsUnset = true;
     }
-    this.$store.dispatch('navProgress', {
-      totalCards: this.todaysReviewCardIds.length,
-      completed: 0,
-    });
     this.setKeys();
 
     this.$emit('homeLoad');
@@ -324,7 +303,6 @@ export default {
       if (!flag) {
         setTimeout(() => {
           this.$store.dispatch('levelDownCard', this.currentCard.card_id);
-          this.navbarProgess();
           this.incorrect(true);
         }, 305);
         return;
@@ -340,7 +318,6 @@ export default {
       if (!flag) {
         setTimeout(() => {
           this.$store.dispatch('levelUpCard', this.currentCard.card_id);
-          this.navbarProgess();
           this.correct(true);
         }, 305);
         return;
@@ -350,42 +327,9 @@ export default {
       // this.currentCardIndex ++
       this.switchCardSequence = false;
     },
-    navbarProgess() {
-      const totalCards = this.todaysReviewCardIds.length;
-      const completed = this.todaysReviewCardIds.length - this.todaysDeck.cards.length;
-      const updateData = { totalCards: totalCards, completed: completed };
-      this.$store.dispatch('navProgress', updateData);
-    },
     editCard(card, reviewDeck) {
       this.$store.commit('updateCardToEditIndex', reviewDeck.cards.indexOf(card));
       this.$router.push('/card-editor');
-    },
-    setOrResetTodaysMaxCards: function() {
-      const today = new Date().getDay();
-      if (!this.user_collection.schedule.lastReviewDay)
-        this.$store.commit('updateLastReviewDay', today);
-      if (this.user_collection.schedule.lastReviewDay < today) {
-        this.$store.commit('updateLastReviewDay', today);
-        this.$store.commit('resetTodaysCardReviews');
-      }
-      this.setTodaysMaxCards();
-    },
-    setTodaysMaxCards() {
-      const maxReviewLength = this.user_collection.webapp_settings.schedule.max_cards;
-      // for debugging
-      // if (this.todaysReviewCardIds.length >= maxReviewLength)
-      //   this.$store.commit('resetTodaysCardReviews');
-
-      for (const card of this.todaysDeckFull.cards) {
-        if (this.todaysReviewCardIds.length >= maxReviewLength) {
-          break;
-        } else {
-          if (!this.todaysReviewCardIds.includes(card.card_id)) {
-            this.$store.commit('addCardToTodaysCardReviews', card.card_id);
-          }
-        }
-      }
-      this.navbarProgess();
     },
     PWAUpdate(bool) {
       this.$emit('updatePWA', bool);

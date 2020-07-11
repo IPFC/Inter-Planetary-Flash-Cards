@@ -4,8 +4,9 @@ import VuexPersistence from 'vuex-persist';
 import localForage from 'localforage';
 
 import Cookies from 'js-cookie';
-import { sortBy } from 'lodash/core';
+import { sortBy, isEqual } from 'lodash/core';
 import { isEmpty } from 'lodash';
+
 import { cardLevelUp } from '../utils/dataProcessing';
 import defaultCollection from '../assets/defaultCollection.json';
 const axios = require('axios');
@@ -57,11 +58,10 @@ const vuexLocalForage = new VuexPersistence({
 const initialState = {
   jwt: null,
   pinataKeys: null,
-  user_collection: null,
-  decks: null,
+  user_collection: defaultCollection.user_collection,
+  decks: defaultCollection.decks,
   currentDeckId: null,
   cardToEditIndex: null,
-  navProgressCounter: '0 / 0',
   lastSyncsData: null,
   syncing: false,
   syncFailed: false,
@@ -95,7 +95,12 @@ const store = new Vuex.Store({
       state.online = bool;
     },
     updateUserCollection(state, data) {
-      state.user_collection = data;
+      // don't allow the usercollection to be overridden by the server data from a lagging sync when we just logged out
+      if (!state.jwt) {
+        if (isEqual(defaultCollection.user_collection, data)) {
+          state.user_collection = data;
+        }
+      } else state.user_collection = data;
     },
     updateSettings(state, data) {
       state.user_collection.webapp_settings = data;
@@ -134,6 +139,9 @@ const store = new Vuex.Store({
     },
     updateDecks(state, data) {
       state.decks = data;
+    },
+    updateDeletedDeckIds(state, list) {
+      state.user_collection.deleted_deck_ids = list;
     },
     deleteDeck(state, deckId) {
       if (deckId) {
@@ -234,9 +242,6 @@ const store = new Vuex.Store({
     updateCurrentDeckId(state, data) {
       state.currentDeckId = data;
     },
-    updateProgressCounter(state, data) {
-      state.navProgressCounter = data;
-    },
     updateCardToEditIndex(state, index) {
       state.cardToEditIndex = index;
     },
@@ -305,8 +310,6 @@ const store = new Vuex.Store({
       state.user_collection.schedule.edited = new Date().getTime();
     },
     addCardToTodaysCardReviews(state, cardId) {
-      if (!state.user_collection.schedule.todaysReviewCardIds)
-        state.user_collection.schedule.todaysReviewCardIds = [];
       state.user_collection.schedule.todaysReviewCardIds.push(cardId);
     },
     resetTodaysCardReviews(state) {
@@ -464,9 +467,31 @@ const store = new Vuex.Store({
         }
       }
     },
-    navProgress(context, data) {
-      const outputString = data.completed + ' / ' + data.totalCards;
-      context.commit('updateProgressCounter', outputString);
+    setOrResetTodaysMaxCards(context) {
+      const today = new Date().getDay();
+      if (!context.state.user_collection.schedule.lastReviewDay)
+        context.commit('updateLastReviewDay', today);
+      if (context.state.user_collection.schedule.lastReviewDay < today) {
+        context.commit('updateLastReviewDay', today);
+        context.commit('resetTodaysCardReviews');
+      }
+      context.dispatch('setTodaysMaxCards');
+    },
+    setTodaysMaxCards(context) {
+      const maxReviewLength = context.state.user_collection.webapp_settings.schedule.max_cards;
+      const todaysReviewCardIds = context.state.user_collection.schedule.todaysReviewCardIds;
+      // for debugging
+      // if (this.todaysReviewCardIds.length >= maxReviewLength)
+      //   this.$store.commit('resetTodaysCardReviews');
+      for (const card of context.getters.todaysDeckFull.cards) {
+        if (todaysReviewCardIds.length >= maxReviewLength) {
+          break;
+        } else {
+          if (!todaysReviewCardIds.includes(card.card_id)) {
+            context.commit('addCardToTodaysCardReviews', card.card_id);
+          }
+        }
+      }
     },
     async logout(context) {
       await context.commit('updateJwt', null);
@@ -546,7 +571,7 @@ const store = new Vuex.Store({
         decksMeta: JSON.parse(JSON.stringify(context.getters.decksMeta)),
         skipSameCheck: skipSameCheck,
       };
-      syncWorker.postMessage(data);
+      if (context.getters.isAuthenticated) syncWorker.postMessage(data);
     },
   },
   getters: {
@@ -594,7 +619,12 @@ const store = new Vuex.Store({
       }
     },
     getDecks: state => state.decks,
-    navProgressCounter: state => state.navProgressCounter,
+    navProgressCounter: (state, getters) => {
+      const completed =
+        state.user_collection.schedule.todaysReviewCardIds.length - getters.todaysDeck.cards.length;
+      const totalCards = state.user_collection.schedule.todaysReviewCardIds.length;
+      return `${completed} / ${totalCards}`;
+    },
     reviewDeck(state) {
       if (
         state.user_collection === null ||
@@ -630,7 +660,7 @@ const store = new Vuex.Store({
         return reviewDeck;
       }
     },
-    todaysDeck(state, getters) {
+    todaysDeckFull(state, getters) {
       if (
         state.user_collection === null ||
         state.decks === null ||
@@ -671,6 +701,16 @@ const store = new Vuex.Store({
         }
         return todaysDeck;
       }
+    },
+    todaysDeck(state, getters) {
+      const todaysReviewCardIds = state.user_collection.schedule.todaysReviewCardIds || [];
+      const cards = [];
+      for (const card of getters.todaysDeckFull.cards) {
+        if (todaysReviewCardIds.includes(card.card_id)) {
+          cards.push(card);
+        }
+      }
+      return { cards: cards };
     },
   },
   plugins: [vuexCookie.plugin, vuexLocalForage.plugin],

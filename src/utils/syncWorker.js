@@ -166,8 +166,8 @@ async function cloudSync(data) {
     if (!isEqual(userCollection.deleted_deck_ids, mergedDeletedDeckIds)) {
       userCollection.deleted_deck_ids = mergedDeletedDeckIds
       postMessage({
-        mutation: 'updateUserCollection',
-        payload: userCollection,
+        mutation: 'updateDeletedDeckIds',
+        payload: mergedDeletedDeckIds,
       });
     }
     // if local deleted, but server deleted isn't, add to server deleted list
