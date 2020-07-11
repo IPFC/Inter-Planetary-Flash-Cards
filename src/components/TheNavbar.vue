@@ -58,18 +58,40 @@
           <b-nav-item v-if="!installed" class="dropdown-item" @click="installer()">
             Install App
           </b-nav-item>
+          <b-nav-item
+            v-if="fireFoxUser"
+            class="dropdown-item"
+            @click="
+              newTabLink(
+                'https://addons.mozilla.org/en-US/firefox/addon/inter-planetary-flash-cards/'
+              )
+            "
+          >
+            Firefox Add-on
+          </b-nav-item>
+          <b-nav-item
+            v-else
+            class="dropdown-item"
+            @click="
+              newTabLink(
+                'https://chrome.google.com/webstore/detail/inter-planetary-flash-car/ffjpplmcceibehbaofplbmcldkmmhcob'
+              )
+            "
+          >
+            Chrome Extension
+          </b-nav-item>
           <b-nav-item class="dropdown-item" to="#" disabled>
             Lessons
           </b-nav-item>
           <b-nav-item class="dropdown-item" to="#" disabled>
             Classes
           </b-nav-item>
-          <b-nav-form>
+          <!-- <b-nav-form>
             <b-form-input size="sm" class="mr-sm-1" placeholder="find decks and classes" />
             <b-button size="sm" type="submit">
               Search
             </b-button>
-          </b-nav-form>
+          </b-nav-form> -->
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -81,8 +103,8 @@ import {
   BLink,
   BNavbar,
   BNavbarNav,
-  BNavForm,
-  BFormInput,
+  // BNavForm,
+  // BFormInput,
   BNavbarToggle,
   BNavText,
   BNavItem,
@@ -95,8 +117,8 @@ export default {
     BLink,
     BNavbar,
     BNavbarNav,
-    BNavForm,
-    BFormInput,
+    // BNavForm,
+    // BFormInput,
     BNavbarToggle,
     BNavText,
     BNavItem,
@@ -113,6 +135,9 @@ export default {
   computed: {
     navProgressCounter() {
       return this.$store.getters.navProgressCounter;
+    },
+    fireFoxUser() {
+      return window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     },
     ...mapState(['syncing', 'syncFailed', 'online']),
     ...mapGetters(['isAuthenticated']),
@@ -144,6 +169,9 @@ export default {
     };
   },
   methods: {
+    newTabLink(link) {
+      window.open(link, '_blank');
+    },
     callSync() {
       if (this.$store.getters.isAuthenticated) {
         // console.log('sync called from navbar');

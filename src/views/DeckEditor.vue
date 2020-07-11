@@ -129,6 +129,15 @@ export default {
     },
   },
   mounted() {
+    for (const card of this.deck.cards) {
+      this.$store.commit('addCardToSchedule', card.card_id);
+      this.$store.commit('updateCardSchedule', {
+        card_id: card.card_id,
+        level: 5,
+        due: new Date().getTime(),
+        last_interval: 345600000,
+      });
+    }
     this.$emit('homeLoad');
   },
   methods: {
