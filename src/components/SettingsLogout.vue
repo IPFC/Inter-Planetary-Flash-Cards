@@ -35,12 +35,13 @@ export default {
     ...mapGetters(['isAuthenticated']),
   },
   methods: {
-    logout() {
-      this.$store.dispatch('logout');
+    async logout() {
+      await this.$store.dispatch('logout');
       this.$router.push('/login');
     },
-    logoutDeleteCache() {
-      this.$store.dispatch('logoutDeleteCache');
+    async logoutDeleteCache() {
+      console.log('logoutDeleteCache');
+      await this.$store.dispatch('logoutDeleteCache');
       this.$router.push('/login');
     },
   },

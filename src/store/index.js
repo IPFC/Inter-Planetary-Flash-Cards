@@ -468,17 +468,17 @@ const store = new Vuex.Store({
       const outputString = data.completed + ' / ' + data.totalCards;
       context.commit('updateProgressCounter', outputString);
     },
-    logout(context) {
-      context.commit('updateJwt', null);
+    async logout(context) {
+      await context.commit('updateJwt', null);
       document.cookie = null;
     },
-    logoutDeleteCache(context) {
-      context.commit('updateJwt', null);
+    async logoutDeleteCache(context) {
+      await context.commit('updateJwt', null);
       document.cookie = null;
-      context.commit('clearState');
-      localForage.clear();
-      context.commit('updateUserCollection', defaultCollection.user_collection);
-      context.commit('updateDecks', defaultCollection.decks);
+      await localForage.clear();
+      await context.commit('clearState');
+      await context.commit('updateUserCollection', defaultCollection.user_collection);
+      await context.commit('updateDecks', defaultCollection.decks);
     },
     levelUpCard(context, cardId) {
       let cardData = null;

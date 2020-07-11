@@ -1,4 +1,5 @@
 /* eslint-disable */
+import defaultCollection from '../assets/defaultCollection.json'
 import {
   isEqual
 } from 'lodash/core';
@@ -38,7 +39,7 @@ async function callAPI(data) {
 }
 async function cloudSync(data) {
   const decks = data.decks;
-  const userCollection = data.user_collection;
+  let userCollection = data.user_collection;
   const lastSyncsData = data.lastSyncsData;
   console.log('    sync called. skip equality check?', data.skipSameCheck)
   console.log('lastSyncsData.user_collection, userCollection', lastSyncsData.user_collection, userCollection);
@@ -56,7 +57,7 @@ async function cloudSync(data) {
     mutation: 'toggleSyncing',
     payload: true,
   });
-  if (data.syncing || userCollection.user_id === 'Tutorial') {
+  if (data.syncing || userCollection.user_id === 'tutorial-user') {
     console.log('    syncing blocked');
     postMessage({
       mutation: 'toggleSyncing',
@@ -100,7 +101,20 @@ async function cloudSync(data) {
   }
   const serverCollection = metaDataCallResults.user_collection;
   serverDecksMeta = metaDataCallResults.decks_meta;
-  if (userCollection.user_id === 'tutorial-user') userCollection = serverCollection
+
+  // if we are a returning user who cleared their cache, they will have the default collection which will need to be replaced
+  const tutorialCardIds = defaultCollection.user_collection.schedule.list.map(item => item.card_id);
+  const tutDeck = decks.filter(deck => deck.title === 'Tutorial')[0];
+  let localCardIds
+  if (tutDeck) localCardIds = tutDeck.cards.map(item => item.card_id) 
+  if (isEqual(tutorialCardIds, localCardIds)) {
+    console.log('was returning user with empty cache ',isEqual( tutorialCardIds, localCardIds));
+    userCollection.schedule.edited = 0
+    decks.forEach(deck => {
+      if (deck.title === 'Tutorial') deck.edited = 0
+    });
+  };
+
   if (!isEqual(serverCollection, userCollection)) {
     const mergedDeletedDeckIds = []
     for (const id of serverCollection.deleted_deck_ids)
