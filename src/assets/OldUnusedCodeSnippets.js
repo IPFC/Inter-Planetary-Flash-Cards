@@ -1,10 +1,21 @@
-<template>
-  
-</template>
+<template> </template>
 
 <script>
 export default {
+  mounted:{
+    /** Resest schedule */
+        for (const card of this.deck.cards) {
+      this.$store.commit('addCardToSchedule', card.card_id);
+      this.$store.commit('updateCardSchedule', {
+        card_id: card.card_id,
+        level: 5,
+        due: new Date().getTime(),
+        last_interval: 345600000,
+      });
+    }
+  },
     methods: {
+
          populateSchedule(){
             // initial schedule when its empty for testing
             for (let card of this.reviewDeck.cards) {
@@ -27,7 +38,7 @@ export default {
                        oldCard.front_rich_text = JSON.parse(JSON.stringify(oldCard.front_text))
                         oldCard.back_rich_text = JSON.parse(JSON.stringify(oldCard.back_text))
                         let cardUpdateData = { deck_id: deck.deck_id, card: oldCard }
-                        this.$store.commit('updateCard', cardUpdateData) 
+                        this.$store.commit('updateCard', cardUpdateData)
                     }
                 }
             }
@@ -38,7 +49,7 @@ export default {
                     let dupCount = 0
                     if (deck.deck_id === dupDeck.deck_id) {
                         dupCount ++
-                        console.log("    dupCount", dupCount)    
+                        console.log("    dupCount", dupCount)
                         if (dupCount > 1) {
                             console.log("    duplicate deck  detected", dupDeck)
                             this.$store.commit('deleteDeck', dupDeck.deck_id)
@@ -52,7 +63,7 @@ export default {
                     for (let cardDup of deck.cards) {
                         if (card.card_id === cardDup.card_id) {
                             dupCount ++
-                            console.log("    dupCount", dupCount)    
+                            console.log("    dupCount", dupCount)
                             if (dupCount > 1) {
                                 console.log("    duplicate card  detected", cardDup)
                                 let deleteData = { deck_id: deck.deck_id, card_id:  cardDup.card_id,}
@@ -82,11 +93,8 @@ export default {
         }
     }
 }
-</script>
 
-<style>
 
-</style>
 // Quill/ in component. to do on change, check contents.
                     <!-- @change="onBackCardEditorChange($event)" -->
         // onFrontCardEditorChange() {
@@ -105,7 +113,7 @@ export default {
     // updateDeckEdited(state, deck_id) {
     //   for (let deck of state.decks) {
     //     if (deck.deck_id === deck_id) {
-    //       deck.edited = new Date().getTime() 
+    //       deck.edited = new Date().getTime()
     //       break
     //     }
     //   }
@@ -193,13 +201,13 @@ export default {
         while (!context.state.syncFailed && context.state.syncing ) {
           try {
             // console.log("    starting sync")
-            let serverCollection     
-            let localDecksMeta = JSON.parse(JSON.stringify(context.getters.decksMeta)) 
+            let serverCollection
+            let localDecksMeta = JSON.parse(JSON.stringify(context.getters.decksMeta))
             // console.log('    localDecksMeta ', localDecksMeta)
             let decks = JSON.parse(JSON.stringify(context.state.decks)) //reload decks, cause they might be changed by above user collection section
             let userCollection = JSON.parse(JSON.stringify(context.state.userCollection))
             let serverDecksMeta = null
-            let getMetaAndCollectionURL = context.state.serverURL + '/get_decks_meta_and_collection' 
+            let getMetaAndCollectionURL = context.state.serverURL + '/get_decks_meta_and_collection'
             await fetch(getMetaAndCollectionURL, {
               headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
               method: 'GET',
@@ -210,14 +218,14 @@ export default {
                   serverCollection = responseData['user_collection']
                   serverDecksMeta = responseData['decks_meta']
               })
-              .catch(function() {  
+              .catch(function() {
                 context.commit('toggleSyncFailed', true)
-                // console.log(err); 
+                // console.log(err);
                 return null
               });
             // user collections comparisons
             if (!isEqual(serverCollection, userCollection)){
-              for (let server_deleted_deck_id of serverCollection.deleted_deck_ids) {        
+              for (let server_deleted_deck_id of serverCollection.deleted_deck_ids) {
                 // if server deleted, but local deleted isn't, delete locally
                 if (!userCollection.deleted_deck_ids.includes(server_deleted_deck_id)) {
                   // add to local usercollection deleted list
@@ -230,7 +238,7 @@ export default {
                     // remove the deck from 'decks'  // note this is only for 'lastsyncsdata' purposes.
                     let deckToDeleteLst = decks.filter(function (deckToCheck) {
                       return deckToCheck.deck_id === server_deleted_deck_id
-                      }) 
+                      })
                     let deckToDelete = deckToDeleteLst[0]
                     let deckIndex = decks.indexOf(deckToDelete)
                     if (deckIndex !== -1) { //just in case its not there alraady
@@ -242,14 +250,14 @@ export default {
                 }
               }
               // if local deleted, but server deleted isn't, add to server deleted list
-              let decksToDeleteOnServer= []  
-              for (let client_deleted_deck_id of userCollection.deleted_deck_ids) { 
+              let decksToDeleteOnServer= []
+              for (let client_deleted_deck_id of userCollection.deleted_deck_ids) {
                 if (!serverCollection.deleted_deck_ids.includes(client_deleted_deck_id)) {
                   decksToDeleteOnServer.push(client_deleted_deck_id)
                 }
                 }// call delete decks (server will update it's deleted decks list on its end)
               if (decksToDeleteOnServer.length > 0) {
-                let deleteDeckURL = context.state.serverURL + '/delete_decks' 
+                let deleteDeckURL = context.state.serverURL + '/delete_decks'
                 let deleteDecksData = {'deck_ids': decksToDeleteOnServer}
                 await fetch(deleteDeckURL, {
                   headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
@@ -260,16 +268,16 @@ export default {
                   .then(() => {
                       // console.log("    decks deleted: ", responseData)
                   })
-                  .catch(function() {  
+                  .catch(function() {
                     context.commit('toggleSyncFailed', true)
-                    // console.log(err); 
+                    // console.log(err);
                     return null
                   });
               }
 
               // if there are new decks from server, add their IDs, download the deck.
               let decksToDownload = []
-              for (let server_deck_id of serverCollection.deck_ids) { 
+              for (let server_deck_id of serverCollection.deck_ids) {
                 if (!userCollection.deck_ids.includes(server_deck_id)) {
                   decksToDownload.push(server_deck_id)
                 }
@@ -290,30 +298,30 @@ export default {
                         context.commit('addDeck', downloadedDeck)
                       }
                   })
-                  .catch(function() {  
+                  .catch(function() {
                     context.commit('toggleSyncFailed', true)
-                    // console.log(err); 
+                    // console.log(err);
                     return null
                   });
               }
-              
+
               // if there are new decks locally, add their IDs, post the deck.
               let decksToPost = []
-              for (let client_deck_id of userCollection.deck_ids ) { 
+              for (let client_deck_id of userCollection.deck_ids ) {
                 if (!serverCollection.deck_ids.includes(client_deck_id)) {
                   let deckToPostLst = decks.filter(function (deckToCheck) {
                     return deckToCheck.deck_id === client_deck_id
-                    }) 
+                    })
                   if (deckToPostLst.length > 0) {
                     let deckToPost = deckToPostLst[0]
                     decksToPost.push(deckToPost)
-                  }  
+                  }
                 }
               }
               if (decksToPost.length > 0) {
                 // console.log('    posting decks ', decksToPost)
                 let postDecksURL = context.state.serverURL + '/post_decks';
-                await fetch(postDecksURL, { 
+                await fetch(postDecksURL, {
                   headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
                   body: JSON.stringify(decksToPost),
                   method: 'POST',
@@ -337,7 +345,7 @@ export default {
                 if (serverCollection.webapp_settings.edited < userCollection.webapp_settings.edited){
                   let putUserCollectionURL = context.state.serverURL + '/put_user_collection';
                   let putUserCollectionData = {'webapp_settings': userCollection.webapp_settings }
-                  await fetch(putUserCollectionURL, { 
+                  await fetch(putUserCollectionURL, {
                     headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
                     body: JSON.stringify(putUserCollectionData),
                     method: 'PUT',
@@ -362,7 +370,7 @@ export default {
                 if (serverCollection.schedule.edited < userCollection.schedule.edited){
                   let putUserCollectionURL = context.state.serverURL + '/put_user_collection';
                   let putUserCollectionData = {'schedule': userCollection.schedule }
-                  await fetch(putUserCollectionURL, { 
+                  await fetch(putUserCollectionURL, {
                     headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
                     body: JSON.stringify(putUserCollectionData),
                     method: 'PUT',
@@ -401,14 +409,14 @@ export default {
                   // if the server version is newer, downlaod it
                   else if (localDeckMeta.edited < serverDeckMeta.edited) {
                     decksToUpdateLocally.push(serverDeckMeta.deck_id)
-                  } 
+                  }
                 }
               }
             }
             // upload all the decks to put
             if (decksToPut.length > 0) {
               let putDecksURL = context.state.serverURL + '/put_decks';
-              await fetch(putDecksURL, { 
+              await fetch(putDecksURL, {
                 headers: { 'Content-Type': 'application/json', 'x-access-token': context.state.jwt},
                 body: JSON.stringify(decksToPut),
                 method: 'PUT',
@@ -422,7 +430,7 @@ export default {
                   // console.log(err);
                 });
             }
-          
+
             // get all newer server decks
             if (decksToUpdateLocally.length > 0) {
               let getDecksURL = context.state.serverURL + '/get_decks'
@@ -447,11 +455,11 @@ export default {
                     }
                   }
               })
-              .catch(function() {  
+              .catch(function() {
                 context.commit('toggleSyncFailed', true)
-                // console.log(err); 
+                // console.log(err);
                 return null
-              }); 
+              });
             }
           context.commit('updateLastSyncsData', {
             decks: decks,
@@ -464,14 +472,14 @@ export default {
           context.commit('toggleSyncing', false)
           }catch{
             context.commit('toggleSyncFailed', true)
-          } 
+          }
           finally{
               context.commit('toggleSyncing', false)
               // console.log('    failed or not',context.state.syncFailed)
         }
-        }          
+        }
 
-      } 
+      }
     }
 
 
@@ -550,7 +558,7 @@ export default {
           pinataSecretValidationErrorMsg
         }}</b-form-invalid-feedback> -->
         <!-- <b-form-valid-feedback v-if="showSignup" :state="pinataSecretValidation">Looks Good.</b-form-valid-feedback> -->
-     
+
         pinataApiValidation() {
       const pinataApi = this.input.pinataApi;
       if (pinataApi.length < 20 || pinataApi.length > 20) {
@@ -582,4 +590,5 @@ export default {
       } else {
         return null;
       }
-    },
+    }
+</script>
