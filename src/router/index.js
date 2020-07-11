@@ -15,12 +15,7 @@ async function redirectIfNotAuth(to, from, next) {
   if (store.getters.isAuthenticated) {
     next();
   } else {
-    await store.dispatch('checkJwt');
-    if (store.getters.isAuthenticated) {
-      next();
-    } else {
-      next('/login');
-    }
+    next('/login');
   }
 }
 

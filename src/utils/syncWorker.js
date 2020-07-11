@@ -102,53 +102,60 @@ async function cloudSync(data) {
   serverDecksMeta = metaDataCallResults.decks_meta;
   if (userCollection.user_id === 'tutorial-user') userCollection = serverCollection
   if (!isEqual(serverCollection, userCollection)) {
-    console.log('serverCollection.deleted_deck_ids, userCollection.deleted_deck_ids',serverCollection.deleted_deck_ids, userCollection.deleted_deck_ids)
     const mergedDeletedDeckIds = []
-    for (const id of serverCollection.deleted_deck_ids) if (!isEmpty(id)) mergedDeletedDeckIds.push(id);
-    for (const id of userCollection.deleted_deck_ids) if (!isEmpty(id) && !mergedDeletedDeckIds.includes(id)) mergedDeletedDeckIds.push(id);
-    console.log('mergedDeletedDeckIds', mergedDeletedDeckIds)
-    if (!isEqual(serverCollection.deleted_deck_ids, mergedDeletedDeckIds)){
-       console.log('putting section: deleted deck Ids');
-            const putSectionData = {
-              url: data.serverUrl + '/put_user_collection',
-              jwt: data.jwt,
-              method: 'PUT',
-              data: {
-               deleted_deck_ids: mergedDeletedDeckIds,
-              },
-            };
-            let putSectionResult = null;
-            await callAPI(putSectionData).then(data => {
-              putSectionResult = data;
-            });
-            console.log('    PUT section results', putSectionResult);
-            if (putSectionResult === null) {
-              return null;
-            }
+    for (const id of serverCollection.deleted_deck_ids)
+      if (!isEmpty(id)) mergedDeletedDeckIds.push(id);
+    for (const id of userCollection.deleted_deck_ids)
+      if (!isEmpty(id) && !mergedDeletedDeckIds.includes(id)) mergedDeletedDeckIds.push(id);
+    if (!isEqual(serverCollection.deleted_deck_ids, mergedDeletedDeckIds)) {
+      console.log('serverCollection.deleted_deck_ids, userCollection.deleted_deck_ids', serverCollection.deleted_deck_ids, userCollection.deleted_deck_ids)
+      console.log('mergedDeletedDeckIds', mergedDeletedDeckIds)
+      console.log('putting section: deleted deck Ids');
+      const putSectionData = {
+        url: data.serverUrl + '/put_user_collection',
+        jwt: data.jwt,
+        method: 'PUT',
+        data: {
+          deleted_deck_ids: mergedDeletedDeckIds,
+        },
+      };
+      let putSectionResult = null;
+      await callAPI(putSectionData).then(data => {
+        putSectionResult = data;
+      });
+      console.log('    PUT section results', putSectionResult);
+      if (putSectionResult === null) {
+        return null;
+      }
     }
     for (const serverDeletedDeckId of serverCollection.deleted_deck_ids) {
       // if server deleted, but local deleted isn't, delete locally
       if (!userCollection.deleted_deck_ids.includes(serverDeletedDeckId) && !isEmpty(serverDeletedDeckId)) {
         // remove from user_collection included list
         if (userCollection.deck_ids.includes(serverDeletedDeckId)) userCollection.deck_ids.splice(userCollection.deck_ids.indexOf(serverDeletedDeckId), 1)
-          // remove the deck from 'decks'  // note this is only for 'lastsyncsdata' purposes.
-          const deckToDeleteFilter = decks.filter(function (deckToCheck) {
-            return deckToCheck.deck_id === serverDeletedDeckId;
-          });
-          const deckToDelete = deckToDeleteFilter[0];
-          const deckIndex = decks.indexOf(deckToDelete);
-          if (deckIndex !== -1) {
-            // just in case its not there alraady
-            decks.splice(deckIndex, 1);
-          }
-          postMessage({
-            mutation: 'deleteDeck',
-            payload: serverDeletedDeckId,
-          });
-        
+        // remove the deck from 'decks'  // note this is only for 'lastsyncsdata' purposes.
+        const deckToDeleteFilter = decks.filter(function (deckToCheck) {
+          return deckToCheck.deck_id === serverDeletedDeckId;
+        });
+        const deckToDelete = deckToDeleteFilter[0];
+        const deckIndex = decks.indexOf(deckToDelete);
+        if (deckIndex !== -1) {
+          // just in case its not there alraady
+          decks.splice(deckIndex, 1);
+        }
+        postMessage({
+          mutation: 'deleteDeck',
+          payload: serverDeletedDeckId,
+        });
       }
     }
-    if (!isEqual(userCollection.deleted_deck_ids, mergedDeletedDeckIds)) userCollection.deleted_deck_ids = mergedDeletedDeckIds
+    if (!isEqual(userCollection.deleted_deck_ids, mergedDeletedDeckIds)) {
+      userCollection.deleted_deck_ids = mergedDeletedDeckIds
+      postMessage({
+        mutation: 'updateUserCollection',
+        payload: userCollection,
+      });
+    }
     // if local deleted, but server deleted isn't, add to server deleted list
     const decksToDeleteOnServer = [];
     for (const clientDeletedDeckId of userCollection.deleted_deck_ids) {
@@ -181,7 +188,7 @@ async function cloudSync(data) {
         decksToDownload.push(serverDeckId);
       }
     }
-    
+
     if (decksToDownload.length > 0) {
       console.log(decksToDownload)
       const downloadCallData = {
@@ -410,25 +417,25 @@ async function cloudSync(data) {
       return null;
     } else {
       console.log('    decks downloaded', getDecksResult);
-      if (!isEmpty( getDecksResult.decks))
-      for (const newerDeck of getDecksResult.decks) {
-        const oldDeckLst = decks.filter(function (deckToCheck) {
-          return deckToCheck.deck_id === newerDeck.deck_id;
-        });
-        if (oldDeckLst.length > 0) {
-          const oldDeck = oldDeckLst[0];
-          const oldDeckIndex = decks.indexOf(oldDeck);
-          decks.splice(oldDeckIndex, 1);
-          decks.push(newerDeck);
-          postMessage({
-            mutation: 'updateDeck',
-            payload: {
-              deck: newerDeck,
-              fromSync: true,
-            },
+      if (!isEmpty(getDecksResult.decks))
+        for (const newerDeck of getDecksResult.decks) {
+          const oldDeckLst = decks.filter(function (deckToCheck) {
+            return deckToCheck.deck_id === newerDeck.deck_id;
           });
+          if (oldDeckLst.length > 0) {
+            const oldDeck = oldDeckLst[0];
+            const oldDeckIndex = decks.indexOf(oldDeck);
+            decks.splice(oldDeckIndex, 1);
+            decks.push(newerDeck);
+            postMessage({
+              mutation: 'updateDeck',
+              payload: {
+                deck: newerDeck,
+                fromSync: true,
+              },
+            });
+          }
         }
-      }
     }
   }
   postMessage({

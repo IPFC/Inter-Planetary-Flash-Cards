@@ -54,36 +54,33 @@ const vuexLocalForage = new VuexPersistence({
   // undocumented bug in vuex-persist with localforage. Hacky fix from issues forum
   asyncStorage: true,
 });
-
+const initialState = {
+  jwt: null,
+  pinataKeys: null,
+  user_collection: null,
+  decks: null,
+  currentDeckId: null,
+  cardToEditIndex: null,
+  navProgressCounter: '0 / 0',
+  lastSyncsData: null,
+  syncing: false,
+  syncFailed: false,
+  initialSync: 0,
+  online: false,
+  serverUrl: process.env.VUE_APP_API_URL,
+};
 const store = new Vuex.Store({
-  state: {
-    jwt: null,
-    jwtValid: false,
-    pinataKeys: null,
-    user_collection: null,
-    decks: null,
-    currentDeckId: null,
-    cardToEditIndex: null,
-    navProgressCounter: '0 / 0',
-    lastSyncsData: null,
-    syncing: false,
-    syncFailed: false,
-    initialSync: 0,
-    online: false,
-    serverUrl: process.env.VUE_APP_API_URL,
-  },
+  state: initialState,
+
   mutations: {
     clearState(state) {
-      state = {};
+      state = initialState;
     },
     updateJwt(state, newJwt) {
       state.jwt = newJwt;
     },
     deleteJwt(state) {
       state.jwt = null;
-    },
-    toggleJwtValid(state, bool) {
-      state.jwtValid = bool;
     },
     updatePinataKeys(state, data) {
       state.pinataKeys = data;
@@ -139,17 +136,19 @@ const store = new Vuex.Store({
       state.decks = data;
     },
     deleteDeck(state, deckId) {
-      console.log('delete Deck, deck', deckId);
-      // add to user_collection deleted list
-      if (!state.user_collection.deleted_deck_ids.includes(deckId))
-        state.user_collection.deleted_deck_ids.push(deckId);
-      // remove from user_collection included list
-      if (state.user_collection.deck_ids.includes(deckId)) {
-        state.user_collection.deck_ids.splice(state.user_collection.deck_ids.indexOf(deckId), 1);
-      }
-      // remove the deck from 'decks'
-      for (const deck of state.decks) {
-        if (deck.deck_id === deckId) state.decks.splice(state.decks.indexOf(deck), 1);
+      if (deckId) {
+        // console.log('delete Deck, deck', deckId);
+        // add to user_collection deleted list
+        if (!state.user_collection.deleted_deck_ids.includes(deckId))
+          state.user_collection.deleted_deck_ids.push(deckId);
+        // remove from user_collection included list
+        if (state.user_collection.deck_ids.includes(deckId)) {
+          state.user_collection.deck_ids.splice(state.user_collection.deck_ids.indexOf(deckId), 1);
+        }
+        // remove the deck from 'decks'
+        for (const deck of state.decks) {
+          if (deck.deck_id === deckId) state.decks.splice(state.decks.indexOf(deck), 1);
+        }
       }
     },
     newCard(state, data) {
@@ -471,26 +470,15 @@ const store = new Vuex.Store({
     },
     logout(context) {
       context.commit('updateJwt', null);
+      document.cookie = null;
     },
     logoutDeleteCache(context) {
       context.commit('updateJwt', null);
+      document.cookie = null;
       context.commit('clearState');
-      // localForage.clear();
+      localForage.clear();
       context.commit('updateUserCollection', defaultCollection.user_collection);
       context.commit('updateDecks', defaultCollection.decks);
-    },
-    checkJwt(context) {
-      const jwt = context.state.jwt;
-      if (jwt === null) {
-        context.commit('toggleJwtValid', false);
-      } else if (!jwt || jwt.split('.').length < 3) {
-        context.commit('toggleJwtValid', false);
-      } else {
-        const data = JSON.parse(atob(jwt.split('.')[1]));
-        const exp = new Date(data.exp * 1000); // JS deals with dates in milliseconds since epoch, python in seconds
-        const now = new Date();
-        context.commit('toggleJwtValid', now < exp);
-      }
     },
     levelUpCard(context, cardId) {
       let cardData = null;
@@ -593,7 +581,19 @@ const store = new Vuex.Store({
       }
     },
     // redundant?
-    isAuthenticated: state => state.jwtValid,
+    isAuthenticated: state => {
+      const jwt = state.jwt;
+      if (jwt === null) {
+        return false;
+      } else if (!jwt || jwt.split('.').length < 3) {
+        return false;
+      } else {
+        const data = JSON.parse(atob(jwt.split('.')[1]));
+        const exp = new Date(data.exp * 1000); // JS deals with dates in milliseconds since epoch, python in seconds
+        const now = new Date();
+        return now < exp;
+      }
+    },
     getDecks: state => state.decks,
     navProgressCounter: state => state.navProgressCounter,
     reviewDeck(state) {

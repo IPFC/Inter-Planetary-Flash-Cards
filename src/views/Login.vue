@@ -225,7 +225,6 @@ export default {
           that.apiErrorMsg = data.error;
         } else {
           that.$store.commit('updateJwt', data.token);
-          that.$store.dispatch('checkJwt');
           that.$store.commit('updatePinataKeys', data.pinata_keys);
           const userCollection = that.$store.state.user_collection;
           userCollection.user_id = data.user_id;

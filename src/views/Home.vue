@@ -221,7 +221,6 @@ export default {
     if (!this.online && this.initialSync === 0) {
       this.alertOffline = !this.alertOffline;
     }
-    this.$store.dispatch('checkJwt');
     this.$store.commit('updateCurrentDeckId', 'reviewDeck');
     // Determine status of user. New or returning:
     let localStorageEmpty = false;
