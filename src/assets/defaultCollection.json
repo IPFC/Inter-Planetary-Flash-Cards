@@ -120,7 +120,7 @@
             "front_rich_text": "<p class=\"ql-align-center\">Welcome to </p><h1 class=\"ql-align-center\"><span style=\"background-color: initial;\">🚀</span></h1><p class=\"ql-align-center\"><strong class=\"ql-size-large\" style=\"color: rgb(0, 102, 204);\">Inter Planetary </strong></p><p class=\"ql-align-center\"><strong class=\"ql-size-large\" style=\"color: rgb(0, 102, 204);\">Flash Cards</strong></p><h1 class=\"ql-align-center\"><span style=\"background-color: initial;\">🚀</span></h1><p class=\"ql-align-center\"><strong class=\"ql-size-small\" style=\"color: rgb(187, 187, 187);\">flip me!</strong></p>",
             "front_text": "Welcome to \n🚀\nInter Planetary \nFlash Cards\n🚀\nflip me!\n"
         }],
-        "user_id": "642a264a-00a2-4517-9d95-64a29174c4bd",
+        "user_id": "tutorial-user",
         "deck_id": "ea2c0b5b-18e0-4885-bd1b-dcae462a0a49",
         "deck_tags": [],
         "description": null,

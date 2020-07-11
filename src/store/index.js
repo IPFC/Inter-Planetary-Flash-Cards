@@ -138,14 +138,19 @@ const store = new Vuex.Store({
     updateDecks(state, data) {
       state.decks = data;
     },
-    deleteDeck(state, deck) {
+    deleteDeck(state, deckId) {
+      console.log('delete Deck, deck', deckId);
       // add to user_collection deleted list
-      state.user_collection.deleted_deck_ids.push(deck.deck_id);
+      if (!state.user_collection.deleted_deck_ids.includes(deckId))
+        state.user_collection.deleted_deck_ids.push(deckId);
       // remove from user_collection included list
-      const deckIdIndex = state.user_collection.deck_ids.indexOf(deck.deck_id);
-      state.user_collection.deck_ids.splice(deckIdIndex, 1);
+      if (state.user_collection.deck_ids.includes(deckId)) {
+        state.user_collection.deck_ids.splice(state.user_collection.deck_ids.indexOf(deckId), 1);
+      }
       // remove the deck from 'decks'
-      state.decks.splice(state.decks.indexOf(deck), 1);
+      for (const deck of state.decks) {
+        if (deck.deck_id === deckId) state.decks.splice(state.decks.indexOf(deck), 1);
+      }
     },
     newCard(state, data) {
       // new blank card
@@ -455,7 +460,7 @@ const store = new Vuex.Store({
               break;
             }
           }
-          context.commit('deleteDeck', deck);
+          context.commit('deleteDeck', deck.deck_id);
           break;
         }
       }

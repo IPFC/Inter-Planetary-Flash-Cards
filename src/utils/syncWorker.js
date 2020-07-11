@@ -100,11 +100,13 @@ async function cloudSync(data) {
   }
   const serverCollection = metaDataCallResults.user_collection;
   serverDecksMeta = metaDataCallResults.decks_meta;
-  // user collections comparisons
+  if (userCollection.user_id === 'tutorial-user') userCollection = serverCollection
   if (!isEqual(serverCollection, userCollection)) {
-    const mergedDeletedDeckIds = serverCollection.deleted_deck_ids.concat(
-      userCollection.deleted_deck_ids.filter(entry => !serverCollection.deleted_deck_ids.includes(entry))
-    );
+    console.log('serverCollection.deleted_deck_ids, userCollection.deleted_deck_ids',serverCollection.deleted_deck_ids, userCollection.deleted_deck_ids)
+    const mergedDeletedDeckIds = []
+    for (const id of serverCollection.deleted_deck_ids) if (!isEmpty(id)) mergedDeletedDeckIds.push(id);
+    for (const id of userCollection.deleted_deck_ids) if (!isEmpty(id) && !mergedDeletedDeckIds.includes(id)) mergedDeletedDeckIds.push(id);
+    console.log('mergedDeletedDeckIds', mergedDeletedDeckIds)
     if (!isEqual(serverCollection.deleted_deck_ids, mergedDeletedDeckIds)){
        console.log('putting section: deleted deck Ids');
             const putSectionData = {
@@ -126,14 +128,9 @@ async function cloudSync(data) {
     }
     for (const serverDeletedDeckId of serverCollection.deleted_deck_ids) {
       // if server deleted, but local deleted isn't, delete locally
-      if (!userCollection.deleted_deck_ids.includes(serverDeletedDeckId)) {
-        // add to local user_collection deleted list
-        userCollection.deleted_deck_ids.push(serverDeletedDeckId);
+      if (!userCollection.deleted_deck_ids.includes(serverDeletedDeckId) && !isEmpty(serverDeletedDeckId)) {
         // remove from user_collection included list
-        const deckIdIndex = userCollection.deck_ids.indexOf(serverDeletedDeckId);
-        // if its actually in local
-        if (deckIdIndex !== -1) {
-          userCollection.deck_ids.splice(deckIdIndex, 1);
+        if (userCollection.deck_ids.includes(serverDeletedDeckId)) userCollection.deck_ids.splice(userCollection.deck_ids.indexOf(serverDeletedDeckId), 1)
           // remove the deck from 'decks'  // note this is only for 'lastsyncsdata' purposes.
           const deckToDeleteFilter = decks.filter(function (deckToCheck) {
             return deckToCheck.deck_id === serverDeletedDeckId;
@@ -148,17 +145,17 @@ async function cloudSync(data) {
             mutation: 'deleteDeck',
             payload: serverDeletedDeckId,
           });
-        }
+        
       }
     }
     if (!isEqual(userCollection.deleted_deck_ids, mergedDeletedDeckIds)) userCollection.deleted_deck_ids = mergedDeletedDeckIds
     // if local deleted, but server deleted isn't, add to server deleted list
     const decksToDeleteOnServer = [];
     for (const clientDeletedDeckId of userCollection.deleted_deck_ids) {
-      if (!serverCollection.deleted_deck_ids.includes(clientDeletedDeckId)) {
+      if (!serverCollection.deleted_deck_ids.includes(clientDeletedDeckId) && !isEmpty(clientDeletedDeckId)) {
         decksToDeleteOnServer.push(clientDeletedDeckId);
       }
-    } // call delete decks (server will update it's deleted decks list on its end)
+    } // call delete decks (server will update its deleted decks list on its end)
     if (decksToDeleteOnServer.length > 0) {
       const deleteCallData = {
         url: data.serverUrl + '/delete_decks',
@@ -184,8 +181,9 @@ async function cloudSync(data) {
         decksToDownload.push(serverDeckId);
       }
     }
-    console.log(decksToDownload)
+    
     if (decksToDownload.length > 0) {
+      console.log(decksToDownload)
       const downloadCallData = {
         url: data.serverUrl + '/get_decks',
         jwt: data.jwt,
@@ -264,7 +262,7 @@ async function cloudSync(data) {
           edited: 0
         }
         if (!isEqual(serverCollection[section], userCollection[section])) {
-          console.log('serverCollection[section], userCollection[section]', serverCollection[section], userCollection[section])
+          console.log(`unequal serverCollection[${section}], userCollection[${section}]`, serverCollection[section], userCollection[section])
           if (serverCollection[section].edited > userCollection[section].edited) {
             console.log('updating local section: ', section);
             postMessage({
