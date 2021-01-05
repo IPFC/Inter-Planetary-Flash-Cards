@@ -15,7 +15,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "alertify": "^0.3.0",
     "alertify.js": "^1.0.12",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.3.0",
     "connect-history-api-fallback": "^1.6.0",
